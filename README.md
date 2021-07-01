@@ -2,7 +2,7 @@
 Web-чат
 
 Участники команды:
-* Козочкин Михаил - https://github.com/postlog
+* Козочкин Михаил (капитан) - https://github.com/postlog
 * Павлов Игорь - https://github.com/boomb0om
 * Бермишев Владислав - https://github.com/vladbermishev
 * Константинова Полина - https://github.com/pollykon
