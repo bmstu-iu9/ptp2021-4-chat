@@ -30,7 +30,7 @@ function buildStyles() {
   return gulp.src(paths.sources.styles)
     .pipe(autoprefixer())
     .pipe(minify())
-    .pipe(concat('bundle.min.css'))
+    .pipe(concat('bundle.css'))
     .pipe(gulp.dest(paths.destinations.styles))
 }
 
