@@ -105,3 +105,6 @@ dist
 
 # Folder with frontend build
 public/
+
+# Intellij Idea folder
+.idea/
