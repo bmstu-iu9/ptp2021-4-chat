@@ -5,6 +5,7 @@ const {
   generateAndSaveSessionId
 } = require('../services/registration')
 
+
 app.post('/register', (request, response) => {
   const {username, password} = request.body
 
