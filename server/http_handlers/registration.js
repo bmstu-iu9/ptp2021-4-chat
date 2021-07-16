@@ -1,18 +1,11 @@
+const {validateUsernameAndPasswordMiddleware} = require("../middleware");
 const {app} = require('../definitions')
-const {
-  validateLoginAndPassword,
-  tryRegisterUser,
-  generateAndSaveSessionId
-} = require('../services/registration')
+const {tryRegisterUser} = require('../services/registration')
+const {generateAndSaveSessionId} = require('../services/common')
 
 
-app.post('/register', (request, response) => {
+app.post('/api/register', validateUsernameAndPasswordMiddleware, (request, response) => {
   const {username, password} = request.body
-
-  if (!validateLoginAndPassword(username, password)) {
-    return response.status(400)
-      .send('Некорректно заданы username или password')
-  }
 
   tryRegisterUser(username, password)
     .then(user => {
