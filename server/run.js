@@ -2,8 +2,9 @@ const {server, sequelize} = require('./definitions')
 const {host, port} = require('./config');
 
 
-// TODO: убрать force
 (async () => {
+  // Инициализация моделей
+  require('./models')
   await sequelize.sync({force: true})
 
   // Инициализация хендлеров
@@ -13,5 +14,3 @@ const {host, port} = require('./config');
     console.log(`Сервер запущен на ${host}:${port}`)
   })
 })()
-
-
