@@ -1,6 +1,6 @@
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
-const {passwordMinLength, sessionIdLifetime} = require('../constants')
+const {passwordMinLength, sessionLifetime} = require('../constants')
 const {User, UserPassword} = require('../models/user')
 const {Session} = require('../models/session')
 
@@ -14,7 +14,10 @@ const {Session} = require('../models/session')
  *                   пользователь уже существует
  */
 async function tryRegisterUser(username, password) {
-  const user = await User.findOne({where: {username: username}})
+  const user = await User.findOne({
+    where: {username}
+  })
+
   if (user) {
     return null
   }
@@ -31,6 +34,25 @@ async function tryRegisterUser(username, password) {
   return registeredUser
 }
 
+/**
+ * Гененрирует session id и сохраняет его в базу данных, привязывая
+ * к указанному пользователю
+ * @param {User} user - Модель пользователя из базы данных
+ * @returns {string} - Id сессии
+ */
+async function generateAndSaveSessionId(user) {
+  const sessionId = crypto.randomBytes(16).toString('base64');
+  const expirationDate = new Date();
+  expirationDate.setSeconds(expirationDate.getSeconds() + sessionLifetime)
+
+  await Session.create({
+    sessionId,
+    expirationDate: expirationDate,
+    userId: user.id
+  })
+
+  return sessionId
+}
 
 function validateLoginAndPassword(login, password) {
   if (!login || !password) {
@@ -46,26 +68,6 @@ function validateLoginAndPassword(login, password) {
   }
 
   return true
-}
-
-/**
- * Гененрирует session id и сохраняет его в базу данных, привязывая
- * к указанному пользователю
- * @param {User} user - Модель пользователя из базы данных
- * @returns {string} - Id сессии
- */
-async function generateAndSaveSessionId(user) {
-  const sessionId = crypto.randomBytes(16).toString('base64');
-  const expirationDate = new Date();
-  expirationDate.setSeconds(expirationDate.getSeconds() + sessionIdLifetime)
-
-  await Session.create({
-    sessionId,
-    expirationDate: expirationDate,
-    userId: user.id
-  })
-
-  return sessionId
 }
 
 

@@ -6,9 +6,20 @@ class Session extends Model {}
 
 
 Session.init({
-  sessionId: {type: DataTypes.STRING, allowNull: false, unique: true},
-  expirationDate: {type: DataTypes.DATE, allowNull: false}
-}, {sequelize, modelName: 'session', timestamps: false})
+  sessionId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  expirationDate: {
+    type: DataTypes.DATE,
+    allowNull: false
+  }
+}, {
+  sequelize,
+  modelName: 'session',
+  timestamps: false
+})
 
 Session.belongsTo(User, {
   onDelete: 'cascade'

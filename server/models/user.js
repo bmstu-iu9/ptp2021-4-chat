@@ -3,8 +3,8 @@ const {sequelize} = require('../definitions')
 
 
 class User extends Model {}
-
 class UserPassword extends Model {}
+
 
 User.init({
   username: {
