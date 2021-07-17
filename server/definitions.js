@@ -1,32 +1,25 @@
 const http = require('http')
 const express = require('express')
-const bodyParser = require('body-parser')
 const ws = require('ws')
-
 const Sequelize = require('sequelize') // ORM для PostgreSQL
-const {publicPath, postgres} = require('./config')
+const {postgres} = require('./config')
 
 
 const app = express()
 const server = http.createServer(app)
-const sequelize = new Sequelize(`postgres://${postgres.user}:${postgres.pass}` +
-  `@${postgres.host}:${postgres.port}/${postgres.databaseName}`, {
-  logging: false
-})
-
-// Настройка middleware
-app.use(express.static(publicPath, {
-  index: false,
-  extensions: ['html']
-}))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+const sequelize = new Sequelize(
+  postgres.schema, postgres.user, postgres.password, {
+    host: postgres.host,
+    port: postgres.port,
+    logging: false,
+    dialect: 'postgres'
+  })
 
 
 module.exports = {
   app,
   server,
   sequelize,
-  ws: new ws.Server({server: server})
+  ws: new ws.Server({server})
 }
 
