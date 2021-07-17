@@ -10,7 +10,9 @@ const {publicPath, postgres} = require('./config')
 const app = express()
 const server = http.createServer(app)
 const sequelize = new Sequelize(`postgres://${postgres.user}:${postgres.pass}` +
-  `@${postgres.host}:${postgres.port}/${postgres.databaseName}`)
+  `@${postgres.host}:${postgres.port}/${postgres.databaseName}`, {
+  logging: false
+})
 
 // Настройка middleware
 app.use(express.static(publicPath, {
