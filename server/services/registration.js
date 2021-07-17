@@ -34,45 +34,7 @@ async function tryRegisterUser(username, password) {
   return registeredUser
 }
 
-/**
- * Гененрирует session id и сохраняет его в базу данных, привязывая
- * к указанному пользователю
- * @param {User} user - Модель пользователя из базы данных
- * @returns {string} - Id сессии
- */
-async function generateAndSaveSessionId(user) {
-  const sessionId = crypto.randomBytes(16).toString('base64');
-  const expirationDate = new Date();
-  expirationDate.setSeconds(expirationDate.getSeconds() + sessionLifetime)
-
-  await Session.create({
-    sessionId,
-    expirationDate: expirationDate,
-    userId: user.id
-  })
-
-  return sessionId
-}
-
-function validateLoginAndPassword(login, password) {
-  if (!login || !password) {
-    return false
-  }
-
-  if (typeof login !== 'string' || typeof password !== 'string') {
-    return false
-  }
-
-  if (password.length < passwordMinLength) {
-    return false
-  }
-
-  return true
-}
-
 
 module.exports = {
-  tryRegisterUser,
-  validateLoginAndPassword,
-  generateAndSaveSessionId
+  tryRegisterUser
 }
