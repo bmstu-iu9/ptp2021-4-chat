@@ -6,14 +6,14 @@ const isDev = process.env.IS_DEV ? true : false
 
 module.exports = {
   isDev,
-  host: isDev ? 'localhost' : '0.0.0.0',
-  port: 80, // стандартный порт для HTTP
+  host: '0.0.0.0',
+  port: parseInt(process.env.DOCKER_NODE_INTERNAL_PORT),
   publicPath: path.join(__dirname, '../public/'),
   postgres: {
     user: process.env.PSQL_USER,
     password: process.env.PSQL_PASS,
-    host: 'localhost',
-    port: 5432, // стандратный порт для postgreSQL
+    host: process.env.DOCKER_PSQL_CONTAINER_NAME,
+    port: process.env.DOCKER_PSQL_EXTERNAL_PORT,
     schema: process.env.PSQL_DB_NAME
   }
 }

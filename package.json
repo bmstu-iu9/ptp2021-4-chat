@@ -2,9 +2,8 @@
   "name": "ptp2021-4-chat",
   "version": "1.0.0",
   "description": "Web-чат",
-  "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server/start.js"
   },
   "repository": {
     "type": "git",
@@ -12,7 +11,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/bmstu-iu9/ptp2021-4-chat/issues"
   },

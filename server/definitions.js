@@ -8,11 +8,9 @@ const {postgres} = require('./config')
 const app = express()
 const server = http.createServer(app)
 const sequelize = new Sequelize(
-  postgres.schema, postgres.user, postgres.password, {
-    host: postgres.host,
-    port: postgres.port,
+  `postgres://${postgres.user}:${postgres.password}` +
+  `@${postgres.host}:${postgres.port}/${postgres.schema}`, {
     logging: false,
-    dialect: 'postgres'
   })
 
 
