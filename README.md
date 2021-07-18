@@ -14,20 +14,39 @@ Web-чат
 
     
 Для начала работы с проектом:
+
 * Скопируйте репозиторий
   
   `git clone https://github.com/bmstu-iu9/ptp2021-4-chat.git`
+  
 * Перейдите в папку с проектом
   
   `cd ptp2021-4-chat`
-* Скачайте и установите все зависимости (NodeJS и NPM должны быть установлены на компьютере)
-
-  `npm i`
   
-  Для работы с фронтендом:
-    * Скачайте и установите сборщик Gulp **глобально**
-      
-      `npm i -g gulp`
-    * Запустите Gulp командой
-      
-      `gulp` (или `gulp default`)
+* Скачайте и установите Docker ([https://www.docker.com/](https://www.docker.com/))
+
+* Соберите и запустите контейнеры
+  
+    `docker-compose up`
+  
+* Для разработки фронтенда запустите Gulp
+
+    `gulp`
+
+**Важно!** При разработке бэкенда и изменении содержимого папки `node_modules` для применения изменений нужно _пересобрать_ контейнеры
+
+Для деплоя на сервер:
+
+* Скопируйте репозиторий
+  
+  `git clone https://github.com/bmstu-iu9/ptp2021-4-chat.git`
+  
+* Перейдите в папку с проектом
+  
+  `cd ptp2021-4-chat`
+  
+* Скачайте и установите Docker ([https://www.docker.com/](https://www.docker.com/))
+
+* Соберите и запустите **production**-контейнеры
+  
+    `docker-compose -f docker-compose.prod.yml up`
