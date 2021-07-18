@@ -1,10 +1,12 @@
-const {validateUsernameAndPasswordMiddleware} = require("../middleware");
+const usernameAndPassword = require("../middleware/usernameAndPassword");
 const {app} = require('../definitions')
 const {tryRegisterUser} = require('../services/registration')
 const {generateAndSaveSessionId} = require('../services/common')
 
 
-app.post('/api/register', validateUsernameAndPasswordMiddleware, (request, response) => {
+app.post('/api/register',
+  usernameAndPassword.validate,
+  (request, response) => {
   const {username, password} = request.body
 
   tryRegisterUser(username, password)
