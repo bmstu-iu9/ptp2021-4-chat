@@ -1,11 +1,12 @@
-const {server, sequelize} = require('./definitions')
+const {app, server, sequelize} = require('./definitions')
 const {host, port} = require('./config');
 
 
 (async () => {
-  // Инициализация моделей
-  require('./models')
-  await sequelize.sync({force: true})
+  // Инициализация middleware
+  require('./middleware')(app)
+
+  await initDatabase(true)
 
   // Инициализация хендлеров
   require('./http_handlers')
@@ -14,3 +15,12 @@ const {host, port} = require('./config');
     console.log(`Сервер запущен на ${host}:${port}`)
   })
 })()
+
+
+async function initDatabase(force) {
+  // Инициализация моделей
+  require('./models')
+
+  // Инициализация базы данных
+  await sequelize.sync({force})
+}
