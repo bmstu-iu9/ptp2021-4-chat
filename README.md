@@ -32,7 +32,7 @@ Web-чат
 
 * Соберите и запустите контейнер с базой данных
   
-    `docker-compose up`
+    `docker-compose up --build`
 
 
 * Установите все зависимости  и запустите сервер
@@ -67,5 +67,5 @@ Web-чат
 
 * Соберите и запустите **production**-контейнеры
   
-    `docker-compose -f docker-compose.prod.yml up`
+    `docker-compose -f docker-compose.prod.yml up --build`
   
