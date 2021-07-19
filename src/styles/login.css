@@ -32,10 +32,10 @@ header{
         flex-flow: wrap;
     }
     .simple-window {
-        order: 0;
+        order: 1;
     }
     .login-window {
-        order: 1;
+        order: 0;
     }
 
 }
