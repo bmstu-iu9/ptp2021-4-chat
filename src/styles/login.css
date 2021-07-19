@@ -28,5 +28,8 @@ header{
 }
 
 .error-window{
-    background-color: #f5c1c1 !important;
+    background-color: #f5c1c1;
+    margin-right: 3rem;
+    padding: .75rem;
+    border-radius: .25rem;
 }
