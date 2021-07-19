@@ -1,0 +1,26 @@
+@import url("normalize.css");
+
+body{
+    background-color: #ebebeb;
+}
+
+.main-window{
+    height: 90vh;
+    border: 2px white solid;
+    border-radius: .25rem;
+    margin-top: 2rem;
+    padding: 0;
+
+    display: flex;
+    flex-direction: row;
+}
+
+.user-dialogs{
+    height: inherit;
+    width: 30%;
+}
+
+.opened-dialog{
+    height: inherit;
+    width: 70%;
+}
