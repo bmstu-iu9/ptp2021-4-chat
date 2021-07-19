@@ -9,24 +9,5 @@ services:
       - '5432:5432'
     volumes:
       - database-volume:/var/lib/postgresql/data
-  node:
-    build: ./
-    command: 'npm run start'
-    stop_signal: SIGINT
-    depends_on:
-      - postgres
-    volumes:
-      - ./:/app
-      - /app/node_modules
-    ports:
-      - '80:80'
-    environment:
-      IS_DEV: 1
-      DOCKER_PSQL_CONTAINER_NAME: postgres
-      DOCKER_NODE_INTERNAL_PORT: 80
-      DOCKER_PSQL_EXTERNAL_PORT: 5432
-      PSQL_USER: ${PSQL_USER}
-      PSQL_PASS: ${PSQL_PASS}
-      PSQL_DB_NAME: ${PSQL_DB_NAME}
 volumes:
   database-volume:
