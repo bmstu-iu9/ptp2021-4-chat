@@ -6,7 +6,7 @@ const {host, port} = require('./config');
   // Инициализация middleware
   require('./middleware')(app)
 
-  await initDatabase(true)
+  await initDatabase()
 
   // Инициализация хендлеров
   require('./http_handlers')
