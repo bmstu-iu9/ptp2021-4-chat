@@ -26,3 +26,7 @@ header{
 .login-window{
     height: fit-content !important;
 }
+
+.error-window{
+    background-color: #f5c1c1 !important;
+}
