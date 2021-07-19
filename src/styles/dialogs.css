@@ -6,7 +6,7 @@ body{
 
 .main-window{
     height: 90vh;
-    border: 2px white solid;
+    border: 3px white solid;
     border-radius: .25rem;
     margin-top: 2rem;
     padding: 0;
@@ -15,12 +15,86 @@ body{
     flex-direction: row;
 }
 
-.user-dialogs{
-    height: inherit;
+/* Окно со всеми диалогами */
+
+.window-dialogs{
     width: 30%;
+    display: flex;
+    flex-direction: column;
 }
 
-.opened-dialog{
-    height: inherit;
-    width: 70%;
+.small-header{
+    padding: .25rem;
+    padding-right: 1rem;
+    border-bottom: 2px white solid;
+    text-align: end;
 }
+
+.dialogs-list{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+    /* Настраиваем скролл */
+    overflow: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: white #ebebeb;
+}
+
+.dialogs-list::-webkit-scrollbar {
+    width: 6px;               /* ширина scrollbar */
+}
+.dialogs-list::-webkit-scrollbar-thumb {
+    background-color: white;    /* цвет плашки */
+    border-radius: 20px;       /* закругления плашки */
+    border: 0px;  /* padding вокруг плашки */
+}
+
+.user-dialog-preview{
+    padding: .75rem;
+    border-bottom: 2px white solid;
+    /* Настраиваем скролл */
+    scroll-snap-align: start;
+}
+
+/* форма с поиском собеседников */
+
+.search-window{
+    padding: .5rem;
+    padding-top: .25rem;
+    border-top: 2px white solid;
+}
+
+.search-form{
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+.search-label{
+    padding-bottom: .5rem;
+}
+
+.search-input{
+    min-width: 10px;
+    flex-grow: 2;
+}
+
+.btn-find{
+    border: 0px;
+    background-color: #ebebeb;
+    margin-right: .25rem;
+    margin-left: .25rem;
+}
+
+/* Окно с диалогом */
+
+.window-opened-dialog{
+    width: 70%;
+    background-color: white;
+}
+
+.opened-dialog-header{
+    border-bottom: 2px #ebebeb solid;
+}
+

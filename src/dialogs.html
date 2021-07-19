@@ -8,6 +8,9 @@
   <!-- Bootstrap5 css files -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
+  <!-- Fontawesome -->
+  <script src="https://kit.fontawesome.com/5d7c9e875e.js" crossorigin="anonymous"></script>
+
   <!-- bundle.css -->
   <link rel="stylesheet" href="styles/dialogs.css">
   <title>Диалоги</title>
@@ -15,21 +18,33 @@
 <body>
 <div class="container-fluid main">
   <div class="row justify-content-center">
-      <div class="col-10 main-window">
-        <div class="user-dialogs">
-          <div class="dialogs-header small-header">
-
-          </div>
-          <div class="search-window">
-
+    <div class="col-10 main-window">
+      <div class="window-dialogs">
+        <div class="dialogs-header small-header">
+          <p>Текущие диалоги</p>
+        </div>
+        <div class="dialogs-list">
+          <div class="user-dialog-preview">
+            <p class="user-name-text">Собеседник 1</p>
           </div>
         </div>
-        <div class="opened-dialog">
-      <div class="dialog-header small-header">
-
+        <div class="search-window">
+          <p class="search-label">Добавление собеседника</p>
+          <form class="search-form">
+            <input class="search-input form-control-sm" type="text"
+                   placeholder="Введите имя">
+            <button type="button" class="btn-find">
+              <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+            </button>
+          </form>
+        </div>
+        </div>
+      <div class="window-opened-dialog">
+        <div class="opened-dialog-header small-header">
+          <p class="opened-dialog-username">Имя Собеседника</p>
+        </div>
       </div>
     </div>
-      </div>
   </div>
 </div>
 
