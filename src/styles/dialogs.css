@@ -47,7 +47,7 @@ body{
 .dialogs-list::-webkit-scrollbar-thumb {
     background-color: white;    /* цвет плашки */
     border-radius: 20px;       /* закругления плашки */
-    border: 0px;  /* padding вокруг плашки */
+    border: 0;  /* padding вокруг плашки */
 }
 
 .user-dialog-preview{
@@ -80,8 +80,8 @@ body{
     flex-grow: 2;
 }
 
-.btn-find{
-    border: 0px;
+#btn-find{
+    border: 0;
     background-color: #ebebeb;
     margin-right: .25rem;
     margin-left: .25rem;
