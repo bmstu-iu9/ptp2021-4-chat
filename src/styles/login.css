@@ -26,8 +26,16 @@ header{
 .login-window{
     height: fit-content !important;
 }
-@media (max-width: 576px) {
-    .simple-window {
-        order: 2;
+@media (min-width: 768px) {
+    .main {
+        display: flex;
+        flex-flow: wrap;
     }
+    .simple-window {
+        order: 1;
+    }
+    .login-window {
+        order: 0;
+    }
+
 }
