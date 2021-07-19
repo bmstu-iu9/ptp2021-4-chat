@@ -26,3 +26,9 @@ header{
 .login-window{
     height: fit-content !important;
 }
+
+@media (max-width: 576px) {
+    .simple-window {
+        order: 2;
+    }
+}
