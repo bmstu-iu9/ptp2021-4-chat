@@ -17,7 +17,7 @@ const {host, port} = require('./config');
 })()
 
 
-async function initDatabase(force) {
+async function initDatabase(force = false) {
   // Инициализация моделей
   require('./models')
 

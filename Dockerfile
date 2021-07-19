@@ -6,7 +6,6 @@ COPY ./ ./
 
 RUN npm i
 RUN npm i -g gulp
-
-CMD ["gulp", "build"]
+RUN gulp build
 
 CMD ["npm", "run", "server"]
