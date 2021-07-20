@@ -6,7 +6,7 @@ const {host, port} = require('./config');
   // Инициализация middleware
   require('./middleware')(app)
 
-  await initDatabase(true)
+  await initDatabase()
 
   // Инициализация хендлеров
   require('./http_handlers')
@@ -17,7 +17,7 @@ const {host, port} = require('./config');
 })()
 
 
-async function initDatabase(force) {
+async function initDatabase(force = false) {
   // Инициализация моделей
   require('./models')
 
