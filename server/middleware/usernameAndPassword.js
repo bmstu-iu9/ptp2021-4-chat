@@ -32,14 +32,13 @@ function check(login, password) {
 
 async function checkSessionExpirationDate(request, response, next){
   if(request.path.startsWith("/api/")){next()}
-  console.log(request.cookies)
-  let sessionId = request.cookies.sessionId
+  const sessionId = request.cookies.sessionId
   if(sessionId){
     const session = await Session.findOne({where:{sessionId:sessionId}})
     if(!session){
       response.redirect("/login")
     }else if(session.expirationDate.getSeconds() <= Date.now()){
-      newExpirationDate = Date.now() + sessionLifetime
+      const newExpirationDate = Date.now() + sessionLifetime
       await session.update({sessionId, newExpirationDate})
       next()
     }else{
