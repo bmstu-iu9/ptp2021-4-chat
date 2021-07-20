@@ -30,7 +30,6 @@ async function tryAuthenticateUser(username, password) {
   return result ? user : null
 }
 
-
 module.exports = {
   tryAuthenticateUser
 }
