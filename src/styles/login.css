@@ -26,3 +26,10 @@ header{
 .login-window{
     height: fit-content !important;
 }
+
+.error-window{
+    background-color: #f5c1c1;
+    margin-right: 3rem;
+    padding: .75rem;
+    border-radius: .25rem;
+}
