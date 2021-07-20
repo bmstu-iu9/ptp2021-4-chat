@@ -26,16 +26,25 @@ header{
 .login-window{
     height: fit-content !important;
 }
+
+.error-window{
+    background-color: #f5c1c1;
+    margin-right: 3rem;
+    padding: .75rem;
+    border-radius: .25rem;
+}
+
 @media (max-width: 768px) {
     .main {
         display: flex;
         flex-flow: wrap;
     }
+
     .simple-window {
         order: 1;
     }
+
     .login-window {
         order: 0;
     }
-
 }
