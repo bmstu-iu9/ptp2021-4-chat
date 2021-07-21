@@ -95,6 +95,8 @@ body{
 .window-opened-dialog{
     width: 70%;
     background-color: white;
+    display: flex;
+    flex-direction: column;
 }
 
 .opened-dialog-header{
@@ -120,6 +122,35 @@ body{
 
 .opened-dialog-username{
     flex-grow: 2;
+}
+
+.messages-list{
+    flex-grow: 2;
+}
+
+.message-input-window{
+    display: flex;
+    flex-direction: row;
+    padding: .5rem;
+    padding-top: 1rem;
+    border-top: 2px #ebebeb solid;
+}
+
+#inputMessageTextArea{
+    resize: none;
+    width: 90%;
+    margin-left: .5rem;
+    border: 1.5px black solid;
+    border-radius: .3rem;
+}
+
+#send-button{
+    padding: .5rem;
+    margin-left: .5rem;
+}
+
+#send-button:hover{
+    cursor: pointer;
 }
 
 /* Для мобилок! */
