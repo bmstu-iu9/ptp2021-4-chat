@@ -1,5 +1,5 @@
 
-document.getElementById('btn-find').onclick = function(){
+function addDialog(){
   let inputField = document.getElementById('search-user-input')
   let userName = inputField.value
   if (userName != "") {
@@ -12,5 +12,14 @@ document.getElementById('btn-find').onclick = function(){
     new_dialog.appendChild(new_dialog_p)
 
     dialogsContainer.appendChild(new_dialog)
+    inputField.value = "" //Очищаем поле ввода
   }
 }
+
+document.getElementById('btn-find').onclick = addDialog
+document.getElementById('search-user-input').addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    addDialog();
+  }
+});
