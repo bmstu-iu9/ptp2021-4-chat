@@ -99,12 +99,14 @@ body{
     flex-direction: column;
 }
 
+/* Шапка окна диалога */
 .opened-dialog-header{
     display: flex;
     flex-direction: row;
     border-bottom: 2px #ebebeb solid;
 }
 
+/* Кнопка вызова меню */
 .btn-menu-trigger{
     position: absolute;
     box-sizing: border-box;
@@ -124,10 +126,45 @@ body{
     flex-grow: 2;
 }
 
+/* Список сообщений */
 .messages-list{
+    display: flex;
+    flex-direction: column;
     flex-grow: 2;
+    /* Настраиваем скролл */
+    overflow: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: #ebebeb white;
 }
 
+.messages-list::-webkit-scrollbar {
+    width: 6px;               /* ширина scrollbar */
+}
+.messages-list::-webkit-scrollbar-thumb {
+    background-color: #ebebeb;    /* цвет плашки */
+    border-radius: 20px;       /* закругления плашки */
+    border: 0;  /* padding вокруг плашки */
+}
+
+.message-container{
+    width: 90%;
+    margin-left: .75rem;
+    font-size: 14px;
+}
+
+.message-author{
+    padding: .5rem;
+    padding-bottom: 0;
+    color: dodgerblue;
+}
+
+.message-text{
+    padding: .5rem;
+    padding-top: 0;
+}
+
+/* Окно ввода сообщения */
 .message-input-window{
     display: flex;
     flex-direction: row;

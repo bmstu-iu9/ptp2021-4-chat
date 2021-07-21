@@ -1,4 +1,32 @@
 
+function createElementWithClass(elementName, className) {
+  let newElem = document.createElement(elementName)
+  newElem.setAttribute("class", className)
+  return newElem
+}
+
+function addMessage(){
+  let inputField = document.getElementById('inputMessageTextArea')
+  let message = inputField.value
+  let fromUser = "Я"
+  if (message != "") {
+    let messagesContainer = document.querySelector('.messages-list')
+    let newMessageAuthor = createElementWithClass('p',
+      'message-author')
+    newMessageAuthor.innerText = fromUser
+    let newMessageText = createElementWithClass('p',
+      'message-text')
+    newMessageText.innerText = message
+    let newMessage = createElementWithClass('div',
+      'message-container')
+    newMessage.appendChild(newMessageAuthor)
+    newMessage.appendChild(newMessageText)
+
+    messagesContainer.appendChild(newMessage)
+    inputField.value = ""
+  }
+}
+
 function addDialog(){
   let inputField = document.getElementById('search-user-input')
   let userName = inputField.value
@@ -27,6 +55,14 @@ function toggleMenu() {
     element.style.cssText = ""
   }
 }
+
+document.getElementById('send-button').onclick = addMessage
+document.getElementById('inputMessageTextArea').addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    addMessage();
+  }
+});
 
 document.getElementById('btn-find').onclick = addDialog
 document.getElementById('search-user-input').addEventListener("keydown", function(event) {
