@@ -9,7 +9,7 @@ function addMessage(){
   const inputField = document.getElementById('input-message-text-area')
   let message = inputField.value
   let fromUser = "Я"
-  if (message != "") {
+  if (message !== "") {
     let messagesContainer = document.querySelector('.messages-list')
     let newMessageAuthor = createElementWithClass('p',
       'message-author')
@@ -30,7 +30,7 @@ function addMessage(){
 function addDialog(){
   const inputField = document.getElementById('search-user-input')
   let userName = inputField.value
-  if (userName != "") {
+  if (userName !== "") {
     let dialogsContainer = document.querySelector('.dialogs-list')
     let newDialogText = document.createElement("p")
     newDialogText.setAttribute("class", "user-name-text")
@@ -49,12 +49,11 @@ function addDialog(){
 
 function toggleMenu() {
   const element = document.querySelector('.window-dialogs')
-  if (element.style.visibility == "hidden" ||  element.style.visibility == "") {
+  if (element.style.visibility === "hidden" ||  element.style.visibility === "") {
     element.style.visibility = "visible"
     element.style.height = "100%"
     element.style.width = "50%"
-    console.log(element.style.width)
-  } else if (element.style.visibility == "visible") {
+  } else if (element.style.visibility === "visible") {
     element.style.cssText = ""
   }
 }
