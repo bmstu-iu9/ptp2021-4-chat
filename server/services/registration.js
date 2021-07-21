@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const {passwordMinLength, sessionLifetime} = require('../constants')
-const {User, UserPassword} = require('../models/user')
+const {User, Password} = require('../models/user')
 const {Session} = require('../models/session')
 
 
@@ -26,7 +26,7 @@ async function tryRegisterUser(username, password) {
   const hashedPassword = await bcrypt.hash(password, salt)
 
   const registeredUser = await User.create({username})
-  await UserPassword.create({
+  await Password.create({
     password: hashedPassword,
     userId: registeredUser.id
   })
