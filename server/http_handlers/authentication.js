@@ -1,21 +1,26 @@
-const {generateAndSaveSessionId} = require("../services/common");
-const {tryAuthenticateUser} = require("../services/authentication");
-const usernameAndPassword = require("../middleware/usernameAndPassword");
-const {app} = require('../definitions')
+const {generateAndSaveSessionId} = require('../services/common')
+const {tryAuthenticateUser} = require('../services/authentication')
+const {redirectIfSessionProvided} = require('../middleware/session');
+const usernameAndPassword = require('../middleware/usernameAndPassword')
+const {urls} = require('../constants');
+const {apiRouter} = require('../definitions')
 
-app.post('/api/auth',
-  usernameAndPassword.checkProvided,
+
+apiRouter.post('/auth', [
+    redirectIfSessionProvided(urls.index),
+    usernameAndPassword.sendErrorIfNotProvided
+  ],
   (request, response) => {
-  const {username, password} = request.body
-  tryAuthenticateUser(username, password)
-    .then(user => {
+    const {username, password} = request.body
+    tryAuthenticateUser(username, password).then(user => {
       if (!user) {
         return response.status(401)
-          .send('Пользователь с заданным username и password не найден')
+        .send('Пользователь с заданным username и password не найден')
       }
-
-      generateAndSaveSessionId(user).then(sessionId => {
-          response.cookie('sessionId', sessionId).send()
+      generateAndSaveSessionId(user).then(({sessionId, expirationDate}) => {
+        response.cookie('sessionId', sessionId, {
+          expires: expirationDate
+        }).redirect('/')
       })
     })
-})
+  })

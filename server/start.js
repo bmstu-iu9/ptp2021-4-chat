@@ -4,7 +4,7 @@ const {host, port} = require('./config');
 
 (async () => {
   // Инициализация middleware
-  require('./middleware')(app)
+  require('./middleware')
 
   await initDatabase()
 

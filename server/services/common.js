@@ -8,35 +8,56 @@ const {passwordMinLength} = require('../config')
  * Гененрирует session id и сохраняет его в базу данных, привязывая
  * к указанному пользователю
  * @param {User} user - Модель пользователя из базы данных
- * @returns {string} - Id сессии
+ * @returns {{string, Date}} - Id сессии и дата истечения ее срока жизни
  */
 async function generateAndSaveSessionId(user) {
   const sessionId = crypto.randomBytes(16).toString('base64');
-  const expirationDate = new Date();
-  expirationDate.setSeconds(expirationDate.getSeconds() + sessionLifetime)
+  const expirationDate = new Date(Date.now() + sessionLifetime);
 
-  // Поиск сессии в базе данных. Если не найдена - создаем новую,
-  // если найдена - обновляем
-  const session = await Session.findOne({
-    where: {
-      userId: user.id
-    }
+  await Session.create({
+    sessionId,
+    expirationDate,
+    userId: user.id
   })
 
-  if (!session) { // Создаем новую
-    await Session.create({
-      sessionId,
-      expirationDate,
-      userId: user.id
-    })
-  } else { // Обновляем
-    await session.update({sessionId, expirationDate})
+  return {sessionId, expirationDate}
+}
+
+/**
+ * Проверяет наличие куки с сессей, проверят наличие id сессии в базе данных
+ * и проверяет, не истекла ли сессия.
+ * Если истекла - обновляет её дату истечения
+ * @param request - объект запроса express
+ * @param response - объект ответа express
+ * @returns {Promise<boolean>} - true если сессия валидна, false в противном
+ * случае
+ */
+async function checkSession(request, response) {
+  const sessionId = request.cookies.sessionId
+  if (!sessionId) {
+    return false
   }
 
-  return sessionId
+  const session = await Session.findOne({
+    where: {sessionId}
+  })
+
+  if (!session) {
+    return false
+  }
+
+  if (session.expirationDate.getSeconds() <= Date.now()) {
+    // Обновление сессии в случае, если она истекла
+    const newExpirationDate = new Date(Date.now() + sessionLifetime)
+    await session.update({newExpirationDate})
+    response.cookie('sessionId', sessionId, {expires: newExpirationDate})
+  }
+
+  return true
 }
 
 
 module.exports = {
+  checkSession,
   generateAndSaveSessionId
 }

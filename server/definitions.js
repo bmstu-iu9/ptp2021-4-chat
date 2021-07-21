@@ -13,9 +13,13 @@ const sequelize = new Sequelize(
     logging: false,
   })
 
+const staticRouter = express.Router()
+const apiRouter = express.Router()
 
 module.exports = {
   app,
+  staticRouter,
+  apiRouter,
   server,
   sequelize,
   ws: new ws.Server({server})
