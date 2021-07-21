@@ -6,7 +6,7 @@ function createElementWithClass(elementName, className) {
 }
 
 function addMessage(){
-  let inputField = document.getElementById('inputMessageTextArea')
+  const inputField = document.getElementById('input-message-text-area')
   let message = inputField.value
   let fromUser = "Я"
   if (message != "") {
@@ -28,24 +28,27 @@ function addMessage(){
 }
 
 function addDialog(){
-  let inputField = document.getElementById('search-user-input')
+  const inputField = document.getElementById('search-user-input')
   let userName = inputField.value
   if (userName != "") {
     let dialogsContainer = document.querySelector('.dialogs-list')
-    let new_dialog_p = document.createElement("p")
-    new_dialog_p.setAttribute("class", "user-name-text")
-    new_dialog_p.innerText = userName
-    let new_dialog = document.createElement("div")
-    new_dialog.setAttribute("class", "user-dialog-preview")
-    new_dialog.appendChild(new_dialog_p)
+    let newDialogText = document.createElement("p")
+    newDialogText.setAttribute("class", "user-name-text")
+    newDialogText.innerText = userName
+    let newDialog = document.createElement("div")
+    newDialog.setAttribute("class", "user-dialog-preview")
+    newDialog.appendChild(newDialogText)
 
-    dialogsContainer.appendChild(new_dialog)
+    dialogsContainer.appendChild(newDialog)
     inputField.value = "" //Очищаем поле ввода
+    //прокрутка до низа
+    dialogsContainer.scrollTop = dialogsContainer.scrollHeight;
+
   }
 }
 
 function toggleMenu() {
-  let element = document.querySelector('.window-dialogs')
+  const element = document.querySelector('.window-dialogs')
   if (element.style.visibility == "hidden" ||  element.style.visibility == "") {
     element.style.visibility = "visible"
     element.style.height = "100%"
@@ -57,7 +60,7 @@ function toggleMenu() {
 }
 
 document.getElementById('send-button').onclick = addMessage
-document.getElementById('inputMessageTextArea').addEventListener("keydown", function(event) {
+document.getElementById('input-message-text-area').addEventListener("keydown", function(event) {
   if (event.key === "Enter") {
     event.preventDefault();
     addMessage();

@@ -176,7 +176,7 @@ body{
     border-top: 2px #ebebeb solid;
 }
 
-#inputMessageTextArea{
+#input-message-text-area{
     resize: none;
     width: 90%;
     margin-left: .5rem;
