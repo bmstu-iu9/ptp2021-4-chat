@@ -24,9 +24,7 @@ function toggleMenu() {
     element.style.width = "50%"
     console.log(element.style.width)
   } else if (element.style.visibility == "visible") {
-    element.style.visibility = "hidden"
-    element.style.height = "0"
-    element.style.width = "0"
+    element.style.cssText = ""
   }
 }
 
