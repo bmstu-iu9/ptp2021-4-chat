@@ -1,7 +1,11 @@
 FROM node
 
 WORKDIR /app
-COPY package.json /app
-COPY package-lock.json /app
 
-RUN npm install
+COPY ./ ./
+
+RUN npm i
+RUN npm i -g gulp
+RUN gulp build
+
+CMD ["npm", "run", "server"]

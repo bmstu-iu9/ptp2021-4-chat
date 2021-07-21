@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Web-чат",
   "scripts": {
-    "start": "node server/start.js"
+    "server": "node server/start.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.7",
+    "cookie-parser": "^1.4.5",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-babel": "^8.0.0",
@@ -30,6 +31,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.4",
