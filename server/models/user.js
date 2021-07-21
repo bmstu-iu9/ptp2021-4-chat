@@ -3,7 +3,7 @@ const {sequelize} = require('../definitions')
 
 
 class User extends Model {}
-class UserPassword extends Model {}
+class Password extends Model {}
 
 
 User.init({
@@ -18,25 +18,25 @@ User.init({
   updatedAt: false
 })
 
-UserPassword.init({
+Password.init({
   password: {
     type: DataTypes.STRING,
     allowNull: false
   }
 }, {
   sequelize,
-  modelName: 'userPassword',
+  modelName: 'password',
   freezeTableName: true,
-  tableName: 'usersPasswords',
+  tableName: 'passwords',
   timestamps: false
 })
 
-UserPassword.belongsTo(User, {
+Password.belongsTo(User, {
   onDelete: 'cascade'
 })
 
 
 module.exports = {
   User,
-  UserPassword
+  Password
 }
