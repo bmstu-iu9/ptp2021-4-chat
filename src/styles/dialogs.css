@@ -42,6 +42,7 @@ body{
     scroll-snap-type: x mandatory;
     scrollbar-width: thin;
     scrollbar-color: white #ebebeb;
+    scroll-snap-align: start;
 }
 
 .dialogs-list::-webkit-scrollbar {
@@ -56,6 +57,7 @@ body{
 .user-dialog-preview{
     padding: .75rem;
     border-bottom: 2px white solid;
+    word-wrap: break-word;
     /* Настраиваем скролл */
     scroll-snap-align: start;
 }
@@ -132,7 +134,7 @@ body{
     flex-direction: column;
     flex-grow: 2;
     /* Настраиваем скролл */
-    overflow: auto;
+    overflow-y: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: thin;
     scrollbar-color: #ebebeb white;
@@ -151,6 +153,7 @@ body{
     width: 90%;
     margin-left: .75rem;
     font-size: 14px;
+    word-wrap: break-word;
 }
 
 .message-author{
