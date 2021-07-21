@@ -24,6 +24,9 @@ function addMessage(){
 
     messagesContainer.appendChild(newMessage)
     inputField.value = ""
+
+    //перемещаем скролл вниз
+    messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
   }
 }
 
