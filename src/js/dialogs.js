@@ -16,6 +16,20 @@ function addDialog(){
   }
 }
 
+function toggleMenu() {
+  let element = document.querySelector('.window-dialogs')
+  if (element.style.visibility == "hidden" ||  element.style.visibility == "") {
+    element.style.visibility = "visible"
+    element.style.height = "100%"
+    element.style.width = "50%"
+    console.log(element.style.width)
+  } else if (element.style.visibility == "visible") {
+    element.style.visibility = "hidden"
+    element.style.height = "0"
+    element.style.width = "0"
+  }
+}
+
 document.getElementById('btn-find').onclick = addDialog
 document.getElementById('search-user-input').addEventListener("keydown", function(event) {
   if (event.key === "Enter") {
@@ -23,3 +37,5 @@ document.getElementById('search-user-input').addEventListener("keydown", functio
     addDialog();
   }
 });
+
+document.getElementById('btn-menu-trigger').onclick = toggleMenu

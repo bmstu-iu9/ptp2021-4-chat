@@ -18,9 +18,12 @@ body{
 /* Окно со всеми диалогами */
 
 .window-dialogs{
+    visibility: visible;
+    height: auto;
     width: 30%;
     display: flex;
     flex-direction: column;
+    background-color: #ebebeb;
 }
 
 .small-header{
@@ -95,6 +98,66 @@ body{
 }
 
 .opened-dialog-header{
+    display: flex;
+    flex-direction: row;
     border-bottom: 2px #ebebeb solid;
 }
 
+.btn-menu-trigger{
+    position: absolute;
+    box-sizing: border-box;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    text-decoration: none;
+    color: black;
+}
+
+.btn-menu-trigger:hover{
+    color: black;
+    cursor: pointer;
+}
+
+.opened-dialog-username{
+    flex-grow: 2;
+}
+
+/* Для мобилок! */
+@media (max-width: 767.98px) {
+    .main{
+        padding: 0;
+        margin: 0;
+    }
+
+    .main-row{
+        margin: 0;
+    }
+
+    .main-window{
+        height: 100vh;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    .window-dialogs{
+        position: fixed;
+        height: 0;
+        width: 0;
+        visibility: hidden;
+        transition: width 0.3s;
+        -webkit-transition: width 0.3s;
+        -moz-transition: width 0.3s;
+    }
+
+    .window-opened-dialog{
+        width: 100%;
+    }
+
+    .btn-menu-trigger{
+        position: fixed;
+        visibility: visible;
+        width: auto;
+        height: auto;
+    }
+}
