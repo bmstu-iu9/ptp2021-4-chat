@@ -1,0 +1,234 @@
+@import url("normalize.css");
+
+body{
+    background-color: #ebebeb;
+}
+
+.main-window{
+    height: 90vh;
+    border: 3px white solid;
+    border-radius: .25rem;
+    margin-top: 2rem;
+    padding: 0;
+
+    display: flex;
+    flex-direction: row;
+}
+
+/* Окно со всеми диалогами */
+
+.window-dialogs{
+    visibility: visible;
+    height: auto;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    background-color: #ebebeb;
+}
+
+.small-header{
+    padding: .25rem;
+    padding-right: 1rem;
+    border-bottom: 2px white solid;
+    text-align: end;
+}
+
+.dialogs-list{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+    /* Настраиваем скролл */
+    overflow: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: white #ebebeb;
+    scroll-snap-align: start;
+}
+
+.dialogs-list::-webkit-scrollbar {
+    width: 6px;               /* ширина scrollbar */
+}
+.dialogs-list::-webkit-scrollbar-thumb {
+    background-color: white;    /* цвет плашки */
+    border-radius: 20px;       /* закругления плашки */
+    border: 0;  /* padding вокруг плашки */
+}
+
+.user-dialog-preview{
+    padding: .75rem;
+    border-bottom: 2px white solid;
+    word-wrap: break-word;
+    /* Настраиваем скролл */
+    scroll-snap-align: start;
+}
+
+/* форма с поиском собеседников */
+
+.search-window{
+    padding: .5rem;
+    padding-top: .25rem;
+    border-top: 2px white solid;
+}
+
+.search-form{
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+.search-label{
+    padding-bottom: .5rem;
+}
+
+.search-input{
+    min-width: 10px;
+    flex-grow: 2;
+}
+
+#btn-find{
+    border: 0;
+    background-color: #ebebeb;
+    margin-right: .25rem;
+    margin-left: .25rem;
+}
+
+/* Окно с диалогом */
+
+.window-opened-dialog{
+    width: 70%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Шапка окна диалога */
+.opened-dialog-header{
+    display: flex;
+    flex-direction: row;
+    border-bottom: 2px #ebebeb solid;
+}
+
+/* Кнопка вызова меню */
+.btn-menu-trigger{
+    position: absolute;
+    box-sizing: border-box;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    text-decoration: none;
+    color: black;
+}
+
+.btn-menu-trigger:hover{
+    color: black;
+    cursor: pointer;
+}
+
+.opened-dialog-username{
+    flex-grow: 2;
+}
+
+/* Список сообщений */
+.messages-list{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 2;
+    /* Настраиваем скролл */
+    overflow-y: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: #ebebeb white;
+}
+
+.messages-list::-webkit-scrollbar {
+    width: 6px;               /* ширина scrollbar */
+}
+.messages-list::-webkit-scrollbar-thumb {
+    background-color: #ebebeb;    /* цвет плашки */
+    border-radius: 20px;       /* закругления плашки */
+    border: 0;  /* padding вокруг плашки */
+}
+
+.message-container{
+    width: 90%;
+    margin-left: .75rem;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+.message-author{
+    padding: .5rem;
+    padding-bottom: 0;
+    color: dodgerblue;
+}
+
+.message-text{
+    padding: .5rem;
+    padding-top: 0;
+}
+
+/* Окно ввода сообщения */
+.message-input-window{
+    display: flex;
+    flex-direction: row;
+    padding: .5rem;
+    padding-top: 1rem;
+    border-top: 2px #ebebeb solid;
+}
+
+#input-message-text-area{
+    resize: none;
+    width: 90%;
+    margin-left: .5rem;
+    border: 1.5px black solid;
+    border-radius: .3rem;
+}
+
+#send-button{
+    padding: .5rem;
+    margin-left: .5rem;
+}
+
+#send-button:hover{
+    cursor: pointer;
+}
+
+/* Для мобилок! */
+@media (max-width: 767.98px) {
+    .main{
+        padding: 0;
+        margin: 0;
+    }
+
+    .main-row{
+        margin: 0;
+    }
+
+    .main-window{
+        height: 100vh;
+        border: 0;
+        padding: 0;
+        margin: 0;
+    }
+
+    .window-dialogs{
+        position: fixed;
+        height: 0;
+        width: 0;
+        visibility: hidden;
+        transition: width 0.3s;
+        -webkit-transition: width 0.3s;
+        -moz-transition: width 0.3s;
+    }
+
+    .window-opened-dialog{
+        width: 100%;
+    }
+
+    .btn-menu-trigger{
+        position: fixed;
+        visibility: visible;
+        width: auto;
+        height: auto;
+    }
+}
