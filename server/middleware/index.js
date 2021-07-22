@@ -11,7 +11,7 @@ const {
 } = require('./session')
 const {redirectIfUrlContainsExtension} = require('./staticUrl')
 
-
+const errorHandler = require('./errorHandler')
 // Настройка middleware для статики
 staticRouter.use(redirectIfUrlContainsExtension)
 staticRouter.use(redirectIfSessionProvided(
@@ -34,3 +34,6 @@ app.use(bodyParser.urlencoded({extended: true}))
 // Установка роутеров
 app.use('/api', apiRouter)
 app.use('/', staticRouter)
+
+// Установка обработчиков ошибок
+app.use(errorHandler)
