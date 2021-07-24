@@ -2,8 +2,12 @@ const {Model, DataTypes} = require('sequelize')
 const {sequelize} = require('../definitions')
 
 
-class User extends Model {}
-class Password extends Model {}
+class User extends Model {
+}
+
+
+class Password extends Model {
+}
 
 
 User.init({
@@ -11,7 +15,7 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
-  },
+  }
 }, {
   sequelize,
   modelName: 'user',
@@ -26,14 +30,16 @@ Password.init({
 }, {
   sequelize,
   modelName: 'password',
-  freezeTableName: true,
-  tableName: 'passwords',
   timestamps: false
 })
 
-Password.belongsTo(User, {
+User.hasOne(Password, {
+  foreignKey: {
+    allowNull: false
+  },
   onDelete: 'cascade'
 })
+Password.belongsTo(User)
 
 
 module.exports = {

@@ -2,7 +2,9 @@ const {Model, DataTypes} = require('sequelize')
 const {sequelize} = require('../definitions')
 const {User} = require('./user')
 
-class Session extends Model {}
+
+class Session extends Model {
+}
 
 
 Session.init({
@@ -21,9 +23,13 @@ Session.init({
   timestamps: false
 })
 
-Session.belongsTo(User, {
+User.hasMany(Session, {
+  foreignKey: {
+    allowNull: false
+  },
   onDelete: 'cascade'
 })
+Session.belongsTo(User)
 
 
 module.exports = {

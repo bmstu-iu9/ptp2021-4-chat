@@ -1,6 +1,5 @@
-const bcrypt = require("bcrypt");
-const {Password} = require("../models/user");
-const {User} = require("../models/user");
+const bcrypt = require('bcrypt')
+const {User, Password} = require('../models/user')
 
 
 /**
@@ -11,23 +10,21 @@ const {User} = require("../models/user");
  *                   пользователь не найден либо пароли не совпадают
  */
 async function tryAuthenticateUser(username, password) {
-  const user = await User.findOne({
+  const foundUser = await User.findOne({
     where: {username}
   })
 
-  if (!user) {
+  if (!foundUser) {
     return null
   }
 
-  const userPassword = await Password.findOne({
-    where: {
-      userId: user.id
-    }
+  const foundPassword = await Password.findOne({
+    where: {userId: foundUser.id}
   })
 
-  const result = await bcrypt.compare(password, userPassword.password)
+  const result = await bcrypt.compare(password, foundPassword.password)
 
-  return result ? user : null
+  return result ? foundUser : null
 }
 
 module.exports = {
