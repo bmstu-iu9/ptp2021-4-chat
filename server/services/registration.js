@@ -1,8 +1,5 @@
-const crypto = require('crypto')
 const bcrypt = require('bcrypt')
-const {passwordMinLength, sessionLifetime} = require('../constants')
 const {User, Password} = require('../models/user')
-const {Session} = require('../models/session')
 
 
 /**
@@ -14,24 +11,23 @@ const {Session} = require('../models/session')
  *                   пользователь уже существует
  */
 async function tryRegisterUser(username, password) {
-  const user = await User.findOne({
+  const foundUser = await User.findOne({
     where: {username}
   })
 
-  if (user) {
+  if (foundUser) {
     return null
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt)
+  const salt = await bcrypt.genSalt(10)
+  const hashed = await bcrypt.hash(password, salt)
 
-  const registeredUser = await User.create({username})
-  await Password.create({
-    password: hashedPassword,
-    userId: registeredUser.id
+  return await User.create({
+    username,
+    password: {password: hashed}
+  }, {
+    include: Password
   })
-
-  return registeredUser
 }
 
 

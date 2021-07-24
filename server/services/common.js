@@ -1,7 +1,7 @@
 const crypto = require('crypto')
-const {Session} = require("../models/session");
-const {sessionLifetime} = require("../constants");
-const {passwordMinLength} = require('../config')
+const {User} = require('../models/user')
+const {Session} = require('../models/session')
+const {sessionLifetime} = require('../constants')
 
 
 /**
@@ -11,8 +11,8 @@ const {passwordMinLength} = require('../config')
  * @returns {{string, Date}} - Id сессии и дата истечения ее срока жизни
  */
 async function generateAndSaveSessionId(user) {
-  const sessionId = crypto.randomBytes(16).toString('base64');
-  const expirationDate = new Date(Date.now() + sessionLifetime);
+  const sessionId = crypto.randomBytes(16).toString('base64')
+  const expirationDate = new Date(Date.now() + sessionLifetime)
 
   await Session.create({
     sessionId,
