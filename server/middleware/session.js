@@ -1,4 +1,4 @@
-const {checkSession} = require('../services/common');
+const {checkSession} = require('../services/common')
 
 
 function redirectIfSessionProvided(to, from) {

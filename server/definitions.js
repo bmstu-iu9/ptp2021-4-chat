@@ -10,7 +10,7 @@ const server = http.createServer(app)
 const sequelize = new Sequelize(
   `postgres://${postgres.user}:${postgres.password}` +
   `@${postgres.host}:${postgres.port}/${postgres.schema}`, {
-    logging: false,
+    logging: false
   })
 
 const staticRouter = express.Router()
@@ -36,4 +36,3 @@ module.exports = {
   sequelize,
   ws: new ws.Server({server})
 }
-

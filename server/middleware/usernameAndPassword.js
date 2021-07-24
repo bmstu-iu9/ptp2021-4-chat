@@ -27,7 +27,7 @@ function checkProvided(login, password) {
   if (!login || !password) {
     return false
   }
-  return !(typeof login !== 'string' || typeof password !== 'string');
+  return !(typeof login !== 'string' || typeof password !== 'string')
 }
 
 module.exports = {

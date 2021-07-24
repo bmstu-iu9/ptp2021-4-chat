@@ -1,10 +1,9 @@
 const {generateAndSaveSessionId} = require('../services/common')
 const {tryRegisterUser} = require('../services/registration')
-const {redirectIfSessionProvided} = require('../middleware/session');
+const {redirectIfSessionProvided} = require('../middleware/session')
 const usernameAndPassword = require('../middleware/usernameAndPassword')
-const {urls} = require('../constants');
+const {urls} = require('../constants')
 const {apiRouter} = require('../definitions')
-
 
 
 apiRouter.post('/register', [

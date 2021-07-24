@@ -1,8 +1,8 @@
 const {generateAndSaveSessionId} = require('../services/common')
 const {tryAuthenticateUser} = require('../services/authentication')
-const {redirectIfSessionProvided} = require('../middleware/session');
+const {redirectIfSessionProvided} = require('../middleware/session')
 const usernameAndPassword = require('../middleware/usernameAndPassword')
-const {urls} = require('../constants');
+const {urls} = require('../constants')
 const {apiRouter} = require('../definitions')
 
 
@@ -12,6 +12,7 @@ apiRouter.post('/auth', [
   ],
   (request, response) => {
     const {username, password} = request.body
+
     tryAuthenticateUser(username, password).then(user => {
       if (!user) {
         return response.status(401)
