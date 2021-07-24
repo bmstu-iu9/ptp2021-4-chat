@@ -2,7 +2,7 @@ const path = require('path')
 
 require('dotenv').config()
 
-const isDev = process.env.IS_PROD ? false : true
+const isDev = process.env.NODE_ENV === 'development'
 
 
 module.exports = {
