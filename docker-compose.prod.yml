@@ -18,7 +18,7 @@ services:
     ports:
       - '80:80'
     environment:
-      IS_PROD: 1
+      NODE_ENV: production
       PSQL_HOST: postgres
       DOCKER_PSQL_EXTERNAL_PORT: ${DOCKER_PSQL_EXTERNAL_PORT}
       PSQL_USER: ${PSQL_USER}
