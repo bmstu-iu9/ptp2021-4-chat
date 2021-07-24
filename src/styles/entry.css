@@ -33,3 +33,13 @@ header{
     padding: .75rem;
     border-radius: .25rem;
 }
+
+@media (max-width: 768px) {
+    .login-window {
+        order: 0;
+    }
+
+    .info-window {
+        order: 1;
+    }
+}
