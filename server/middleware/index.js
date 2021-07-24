@@ -1,17 +1,18 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-const {app} = require('../definitions');
+const {app} = require('../definitions')
 const {publicPath} = require('../config')
-const {urls} = require('../constants');
+const {urls} = require('../constants')
 const {staticRouter, apiRouter} = require('../definitions')
 const {
   redirectIfSessionProvided,
   redirectIfSessionNotProvided
 } = require('./session')
 const {redirectIfUrlContainsExtension} = require('./staticUrl')
-
 const errorHandler = require('./errorHandler')
+
+
 // Настройка middleware для статики
 staticRouter.use(redirectIfUrlContainsExtension)
 staticRouter.use(redirectIfSessionProvided(
