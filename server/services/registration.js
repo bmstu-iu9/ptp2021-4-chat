@@ -8,8 +8,7 @@ const {User, Password} = require('../models/user')
  * добавляет пользователя в неё
  * @param {string} username - Логин пользователя
  * @param {string} password - Пароль пользователя
- * @returns {User, null} - Модель пользователя из базы данных или null если
- *                   пользователь уже существует
+ * @returns {User} - Модель пользователя из базы данных
  */
 async function registerUser(username, password) {
   const foundUser = await User.findOne({

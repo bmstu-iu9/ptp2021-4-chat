@@ -7,8 +7,7 @@ const {User, Password} = require('../models/user')
  * Ищет пользователя с заданным username и password в базе данных
  * @param {string} username - Логин пользователя
  * @param {string} password - Пароль пользователя
- * @returns {User, null} - Модель пользователя из базы данных или null если
- *                   пользователь не найден либо пароли не совпадают
+ * @returns {User} - Модель пользователя из базы данных
  */
 async function authenticateUser(username, password) {
   const foundUser = await User.findOne({
@@ -25,7 +24,11 @@ async function authenticateUser(username, password) {
 
   const result = await bcrypt.compare(password, foundPassword.password)
 
-  return result ? foundUser : null
+  if (!result) {
+    throw createError(401, 'Пользователь с заданным username и password не найден')
+  }
+
+  return foundUser
 }
 
 
