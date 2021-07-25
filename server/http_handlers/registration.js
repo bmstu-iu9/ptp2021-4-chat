@@ -16,7 +16,7 @@ apiRouter.post('/register',
 
     const user = await registerUser(username, password)
 
-    const {sessionId, expirationDate} = generateAndSaveSessionId(user)
+    const {sessionId, expirationDate} = await generateAndSaveSessionId(user)
 
     response.cookie('sessionId', sessionId, {
       expires: expirationDate
