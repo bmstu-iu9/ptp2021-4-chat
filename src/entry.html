@@ -34,22 +34,38 @@
           voluptate. Animi commodi cum dicta dolore enim est necessitatibus quam?
         </p>
       </div>
-      <div class="col-md-3 col-9 m-3 login-window simple-window">
+      <div class="col-md-4 col-9 m-3 login-window simple-window">
         <div class="mb-3 error-window">
           <p><b>Ошибка!</b></p>
           <p>Неправильное имя пользователя или пароль.</p>
         </div>
-        <form>
+        <form class="login-form">
           <div class="mb-3">
-            <input type="email" class="form-control" id="inputLogin"
+            <input type="email" class="form-control input-login"
                    placeholder="Логин">
           </div>
           <div class="mb-3">
-            <input type="password" class="form-control" id="inputPassword"
+            <input type="password" class="form-control input-password"
                    placeholder="Пароль">
           </div>
-          <button type="submit" class="btn btn-primary">Войти</button>
-          <button type="submit" class="btn btn-success">Регистрация</button>
+          <button type="submit" class="btn btn-success">Войти</button>
+          <button class="btn btn-primary btn-create-account">Создать аккаунт</button>
+        </form>
+        <form class="registration-form form_hidden">
+          <div class="mb-3">
+            <input type="email" class="form-control input-login"
+                   placeholder="Логин">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control input-password"
+                   placeholder="Пароль">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control input-password-retry"
+                   placeholder="Повтор пароля">
+          </div>
+          <button type="submit" class="btn btn-success">Зарегистрироваться</button>
+          <button class="btn btn-primary btn-login">Вход</button>
         </form>
       </div>
     </div>
@@ -57,5 +73,6 @@
 
   <!-- Bootstrap5 js files -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <script src="js/entry.js"></script>
 </body>
 </html>
