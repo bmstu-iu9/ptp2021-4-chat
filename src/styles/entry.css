@@ -34,6 +34,10 @@ header {
     border-radius: .25rem;
 }
 
+.form_hidden {
+    display: none !important;
+}
+
 @media (max-width: 768px) {
     .login-window {
         order: 0;
