@@ -1,28 +1,25 @@
 const {generateAndSaveSessionId} = require('../services/common')
-const {tryRegisterUser} = require('../services/registration')
+const {registerUser} = require('../services/registration')
 const {redirectIfSessionProvided} = require('../middleware/session')
 const usernameAndPassword = require('../middleware/usernameAndPassword')
+const {wrapAsyncHandler} = require('../misc/utls')
 const {urls} = require('../constants')
 const {apiRouter} = require('../definitions')
 
 
-apiRouter.post('/register', [
-    redirectIfSessionProvided(urls.index),
-    usernameAndPassword.sendErrorIfNotProvidedOrNotValid
-  ],
-  (request, response) => {
+apiRouter.post('/register',
+  redirectIfSessionProvided(urls.index),
+  usernameAndPassword.sendErrorIfNotProvidedOrNotValid,
+
+  wrapAsyncHandler(async (request, response) => {
     const {username, password} = request.body
 
-    tryRegisterUser(username, password).then(user => {
-      if (!user) {
-        return response.status(409)
-        .send('Пользователь с заданным username уже существует')
-      }
+    const user = await registerUser(username, password)
 
-      generateAndSaveSessionId(user).then(({sessionId, expirationDate}) => {
-        response.cookie('sessionId', sessionId, {
-          expires: expirationDate
-        }).redirect('/')
-      })
-    })
+    const {sessionId, expirationDate} = generateAndSaveSessionId(user)
+
+    response.cookie('sessionId', sessionId, {
+      expires: expirationDate
+    }).redirect(urls.index)
   })
+)

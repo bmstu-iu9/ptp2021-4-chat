@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const {createError} = require('../misc/utls')
 const {User, Password} = require('../models/user')
 
 
@@ -9,13 +10,13 @@ const {User, Password} = require('../models/user')
  * @returns {User, null} - Модель пользователя из базы данных или null если
  *                   пользователь не найден либо пароли не совпадают
  */
-async function tryAuthenticateUser(username, password) {
+async function authenticateUser(username, password) {
   const foundUser = await User.findOne({
     where: {username}
   })
 
   if (!foundUser) {
-    return null
+    throw createError(401, 'Пользователь с заданным username и password не найден')
   }
 
   const foundPassword = await Password.findOne({
@@ -27,6 +28,7 @@ async function tryAuthenticateUser(username, password) {
   return result ? foundUser : null
 }
 
+
 module.exports = {
-  tryAuthenticateUser
+  authenticateUser
 }
