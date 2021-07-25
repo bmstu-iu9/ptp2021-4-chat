@@ -11,7 +11,7 @@ function redirectIfSessionProvided(to, from) {
       return next()
     }
 
-    const result = await checkSession(request, response)
+    const result = await checkSession(request, response).catch(next)
     if (result) {
       return response.redirect(to)
     }
@@ -30,7 +30,7 @@ function redirectIfSessionNotProvided(to, from) {
       return next()
     }
 
-    const result = await checkSession(request, response)
+    const result = await checkSession(request, response).catch(next)
     if (!result) {
       return response.redirect(to)
     }
