@@ -35,38 +35,49 @@
         </p>
       </div>
       <div class="col-md-4 col-9 m-3 login-window simple-window">
+        <!-- Окно ошибки -->
         <div class="mb-3 error-window">
           <p><b>Ошибка!</b></p>
           <p>Неправильное имя пользователя или пароль.</p>
         </div>
+        <!-- /Окно ошибки -->
+        <!-- Форма аутентификации-->
         <form class="login-form">
           <div class="mb-3">
-            <input type="email" class="form-control input-login"
-                   placeholder="Логин">
+            <input type="text" class="form-control login-form__username-input"
+                   name="username"
+                   placeholder="Имя пользователя">
           </div>
           <div class="mb-3">
-            <input type="password" class="form-control input-password"
+            <input type="password" class="form-control login-form__password-input"
+                   name="password"
                    placeholder="Пароль">
           </div>
-          <button type="submit" class="btn btn-success">Войти</button>
-          <button class="btn btn-primary btn-create-account">Создать аккаунт</button>
+          <button type="submit" class="btn btn-success login-form__submit-button">Войти</button>
+          <button class="btn btn-primary login-form__switch-button">Создать аккаунт</button>
         </form>
+        <!-- /Форма аутентификации -->
+        <!-- Форма регистрации -->
         <form class="registration-form form_hidden">
           <div class="mb-3">
-            <input type="email" class="form-control input-login"
-                   placeholder="Логин">
+            <input type="text" class="form-control registration-from__username-input"
+                   name="username"
+                   placeholder="Имя пользователя">
           </div>
           <div class="mb-3">
-            <input type="password" class="form-control input-password"
+            <input type="password" class="form-control registration-from__password-input"
+                   name="password"
                    placeholder="Пароль">
           </div>
           <div class="mb-3">
-            <input type="password" class="form-control input-password-retry"
+            <input type="password" class="form-control registration-from__password-retry-input"
+                   name="passwordRetry"
                    placeholder="Повтор пароля">
           </div>
-          <button type="submit" class="btn btn-success">Зарегистрироваться</button>
-          <button class="btn btn-primary btn-login">Вход</button>
+          <button type="submit" class="btn btn-success registration-form__submit-button">Создать аккаунт</button>
+          <button class="btn btn-primary registration-form__switch-button">Вход</button>
         </form>
+        <!-- /Форма регистрации -->
       </div>
     </div>
   </div>
