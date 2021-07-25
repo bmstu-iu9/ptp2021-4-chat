@@ -12,7 +12,9 @@ const {User, Password} = require('../models/user')
  */
 async function authenticateUser(username, password) {
   const foundUser = await User.findOne({
-    where: {username}
+    where: {
+      username: username.toLowerCase()
+    }
   })
 
   if (!foundUser) {
