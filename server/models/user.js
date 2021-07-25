@@ -14,7 +14,10 @@ User.init({
   username: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
+    set(value) {
+      this.setDataValue('username', value.toLowerCase())
+    }
   }
 }, {
   sequelize,
