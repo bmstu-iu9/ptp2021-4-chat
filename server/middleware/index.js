@@ -17,10 +17,10 @@ const errorHandler = require('./errorHandler')
 staticRouter.use(redirectIfUrlContainsExtension)
 staticRouter.use(redirectIfSessionProvided(
   urls.index,
-  urls.authenticationAndRegister
+  urls.authenticationAndRegistration
 ))
 staticRouter.use(redirectIfSessionNotProvided(
-  urls.authenticationAndRegister,
+  urls.authenticationAndRegistration,
   urls.index
 ))
 staticRouter.use(express.static(publicPath, {
