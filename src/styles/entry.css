@@ -27,11 +27,18 @@ header {
     height: fit-content !important;
 }
 
-.error-window {
-    background-color: #f5c1c1;
-    margin-right: 3rem;
+.notification-window {
+    background-color: #91d491;
     padding: .75rem;
     border-radius: .25rem;
+}
+
+.notification-window_hidden {
+    display: none !important;
+}
+
+.notification-window_error {
+    background-color: #f5c1c1 !important;
 }
 
 .form_hidden {
