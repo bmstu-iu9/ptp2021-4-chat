@@ -3,6 +3,10 @@ const registrationForm = document.querySelector('.registration-form')
 const loginFormSwitchButton = document.querySelector('.login-form__switch-button')
 const registrationFormSwitchButton = document.querySelector('.registration-form__switch-button')
 
+const notificationWindow = document.querySelector('.notification-window')
+const notificationWindowTitle = document.querySelector('.notification-window__title')
+const notificationWindowParagraph = document.querySelector('.notification-window__paragraph')
+
 
 loginFormSwitchButton.addEventListener('click', function(event) {
   event.preventDefault()
@@ -18,4 +22,23 @@ registrationFormSwitchButton.addEventListener('click', function(event) {
 
 function validatePassword(password) {
   return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/.test(password)
+}
+
+function showNotificationWindow(title, paragraph, error = false){
+  notificationWindowTitle.innerHTML = title
+  notificationWindowParagraph.innerHTML = paragraph
+
+  notificationWindow.classList.remove('notification-window_hidden')
+
+  if (error) {
+    notificationWindow.classList.add('notification-window_error')
+  }
+}
+
+function hideNotificationWindow(){
+  notificationWindowTitle.innerHTML = ''
+  notificationWindowParagraph.innerHTML = ''
+
+  notificationWindow.classList.add('notification-window_hidden')
+  notificationWindow.classList.remove('notification-window_error')
 }
