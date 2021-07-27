@@ -1,5 +1,6 @@
 const crypto = require('crypto')
-const {User} = require('../models/user')
+const bcrypt = require('bcrypt')
+const {User, Password} = require('../models/user')
 const {Session} = require('../models/session')
 const {sessionLifetime} = require('../constants')
 
@@ -57,7 +58,22 @@ async function checkSession(request, response) {
 }
 
 
+async function checkUserCredentials(user, password) {
+  if (!user) {
+    return false
+  }
+
+  const foundPassword = await Password.findOne({
+    where: {
+      userId: user.id
+    }
+  })
+
+  return await bcrypt.compare(password, foundPassword.password)
+}
+
 module.exports = {
   checkSession,
-  generateAndSaveSessionId
+  generateAndSaveSessionId,
+  checkUserCredentials
 }
