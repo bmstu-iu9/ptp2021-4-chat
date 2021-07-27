@@ -1,9 +1,6 @@
 
-function isValidUserName(userName){
-  var re=new RegExp('^[a-zA-Z0-9]+$');
-  if ((3 <= userName.length) && (userName.length <= 27) && re.test(userName)){
-    return true
-  } else {
-    return false
-  }
+function validateUsername(username){
+  const re = new RegExp('^[a-zA-Z0-9]+$')
+
+  return (3 <= username.length) && (username.length <= 27) && re.test(username)
 }
