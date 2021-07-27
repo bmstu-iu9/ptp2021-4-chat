@@ -1,6 +1,6 @@
-const loginForm = document.querySelector('.login-form')
+const authForm = document.querySelector('.auth-form')
 const registrationForm = document.querySelector('.registration-form')
-const loginFormSwitchButton = document.querySelector('.login-form__switch-button')
+const authFormSwitchButton = document.querySelector('.auth-form__switch-button')
 const registrationFormSwitchButton = document.querySelector('.registration-form__switch-button')
 
 const notificationWindow = document.querySelector('.notification-window')
@@ -8,17 +8,28 @@ const notificationWindowTitle = document.querySelector('.notification-window__ti
 const notificationWindowParagraph = document.querySelector('.notification-window__paragraph')
 
 
-loginFormSwitchButton.addEventListener('click', function(event) {
+authFormSwitchButton.addEventListener('click', function(event) {
   event.preventDefault()
-  loginForm.classList.add('form_hidden')
+  authForm.classList.add('form_hidden')
   registrationForm.classList.remove('form_hidden')
+  authForm.querySelectorAll('input').forEach(input => {
+    setInputValue(input,'')
+  })
 })
 
 registrationFormSwitchButton.addEventListener('click', function(event) {
   event.preventDefault()
   registrationForm.classList.add('form_hidden')
-  loginForm.classList.remove('form_hidden')
+  authForm.classList.remove('form_hidden')
+  registrationForm.querySelectorAll('input').forEach(input => {
+    setInputValue(input,'')
+  })
 })
+
+function setInputValue(input, value) {
+  input.value = value
+  input.dispatchEvent(new Event('input'))
+}
 
 function validatePassword(password) {
   return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/.test(password)
