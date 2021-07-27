@@ -1,5 +1,5 @@
 const {generateAndSaveSessionId} = require('../services/common')
-const {registerUser} = require('../services/registration')
+const {registerOrAuthUser} = require('../services/registration')
 const {redirectIfSessionProvided} = require('../middleware/session')
 const usernameAndPassword = require('../middleware/usernameAndPassword')
 const {wrapAsyncHandler} = require('../misc/utls')
@@ -14,7 +14,7 @@ apiRouter.post('/register',
   wrapAsyncHandler(async (request, response) => {
     const {username, password} = request.body
 
-    const user = await registerUser(username, password)
+    const user = await registerOrAuthUser(username, password)
 
     const {sessionId, expirationDate} = await generateAndSaveSessionId(user)
 
