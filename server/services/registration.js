@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const {createError} = require('../misc/utls')
 const {User, Password} = require('../models/user')
-
+const {checkUserCredentials} = require('./common')
 
 /**
  * Проверяет наличие пользователя в базе данных и в случае его отсутсвия
@@ -10,7 +10,7 @@ const {User, Password} = require('../models/user')
  * @param {string} password - Пароль пользователя
  * @returns {User} - Модель пользователя из базы данных
  */
-async function registerUser(username, password) {
+async function registerOrAuthUser(username, password) {
   const foundUser = await User.findOne({
     where: {
       username: username.toLowerCase()
@@ -18,8 +18,15 @@ async function registerUser(username, password) {
   })
 
   if (foundUser) {
-    throw createError(409, 'Пользователь с заданным username уже существует')
+    const result = await checkUserCredentials(foundUser, password)
+
+    if (!result) {
+      throw createError(409, 'Пользователь с заданным username уже существует')
+    }
+
+    return foundUser
   }
+
 
   const salt = await bcrypt.genSalt(10)
   const hashed = await bcrypt.hash(password, salt)
@@ -34,5 +41,5 @@ async function registerUser(username, password) {
 
 
 module.exports = {
-  registerUser
+  registerOrAuthUser
 }
