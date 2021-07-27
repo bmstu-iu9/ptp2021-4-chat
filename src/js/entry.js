@@ -13,7 +13,7 @@ authFormSwitchButton.addEventListener('click', function(event) {
   authForm.classList.add('form_hidden')
   registrationForm.classList.remove('form_hidden')
   authForm.querySelectorAll('input').forEach(input => {
-    setInputValue(input,'')
+    setInputValue(input, '')
   })
 })
 
@@ -22,7 +22,7 @@ registrationFormSwitchButton.addEventListener('click', function(event) {
   registrationForm.classList.add('form_hidden')
   authForm.classList.remove('form_hidden')
   registrationForm.querySelectorAll('input').forEach(input => {
-    setInputValue(input,'')
+    setInputValue(input, '')
   })
 })
 
@@ -35,7 +35,7 @@ function validatePassword(password) {
   return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/.test(password)
 }
 
-function showNotificationWindow(title, paragraph, error = false){
+function showNotificationWindow(title, paragraph, error = false) {
   notificationWindowTitle.innerHTML = title
   notificationWindowParagraph.innerHTML = paragraph
 
@@ -46,10 +46,25 @@ function showNotificationWindow(title, paragraph, error = false){
   }
 }
 
-function hideNotificationWindow(){
+function hideNotificationWindow() {
   notificationWindowTitle.innerHTML = ''
   notificationWindowParagraph.innerHTML = ''
 
   notificationWindow.classList.add('notification-window_hidden')
   notificationWindow.classList.remove('notification-window_error')
+}
+
+function getURLParam(key) {
+  const url = new URL(location.href)
+  return url.searchParams.get(key)
+}
+
+function setURLParam(key, value) {
+  const url = new URL(location.href)
+  if (value === null) {
+    url.searchParams.delete(key)
+  } else {
+    url.searchParams.set(key, value)
+  }
+  history.pushState(null, '', url.search)
 }
