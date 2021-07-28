@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const {app} = require('../definitions')
-const {publicPath} = require('../config')
+const {publicPath, commonPath} = require('../config')
 const {urls} = require('../constants')
 const {staticRouter, apiRouter} = require('../definitions')
 const {
@@ -26,6 +26,7 @@ staticRouter.use(redirectIfSessionNotProvided(
 staticRouter.use(express.static(publicPath, {
   extensions: ['html']
 }))
+staticRouter.use('/common', express.static(commonPath))
 
 // Настройка общих middleware
 app.use(cookieParser())
