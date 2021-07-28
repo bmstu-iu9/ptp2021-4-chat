@@ -30,32 +30,6 @@ function setInputValue(input, value) {
   input.dispatchEvent(new Event('input'))
 }
 
-function validatePassword(password) {
-  let hasUppercase = false
-  let hasLowercase = false
-  let hasDigits = false
-
-  if (password.length < 6) {
-    return false
-  }
-
-  for (let i = 0; i < password.length; i++) {
-    if (password[i] >= 'A' && password[i] <= 'Z') {
-      hasUppercase = true
-    }
-
-    if (password[i] >= 'a' && password[i] <= 'z') {
-      hasLowercase = true
-    }
-
-    if (password[i] >= '0' && password[i] <= '9') {
-      hasDigits = true
-    }
-  }
-
-  return hasLowercase && hasDigits && hasUppercase
-}
-
 function showNotificationWindow(title, paragraph, error = false) {
   notificationWindowTitle.innerHTML = title
   notificationWindowParagraph.innerHTML = paragraph

@@ -10,6 +10,7 @@ module.exports = {
   host: isDev ? 'localhost' : '0.0.0.0',
   port: 80,
   publicPath: path.join(__dirname, '../public/'),
+  commonPath: path.join(__dirname,'../common/'),
   postgres: {
     user: process.env.PSQL_USER,
     password: process.env.PSQL_PASS,
