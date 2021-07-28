@@ -7,7 +7,6 @@ const notificationWindow = document.querySelector('.notification-window')
 const notificationWindowTitle = document.querySelector('.notification-window__title')
 const notificationWindowParagraph = document.querySelector('.notification-window__paragraph')
 
-
 authFormSwitchButton.addEventListener('click', function(event) {
   event.preventDefault()
   authForm.classList.add('form_hidden')
@@ -32,7 +31,29 @@ function setInputValue(input, value) {
 }
 
 function validatePassword(password) {
-  return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/.test(password)
+  let hasUppercase = false
+  let hasLowercase = false
+  let hasDigits = false
+
+  if (password.length < 6) {
+    return false
+  }
+
+  for (let i = 0; i < password.length; i++) {
+    if (password[i] >= 'A' && password[i] <= 'Z') {
+      hasUppercase = true
+    }
+
+    if (password[i] >= 'a' && password[i] <= 'z') {
+      hasLowercase = true
+    }
+
+    if (password[i] >= '0' && password[i] <= '9') {
+      hasDigits = true
+    }
+  }
+
+  return hasLowercase && hasDigits && hasUppercase
 }
 
 function showNotificationWindow(title, paragraph, error = false) {
