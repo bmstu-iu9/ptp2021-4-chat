@@ -1,4 +1,4 @@
-const {wrapAsyncHandler} = require('../misc/utls')
+const {wrapAsyncHandler} = require('../misc/utils')
 const {deleteSession} = require("../services/logout")
 const {urls} = require("../constants")
 const {apiRouter} = require('../definitions')

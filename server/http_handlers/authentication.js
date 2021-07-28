@@ -2,7 +2,7 @@ const {generateAndSaveSessionId} = require('../services/common')
 const {authenticateUser} = require('../services/authentication')
 const {redirectIfSessionProvided} = require('../middleware/session')
 const usernameAndPassword = require('../middleware/usernameAndPassword')
-const {wrapAsyncHandler} = require('../misc/utls')
+const {wrapAsyncHandler} = require('../misc/utils')
 const {urls} = require('../constants')
 const {apiRouter} = require('../definitions')
 

@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt')
-const {createError} = require('../misc/utls')
+const {createError} = require('../misc/utils')
 const {User, Password} = require('../models/user')
 const {checkUserCredentials} = require('./common')
+const {errors} = require('../../common/common')
 
 /**
  * Проверяет наличие пользователя в базе данных и в случае его отсутсвия
@@ -21,7 +22,7 @@ async function registerOrAuthUser(username, password) {
     const result = await checkUserCredentials(foundUser, password)
 
     if (!result) {
-      throw createError(409, 'Пользователь с заданным username уже существует')
+      throw errors.usernameAlreadyRegistered
     }
 
     return foundUser
