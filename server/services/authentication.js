@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt')
-const {createError} = require('../misc/utls')
+const {createError} = require('../misc/utils')
 const {User, Password} = require('../models/user')
 const {checkUserCredentials} = require('./common')
+const {errors} = require('../../common/common')
 
 /**
  * Ищет пользователя с заданным username и password в базе данных
@@ -17,13 +18,13 @@ async function authenticateUser(username, password) {
   })
 
   if (!foundUser) {
-    throw createError(401, 'Пользователь с заданным username и password не найден')
+    throw createError(...Object.values(errors.usernameNotRegistered))
   }
 
   const result = await checkUserCredentials(foundUser, password)
 
   if (!result) {
-    throw createError(401, 'Пользователь с заданным username и password не найден')
+    throw createError(...Object.values(errors.incorrectPassword))
   }
 
   return foundUser

@@ -28,10 +28,28 @@ function validatePassword(password) {
 
     return password.length >= 6 && hasLowercase && hasDigits && hasUppercase
 }
-
+const errors = {
+    usernameNotRegistered: {
+        code: 401,
+        message: 'username-not-registered'
+    },
+    incorrectPassword: {
+        code: 401,
+        message: 'incorrect-password'
+    },
+    usernameAlreadyRegistered: {
+        code: 409,
+        message: 'username-already-registered'
+    },
+    incorrectBody: {
+        code: 400,
+        message: 'incorrect-body'
+    }
+}
 if(isNode()){
     module.exports = {
         validatePassword,
-        validateUsername
+        validateUsername,
+        errors
     }
 }
