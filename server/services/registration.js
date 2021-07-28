@@ -22,7 +22,7 @@ async function registerOrAuthUser(username, password) {
     const result = await checkUserCredentials(foundUser, password)
 
     if (!result) {
-      throw errors.usernameAlreadyRegistered
+      throw createError(...Object.values(errors.usernameAlreadyRegistered))
     }
 
     return foundUser
