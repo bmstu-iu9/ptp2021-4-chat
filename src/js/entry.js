@@ -7,13 +7,12 @@ const notificationWindow = document.querySelector('.notification-window')
 const notificationWindowTitle = document.querySelector('.notification-window__title')
 const notificationWindowParagraph = document.querySelector('.notification-window__paragraph')
 
-
 authFormSwitchButton.addEventListener('click', function(event) {
   event.preventDefault()
   authForm.classList.add('form_hidden')
   registrationForm.classList.remove('form_hidden')
   authForm.querySelectorAll('input').forEach(input => {
-    setInputValue(input,'')
+    setInputValue(input, '')
   })
 })
 
@@ -22,7 +21,7 @@ registrationFormSwitchButton.addEventListener('click', function(event) {
   registrationForm.classList.add('form_hidden')
   authForm.classList.remove('form_hidden')
   registrationForm.querySelectorAll('input').forEach(input => {
-    setInputValue(input,'')
+    setInputValue(input, '')
   })
 })
 
@@ -32,10 +31,32 @@ function setInputValue(input, value) {
 }
 
 function validatePassword(password) {
-  return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,}$/.test(password)
+  let hasUppercase = false
+  let hasLowercase = false
+  let hasDigits = false
+
+  if (password.length < 6) {
+    return false
+  }
+
+  for (let i = 0; i < password.length; i++) {
+    if (password[i] >= 'A' && password[i] <= 'Z') {
+      hasUppercase = true
+    }
+
+    if (password[i] >= 'a' && password[i] <= 'z') {
+      hasLowercase = true
+    }
+
+    if (password[i] >= '0' && password[i] <= '9') {
+      hasDigits = true
+    }
+  }
+
+  return hasLowercase && hasDigits && hasUppercase
 }
 
-function showNotificationWindow(title, paragraph, error = false){
+function showNotificationWindow(title, paragraph, error = false) {
   notificationWindowTitle.innerHTML = title
   notificationWindowParagraph.innerHTML = paragraph
 
@@ -46,7 +67,7 @@ function showNotificationWindow(title, paragraph, error = false){
   }
 }
 
-function hideNotificationWindow(){
+function hideNotificationWindow() {
   notificationWindowTitle.innerHTML = ''
   notificationWindowParagraph.innerHTML = ''
 
