@@ -173,6 +173,47 @@ function makeAPIRequest(action, payload) {
   })
 }
 
+function processError(error, context) {
+  if (error.code == -1) {
+    return showNotificationWindow(
+      errorsMessages.connectionError.title,
+      errorsMessages.connectionError.message(),
+      errorsMessages.connectionError.asError
+    )
+  }
+
+  switch (error.message) {
+    case errors.usernameNotRegistered.message: {
+      return showNotificationWindow(
+        errorsMessages.usernameNotRegistered.title,
+        errorsMessages.usernameNotRegistered.message(context.username),
+        errorsMessages.usernameNotRegistered.asError
+      )
+    }
+    case errors.incorrectPassword.message: {
+      return showNotificationWindow(
+        errorsMessages.incorrectPassword.title,
+        errorsMessages.incorrectPassword.message(),
+        errorsMessages.incorrectPassword.asError
+      )
+    }
+    case errors.usernameAlreadyRegistered.message: {
+      return showNotificationWindow(
+        errorsMessages.usernameAlreadyRegistered.title,
+        errorsMessages.usernameAlreadyRegistered.message(context.username),
+        errorsMessages.usernameAlreadyRegistered.asError
+      )
+    }
+    default: {
+      return showNotificationWindow(
+        errorsMessages.defaultError.title,
+        errorsMessages.defaultError.message(error.message),
+        errorsMessages.defaultError.asError
+      )
+    }
+  }
+}
+
 function setInputValue(input, value) {
   input.value = value
   input.dispatchEvent(new Event('input'))
