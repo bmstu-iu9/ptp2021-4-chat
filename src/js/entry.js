@@ -147,6 +147,32 @@ registrationFormSubmitButton.addEventListener('click', event => {
   })
 })
 
+function makeAPIRequest(action, payload) {
+  return fetch(`/api/${action}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(response => {
+    if (!response.ok) {
+      return response.text().then(errorMessage => {
+        processError({
+          code: response.status,
+          message: errorMessage
+        }, payload)
+      })
+    }
+
+    if (response.redirected) {
+      location.replace(response.url)
+    }
+  }).catch(error => {
+    processError({
+      code: -1,
+      message: error.message
+    }, payload)
+  })
+}
+
 function setInputValue(input, value) {
   input.value = value
   input.dispatchEvent(new Event('input'))
