@@ -13,29 +13,16 @@ function createError(code, message) {
 
 /**
  * Оборачивает хендлер в функцию, которая верным образом обрабатывает
- * исключение в случае его возникновения:
- * * Если исключение содержит ключ `code` и при этом заголовки ещё
- * не были отправлены, то отправляется ответ с HTTP-статусом равным `code`
- * и сообщением, содержащимся в объекте ошибки
- * * В противном случае ошибка передаётся к обработчикам ошибок путем
- * вызова функции `next(error)`
+ * исключение в случае его возникновения
  */
-function wrapAsyncHandler(asyncFunction) {
+function wrapAsyncFunction(asyncFunction) {
   return async (request, response, next) => {
-    try {
-      return await asyncFunction(request, response)
-    } catch (error) {
-      if (error.code && !response.headersSent) {
-        return response.status(error.code).send(error.message || '')
-      }
-
-      next(error)
-    }
+    return await asyncFunction(request, response, next).catch(next)
   }
 }
 
 
 module.exports = {
   createError,
-  wrapAsyncHandler
+  wrapAsyncFunction
 }
