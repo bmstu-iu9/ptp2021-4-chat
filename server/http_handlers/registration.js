@@ -2,7 +2,7 @@ const {generateAndSaveSessionId} = require('../services/common')
 const {registerOrAuthUser} = require('../services/registration')
 const {redirectIfSessionProvided} = require('../middleware/session')
 const usernameAndPassword = require('../middleware/usernameAndPassword')
-const {wrapAsyncHandler} = require('../misc/utils')
+const {wrapAsyncFunction} = require('../misc/utils')
 const {urls} = require('../constants')
 const {apiRouter} = require('../definitions')
 
@@ -11,7 +11,7 @@ apiRouter.post('/register',
   redirectIfSessionProvided(urls.index),
   usernameAndPassword.sendErrorIfNotProvidedOrNotValid,
 
-  wrapAsyncHandler(async (request, response) => {
+  wrapAsyncFunction(async (request, response) => {
     const {username, password} = request.body
 
     const user = await registerOrAuthUser(username, password)

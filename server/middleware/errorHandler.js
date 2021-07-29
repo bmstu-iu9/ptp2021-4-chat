@@ -1,7 +1,7 @@
 const {logger} = require('../definitions')
 
 
-module.exports = function (error, request, response, next) {
+function handleUnexpectedError(error, request, response, next) {
   logger.error(error.stack)
 
   if (response.headersSent) {
@@ -9,4 +9,20 @@ module.exports = function (error, request, response, next) {
   }
 
   response.status(500).send()
+}
+
+function handleErrorWithCode(error, request, response, next) {
+  if (!error.code || response.headersSent) {
+    return next(error)
+  }
+
+  response.status(error.code).send(error.message || '')
+}
+
+
+module.exports = {
+  errorHandlersPipeline: [
+    handleErrorWithCode,
+    handleUnexpectedError
+  ]
 }

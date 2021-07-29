@@ -57,7 +57,6 @@ async function checkSession(request, response) {
   return true
 }
 
-
 async function checkUserCredentials(user, password) {
   if (!user) {
     return false
@@ -71,6 +70,7 @@ async function checkUserCredentials(user, password) {
 
   return await bcrypt.compare(password, foundPassword.password)
 }
+
 
 module.exports = {
   checkSession,

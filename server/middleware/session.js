@@ -1,3 +1,4 @@
+const {wrapAsyncFunction} = require('../misc/utils')
 const {checkSession} = require('../services/common')
 
 
@@ -6,18 +7,19 @@ function redirectIfSessionProvided(to, from) {
     from = Array.isArray(from) ? from : [from]
   }
 
-  return async (request, response, next) => {
+  return wrapAsyncFunction(async (request, response, next) => {
     if (from && !from.includes(request.path)) {
       return next()
     }
 
-    const result = await checkSession(request, response).catch(next)
+    const result = await checkSession(request, response)
+
     if (result) {
       return response.redirect(to)
     }
 
     next()
-  }
+  })
 }
 
 function redirectIfSessionNotProvided(to, from) {
@@ -25,18 +27,19 @@ function redirectIfSessionNotProvided(to, from) {
     from = Array.isArray(from) ? from : [from]
   }
 
-  return async (request, response, next) => {
+  return wrapAsyncFunction(async (request, response, next) => {
     if (from && !from.includes(request.path)) {
       return next()
     }
 
-    const result = await checkSession(request, response).catch(next)
+    const result = await checkSession(request, response)
+
     if (!result) {
       return response.redirect(to)
     }
 
     next()
-  }
+  })
 }
 
 

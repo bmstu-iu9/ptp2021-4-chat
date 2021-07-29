@@ -10,7 +10,7 @@ const {
   redirectIfSessionNotProvided
 } = require('./session')
 const {redirectIfUrlContainsExtension} = require('./staticUrl')
-const errorHandler = require('./errorHandler')
+const {errorHandlersPipeline} = require('./errorHandler')
 
 
 // Настройка middleware для статики
@@ -38,4 +38,4 @@ app.use('/api', apiRouter)
 app.use('/', staticRouter)
 
 // Установка обработчиков ошибок
-app.use(errorHandler)
+app.use(errorHandlersPipeline)
