@@ -46,16 +46,16 @@ const errorsMessages = {
   usernameNotRegistered: {
     title: 'Уведомление',
     message: (username) => `Такой пользователь не зарегистрирован, вы можете` +
-      ` перейти на <a data-username=${username}
-                      onclick="return handleFormSwitch(this, 'registration')"
+      ` перейти на <a onclick="redirect(
+                        '/entry?action=registration&username=${username}')"
                       href="">страницу регистрации</a>`,
     asError: false
   },
   usernameAlreadyRegistered: {
     title: 'Уведомление',
     message: (username) => `Вы уже ранее регистрировались,` +
-      ` перейти на <a data-username=${username}
-                      onclick="return handleFormSwitch(this, 'auth')"
+      ` перейти на <a onclick="redirect(
+                        '/entry?action=auth&username=${username}')"
                       href="">страницу авторизации</a>?`,
     asError: false
   },
@@ -313,15 +313,7 @@ function setUsernameInputValue(form) {
   })
 }
 
-function handleFormSwitch(element, action) {
-  const username = element.getAttribute('data-username')
-
-  if (!username) {
-    throw new Error('Для элемента не установлен аттрибут data-username')
-  }
-
-  setURLParam('username', username)
-  switchFormTo(action)
-
-  return false
+function redirect(href) {
+  history.replaceState(null, '', href)
+  location.reload()
 }
