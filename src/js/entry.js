@@ -62,22 +62,14 @@ const errorsMessages = {
   }
 }
 
-authFormSwitchButton.addEventListener('click', function(event) {
+authFormSwitchButton.addEventListener('click', event => {
   event.preventDefault()
-  authForm.classList.add('form_hidden')
-  registrationForm.classList.remove('form_hidden')
-  authForm.querySelectorAll('input').forEach(input => {
-    setInputValue(input, '')
-  })
+  switchFormTo('registration')
 })
 
-registrationFormSwitchButton.addEventListener('click', function(event) {
+registrationFormSwitchButton.addEventListener('click', event => {
   event.preventDefault()
-  registrationForm.classList.add('form_hidden')
-  authForm.classList.remove('form_hidden')
-  registrationForm.querySelectorAll('input').forEach(input => {
-    setInputValue(input, '')
-  })
+  switchFormTo('auth')
 })
 
 function setInputValue(input, value) {
