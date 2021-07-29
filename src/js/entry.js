@@ -174,7 +174,7 @@ function makeAPIRequest(action, payload) {
 }
 
 function processError(error, context) {
-  if (error.code == -1) {
+  if (error.code === -1) {
     return showNotificationWindow(
       errorsMessages.connectionError.title,
       errorsMessages.connectionError.message(),
@@ -220,6 +220,8 @@ function setInputValue(input, value) {
 }
 
 function showNotificationWindow(title, paragraph, error = false) {
+  hideNotificationWindow() // сперва обнуляем окно, чтобы затем показать 'с чистого листа'
+
   notificationWindowTitle.innerHTML = title
   notificationWindowParagraph.innerHTML = paragraph
 
@@ -256,8 +258,6 @@ function setURLParam(key, value) {
 }
 
 function switchFormTo(action) {
-  hideNotificationWindow()
-
   const formToShow = document.querySelector('.' + CSS.escape(action) + '-form')
 
   if (!formToShow) {
@@ -271,6 +271,7 @@ function switchFormTo(action) {
     }
   })
 
+  hideNotificationWindow()
   formToShow.classList.remove('form_hidden')
   setUsernameInputValue(formToShow)
   setURLParam('action', action)
