@@ -11,6 +11,10 @@ header {
     padding-top: 0.5rem;
 }
 
+.row-main{
+    margin: 0;
+}
+
 .m-3 {
     margin-left: 3rem;
     margin-right: 3rem;
