@@ -245,10 +245,33 @@ function getURLParam(key) {
 
 function setURLParam(key, value) {
   const url = new URL(location.href)
+
   if (value === null) {
     url.searchParams.delete(key)
   } else {
     url.searchParams.set(key, value)
   }
+
   history.pushState(null, '', url.search)
+}
+
+function switchFormTo(action) {
+  hideNotificationWindow()
+
+  const formToShow = document.querySelector('.' + CSS.escape(action) + '-form')
+
+  if (!formToShow) {
+    throw new Error(`Неверно задан параметр action: формы с классом '${action}-form' не существует`)
+  }
+
+  document.querySelectorAll('form').forEach(form => {
+    if (form !== formToShow) {
+      form.classList.add('form_hidden')
+      form.querySelectorAll('input').forEach(input => setInputValue(input, ''))
+    }
+  })
+
+  formToShow.classList.remove('form_hidden')
+  setUsernameInputValue(formToShow)
+  setURLParam('action', action)
 }
