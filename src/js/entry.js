@@ -62,6 +62,8 @@ const errorsMessages = {
   }
 }
 
+showFormOnLoad()
+
 authFormSwitchButton.addEventListener('click', event => {
   event.preventDefault()
   switchFormTo('registration')
@@ -70,6 +72,79 @@ authFormSwitchButton.addEventListener('click', event => {
 registrationFormSwitchButton.addEventListener('click', event => {
   event.preventDefault()
   switchFormTo('auth')
+})
+
+authFormSubmitButton.addEventListener('click', event => {
+  event.preventDefault()
+
+  const username = authForm.querySelector('input[name="username"]').value
+  const password = authForm.querySelector('input[name="password"]').value
+
+  if (username === '' || password === '') {
+    return showNotificationWindow(
+      errorsMessages.fieldsEmpty.title,
+      errorsMessages.fieldsEmpty.message(),
+      errorsMessages.fieldsEmpty.asError
+    )
+  }
+
+  authFormSubmitButton.disabled = true
+  authFormSwitchButton.disabled = true
+
+  makeAPIRequest('auth', {username, password})
+  .finally(() => {
+    authFormSubmitButton.disabled = false
+    authFormSwitchButton.disabled = false
+  })
+})
+
+registrationFormSubmitButton.addEventListener('click', event => {
+  event.preventDefault()
+
+  const username = registrationForm.querySelector('input[name="username"]').value
+  const password = registrationForm.querySelector('input[name="password"]').value
+  const passwordRetry = registrationForm.querySelector('input[name="passwordRetry"]').value
+
+  if (username === '' || password === '' || passwordRetry === '') {
+    return showNotificationWindow(
+      errorsMessages.fieldsEmpty.title,
+      errorsMessages.fieldsEmpty.message(),
+      errorsMessages.fieldsEmpty.asError
+    )
+  }
+
+  if (password !== passwordRetry) {
+    return showNotificationWindow(
+      errorsMessages.passwordsDontMatch.title,
+      errorsMessages.passwordsDontMatch.message(),
+      errorsMessages.passwordsDontMatch.asError
+    )
+  }
+
+  if (!validateUsername(username)) {
+    return showNotificationWindow(
+      errorsMessages.invalidUsername.title,
+      errorsMessages.invalidUsername.message(),
+      errorsMessages.invalidUsername.asError
+    )
+  }
+
+  if (!validatePassword(password)) {
+    return showNotificationWindow(
+      errorsMessages.invalidPassword.title,
+      errorsMessages.invalidPassword.message(),
+      errorsMessages.invalidPassword.asError
+    )
+  }
+
+  registrationFormSubmitButton.disabled = true
+  registrationFormSwitchButton.disabled = true
+
+  makeAPIRequest('register', {username, password})
+  .finally(() => {
+    registrationFormSubmitButton.disabled = false
+    registrationFormSwitchButton.disabled = false
+  })
 })
 
 function setInputValue(input, value) {
