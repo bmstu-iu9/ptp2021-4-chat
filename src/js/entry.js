@@ -254,7 +254,7 @@ function setURLParam(key, value) {
     url.searchParams.set(key, value)
   }
 
-  history.pushState(null, '', url.search)
+  history.replaceState(null, '', url.search)
 }
 
 function switchFormTo(action) {
