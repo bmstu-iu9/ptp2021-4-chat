@@ -4,6 +4,7 @@ const {User, Password} = require('../models/user')
 const {checkUserCredentials} = require('./common')
 const {errors} = require('../../common/common')
 
+
 /**
  * Проверяет наличие пользователя в базе данных и в случае его отсутсвия
  * добавляет пользователя в неё

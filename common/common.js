@@ -1,55 +1,62 @@
-function isNode(){
-    return (typeof process !== 'undefined') && (process.release.name === "node");
+function isNode() {
+  return (typeof process !== 'undefined') && (process.release.name === "node")
 }
 
-function validateUsername(username){
-    const re = new RegExp('^[a-zA-Z0-9]+$')
-    return (3 <= username.length) && (username.length <= 27) && re.test(username)
+function validateUsername(username) {
+  const re = new RegExp('^[a-zA-Z0-9]+$')
+  return (3 <= username.length) && (username.length <= 27) && re.test(username)
 }
 
 function validatePassword(password) {
-    let hasUppercase = false
-    let hasLowercase = false
-    let hasDigits = false
+  if (password.length < 6) {
+    return false
+  }
 
-    for (let i = 0; i < password.length; i++) {
-        if (password[i] >= 'A' && password[i] <= 'Z') {
-            hasUppercase = true
-        }
+  let hasUppercase = false
+  let hasLowercase = false
+  let hasDigits = false
 
-        if (password[i] >= 'a' && password[i] <= 'z') {
-            hasLowercase = true
-        }
-
-        if (password[i] >= '0' && password[i] <= '9') {
-            hasDigits = true
-        }
+  for (let i = 0; i < password.length; i++) {
+    if (password[i] >= 'A' && password[i] <= 'Z') {
+      hasUppercase = true
     }
 
-    return password.length >= 6 && hasLowercase && hasDigits && hasUppercase
+    if (password[i] >= 'a' && password[i] <= 'z') {
+      hasLowercase = true
+    }
+
+    if (password[i] >= '0' && password[i] <= '9') {
+      hasDigits = true
+    }
+  }
+
+  return hasUppercase && hasLowercase && hasDigits
 }
+
 const errors = {
-    usernameNotRegistered: {
-        code: 401,
-        message: 'username-not-registered'
-    },
-    incorrectPassword: {
-        code: 401,
-        message: 'incorrect-password'
-    },
-    usernameAlreadyRegistered: {
-        code: 409,
-        message: 'username-already-registered'
-    },
-    incorrectBody: {
-        code: 400,
-        message: 'incorrect-body'
-    }
+  usernameNotRegistered: {
+    code: 401,
+    message: 'username-not-registered'
+  },
+  incorrectPassword: {
+    code: 401,
+    message: 'incorrect-password'
+  },
+  usernameAlreadyRegistered: {
+    code: 409,
+    message: 'username-already-registered'
+  },
+  incorrectBody: {
+    code: 400,
+    message: 'incorrect-body'
+  }
 }
-if(isNode()){
-    module.exports = {
-        validatePassword,
-        validateUsername,
-        errors
-    }
+
+
+if (isNode()) {
+  module.exports = {
+    validatePassword,
+    validateUsername,
+    errors
+  }
 }

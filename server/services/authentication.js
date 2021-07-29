@@ -1,8 +1,8 @@
-const bcrypt = require('bcrypt')
 const {createError} = require('../misc/utils')
-const {User, Password} = require('../models/user')
+const {User} = require('../models/user')
 const {checkUserCredentials} = require('./common')
 const {errors} = require('../../common/common')
+
 
 /**
  * Ищет пользователя с заданным username и password в базе данных
