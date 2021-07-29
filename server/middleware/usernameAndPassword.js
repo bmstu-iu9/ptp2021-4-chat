@@ -1,15 +1,19 @@
-const {passwordMinLength} = require('../constants')
-const {errors} = require('../../common/common')
 const {createError} = require('../misc/utils')
+const {
+  errors,
+  validateUsername,
+  validatePassword
+} = require('../../common/common')
+
 
 
 function sendErrorIfNotProvidedOrNotValid(request, response, next) {
   const {username, password} = request.body
 
-  if (!checkProvided(username, password) || password.length < passwordMinLength) {
-    const error = createError(...Object.values(errors.incorrectBody))
-    return response.status(error.code)
-    .send(error.message)
+  if (!checkProvided(username, password)
+    || !validateUsername(username)
+    || !validatePassword(password)) {
+    throw createError(...Object.values(errors.incorrectBody))
   }
 
   next()
@@ -19,9 +23,7 @@ function sendErrorIfNotProvided(request, response, next) {
   const {username, password} = request.body
 
   if (!checkProvided(username, password)) {
-    const error = createError(...Object.values(errors.incorrectBody))
-    return response.status(error.code)
-    .send(error.message)
+    throw createError(...Object.values(errors.incorrectBody))
   }
 
   next()
@@ -33,6 +35,7 @@ function checkProvided(login, password) {
   }
   return !(typeof login !== 'string' || typeof password !== 'string')
 }
+
 
 module.exports = {
   sendErrorIfNotProvidedOrNotValid,
