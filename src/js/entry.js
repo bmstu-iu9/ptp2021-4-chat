@@ -275,3 +275,14 @@ function switchFormTo(action) {
   setUsernameInputValue(formToShow)
   setURLParam('action', action)
 }
+
+function showFormOnLoad() {
+  const param = getURLParam('action')
+
+  if (param === 'registration') {
+    switchFormTo('registration')
+  } else {
+    switchFormTo('auth')
+  }
+}
+
