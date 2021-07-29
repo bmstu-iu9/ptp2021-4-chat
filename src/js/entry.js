@@ -286,3 +286,24 @@ function showFormOnLoad() {
   }
 }
 
+function setUsernameInputValue(form) {
+  const username = getURLParam('username')
+
+  if (!username) {
+    return
+  }
+
+  const input = form.querySelector('input[name="username"]')
+
+  if (!input) {
+    return
+  }
+
+  setInputValue(input, username)
+
+  input.addEventListener('input', () => {
+    setURLParam('username', null)
+  }, {
+    once: true
+  })
+}
