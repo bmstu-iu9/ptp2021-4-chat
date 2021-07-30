@@ -46,13 +46,17 @@ const errorsMessages = {
   usernameNotRegistered: {
     title: 'Уведомление',
     message: (username) => `Такой пользователь не зарегистрирован, вы можете` +
-      ` перейти на <a href="/entry?action=registration&username=${username}">страницу регистрации</a>`,
+      ` перейти на <a onclick="redirect(
+                        '/entry?action=registration&username=${username}')"
+                      href="">страницу регистрации</a>`,
     asError: false
   },
   usernameAlreadyRegistered: {
     title: 'Уведомление',
     message: (username) => `Вы уже ранее регистрировались,` +
-      ` перейти на <a href="/entry?action=auth&username=${username}">страницу авторизации</a>?`,
+      ` перейти на <a onclick="redirect(
+                        '/entry?action=auth&username=${username}')"
+                      href="">страницу авторизации</a>?`,
     asError: false
   },
   defaultError: {
@@ -254,7 +258,7 @@ function setURLParam(key, value) {
     url.searchParams.set(key, value)
   }
 
-  history.pushState(null, '', url.search)
+  history.replaceState(null, '', url.search)
 }
 
 function switchFormTo(action) {
@@ -307,4 +311,9 @@ function setUsernameInputValue(form) {
   }, {
     once: true
   })
+}
+
+function redirect(href) {
+  history.replaceState(null, '', href)
+  location.reload()
 }
