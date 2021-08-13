@@ -45,17 +45,17 @@ const errorsMessages = {
   },
   usernameNotRegistered: {
     title: 'Уведомление',
-    message: (username) => `Такой пользователь не зарегистрирован, вы можете` +
+    message: (context) => `Такой пользователь не зарегистрирован, вы можете` +
       ` перейти на <a onclick="redirect(
-                        '/entry?action=registration&username=${username}')"
+                        '/entry?action=registration&username=${context.username}')"
                       href="">страницу регистрации</a>`,
     asError: false
   },
   usernameAlreadyRegistered: {
     title: 'Уведомление',
-    message: (username) => `Вы уже ранее регистрировались,` +
+    message: (context) => `Вы уже ранее регистрировались,` +
       ` перейти на <a onclick="redirect(
-                        '/entry?action=auth&username=${username}')"
+                        '/entry?action=auth&username=${context.username}')"
                       href="">страницу авторизации</a>?`,
     asError: false
   },
@@ -85,11 +85,7 @@ authFormSubmitButton.addEventListener('click', event => {
   const password = authForm.querySelector('input[name="password"]').value
 
   if (username === '' || password === '') {
-    return showNotificationWindow(
-      errorsMessages.fieldsEmpty.title,
-      errorsMessages.fieldsEmpty.message(),
-      errorsMessages.fieldsEmpty.asError
-    )
+    return showNotification(errorsMessages.fieldsEmpty)
   }
 
   authFormSubmitButton.disabled = true
@@ -110,35 +106,19 @@ registrationFormSubmitButton.addEventListener('click', event => {
   const passwordRetry = registrationForm.querySelector('input[name="passwordRetry"]').value
 
   if (username === '' || password === '' || passwordRetry === '') {
-    return showNotificationWindow(
-      errorsMessages.fieldsEmpty.title,
-      errorsMessages.fieldsEmpty.message(),
-      errorsMessages.fieldsEmpty.asError
-    )
+    return showNotification(errorsMessages.fieldsEmpty)
   }
 
   if (password !== passwordRetry) {
-    return showNotificationWindow(
-      errorsMessages.passwordsDontMatch.title,
-      errorsMessages.passwordsDontMatch.message(),
-      errorsMessages.passwordsDontMatch.asError
-    )
+    return showNotification(errorsMessages.passwordsDontMatch)
   }
 
   if (!validateUsername(username)) {
-    return showNotificationWindow(
-      errorsMessages.invalidUsername.title,
-      errorsMessages.invalidUsername.message(),
-      errorsMessages.invalidUsername.asError
-    )
+    return showNotification(errorsMessages.invalidUsername)
   }
 
   if (!validatePassword(password)) {
-    return showNotificationWindow(
-      errorsMessages.invalidPassword.title,
-      errorsMessages.invalidPassword.message(),
-      errorsMessages.invalidPassword.asError
-    )
+    return showNotification(errorsMessages.invalidPassword)
   }
 
   registrationFormSubmitButton.disabled = true
@@ -179,41 +159,21 @@ function makeAPIRequest(action, payload) {
 
 function processError(error, context) {
   if (error.code === -1) {
-    return showNotificationWindow(
-      errorsMessages.connectionError.title,
-      errorsMessages.connectionError.message(),
-      errorsMessages.connectionError.asError
-    )
+    return showNotification(errorsMessages.connectionError)
   }
 
   switch (error.message) {
     case errors.usernameNotRegistered.message: {
-      return showNotificationWindow(
-        errorsMessages.usernameNotRegistered.title,
-        errorsMessages.usernameNotRegistered.message(context.username),
-        errorsMessages.usernameNotRegistered.asError
-      )
+      return showNotification(errorsMessages.usernameNotRegistered, context)
     }
     case errors.incorrectPassword.message: {
-      return showNotificationWindow(
-        errorsMessages.incorrectPassword.title,
-        errorsMessages.incorrectPassword.message(),
-        errorsMessages.incorrectPassword.asError
-      )
+      return showNotification(errorsMessages.incorrectPassword)
     }
     case errors.usernameAlreadyRegistered.message: {
-      return showNotificationWindow(
-        errorsMessages.usernameAlreadyRegistered.title,
-        errorsMessages.usernameAlreadyRegistered.message(context.username),
-        errorsMessages.usernameAlreadyRegistered.asError
-      )
+      return showNotification(errorsMessages.usernameAlreadyRegistered, context)
     }
     default: {
-      return showNotificationWindow(
-        errorsMessages.defaultError.title,
-        errorsMessages.defaultError.message(error.message),
-        errorsMessages.defaultError.asError
-      )
+      return showNotification(errorsMessages.defaultError)
     }
   }
 }
@@ -223,8 +183,19 @@ function setInputValue(input, value) {
   input.dispatchEvent(new Event('input'))
 }
 
+function showNotification(error, context) {
+  let message
+  if (context) {
+    message = error.message(context)
+  } else {
+    message = error.message()
+  }
+
+  showNotificationWindow(error.title, message, error.asError)
+}
+
 function showNotificationWindow(title, paragraph, error = false) {
-  hideNotificationWindow() // сперва обнуляем окно, чтобы затем показать 'с чистого листа'
+  hideNotificationWindow()
 
   notificationWindowTitle.innerHTML = title
   notificationWindowParagraph.innerHTML = paragraph
