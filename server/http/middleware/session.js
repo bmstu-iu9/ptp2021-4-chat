@@ -1,4 +1,4 @@
-const {wrapAsyncFunction} = require('../misc/utils')
+const {wrapAsyncFunction} = require('../../misc/utils')
 const {checkSession} = require('../services/common')
 
 

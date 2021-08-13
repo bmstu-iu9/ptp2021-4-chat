@@ -1,16 +1,16 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-const {app} = require('../definitions')
-const {publicPath, commonPath} = require('../config')
-const {urls} = require('../constants')
-const {staticRouter, apiRouter} = require('../definitions')
+const {app} = require('../../definitions')
+const {publicPath, commonPath} = require('../../config')
+const {urls} = require('../../constants')
+const {staticRouter, apiRouter} = require('../../definitions')
 const {
   redirectIfSessionProvided,
   redirectIfSessionNotProvided
 } = require('./session')
-const {redirectIfUrlContainsExtension} = require('./staticUrl')
-const {errorHandlersPipeline} = require('./errorHandler')
+const {redirectIfUrlContainsExtension} = require('./static')
+const {errorHandlersPipeline} = require('./errors')
 
 
 // Настройка middleware для статики

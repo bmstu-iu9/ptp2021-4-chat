@@ -1,7 +1,8 @@
 const http = require('http')
 const express = require('express')
 const ws = require('ws')
-const Sequelize = require('sequelize') // ORM для PostgreSQL
+const Sequelize = require('sequelize')
+const WSServer = require('./misc/WSServer') // ORM для PostgreSQL
 const {postgres} = require('./config')
 const {Logger, logLevels} = require('./misc/logger')
 
@@ -36,5 +37,5 @@ module.exports = {
   apiRouter,
   server,
   sequelize,
-  ws: new ws.Server({server})
+  wss: new WSServer(new ws.Server({server}))
 }

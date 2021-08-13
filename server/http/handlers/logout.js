@@ -1,7 +1,7 @@
-const {wrapAsyncFunction} = require('../misc/utils')
+const {wrapAsyncFunction} = require('../../misc/utils')
 const {deleteSession} = require("../services/logout")
-const {urls} = require("../constants")
-const {apiRouter} = require('../definitions')
+const {urls} = require("../../constants")
+const {apiRouter} = require('../../definitions')
 const {redirectIfSessionNotProvided} = require('../middleware/session')
 
 

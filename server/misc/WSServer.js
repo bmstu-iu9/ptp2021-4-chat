@@ -118,6 +118,4 @@ class WSServer {
 }
 
 
-module.exports = {
-  WSServer
-}
+module.exports = WSServer
