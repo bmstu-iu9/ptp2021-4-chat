@@ -61,7 +61,7 @@ const errorsMessages = {
   },
   defaultError: {
     title: 'Ошибка',
-    message: (message) => `Неизвестная ошибка: ${message}`,
+    message: () => `Неизвестная ошибка`,
     asError: true
   }
 }
@@ -183,15 +183,19 @@ function setInputValue(input, value) {
   input.dispatchEvent(new Event('input'))
 }
 
-function showNotification(error, context) {
+function showNotification(notificationDescription, context) {
   let message
   if (context) {
-    message = error.message(context)
+    message = notificationDescription.message(context)
   } else {
-    message = error.message()
+    message = notificationDescription.message()
   }
 
-  showNotificationWindow(error.title, message, error.asError)
+  showNotificationWindow(
+    notificationDescription.title,
+    message,
+    notificationDescription.asError
+  )
 }
 
 function showNotificationWindow(title, paragraph, error = false) {
