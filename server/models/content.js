@@ -23,6 +23,6 @@ Content.init({
 })
 
 
-module.export = {
+module.exports = {
   Content
 }
