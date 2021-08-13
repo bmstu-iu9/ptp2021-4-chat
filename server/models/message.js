@@ -5,7 +5,11 @@ const {Model, DataTypes} = require('sequelize')
 const {sequelize} = require('../definitions')
 
 
-class Message extends Model{
+class Message extends Model {
+}
+
+
+class ReadMessage extends Model {
 }
 
 
@@ -52,7 +56,30 @@ Content.hasOne(Message, {
 })
 Message.belongsTo(Content)
 
+ReadMessage.init({},{
+  sequelize,
+  modelName: 'readMessage',
+  updatedAt: false
+})
+
+User.hasMany(ReadMessage, {
+  foreignKey: {
+    allowNull: false
+  },
+  onDelete: 'cascade'
+})
+ReadMessage.belongsTo(User)
+
+Message.hasMany(ReadMessage, {
+  foreignKey: {
+    allowNull: false
+  },
+  onDelete: 'cascade'
+})
+ReadMessage.belongsTo(Message)
+
 
 module.exports = {
-  Message
+  Message,
+  ReadMessage
 }
