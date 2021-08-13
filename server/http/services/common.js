@@ -1,8 +1,8 @@
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
-const {User, Password} = require('../models/user')
-const {Session} = require('../models/session')
-const {sessionLifetime} = require('../constants')
+const {User, Password} = require('../../models/user')
+const {Session} = require('../../models/session')
+const {sessionLifetime} = require('../../constants')
 
 
 /**

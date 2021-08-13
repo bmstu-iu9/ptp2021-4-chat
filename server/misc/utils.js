@@ -1,28 +1,39 @@
-/**
- * Создает объект Error с указанным HTTP-кодом и сообщением
- * @param code {number} - HTTP-код
- * @param message {string} - сообщение
- * @returns {Error} - объект ошибки
- */
-function createError(code, message) {
-  const error = new Error()
-  error.message = message
-  error.code = code
-  return error
-}
+const HTTPError = require('./HTTPError')
+const {
+  errors,
+  validateUsername,
+  validatePassword
+} = require('../../common/common')
+
 
 /**
  * Оборачивает хендлер в функцию, которая верным образом обрабатывает
  * исключение в случае его возникновения
  */
 function wrapAsyncFunction(asyncFunction) {
-  return async (request, response, next) => {
-    return await asyncFunction(request, response, next).catch(next)
+  return async (...args) => {
+    const next = args[args.length - 1]
+    return await asyncFunction(...args).catch(next)
   }
 }
 
+/**
+ * Проверяет username и password при помощи общих функций валидации
+ * и в случае их некорректности выбрасывает исключение (только для express)
+ * @param username - имя пользователя
+ * @param password - пароль
+ */
+function validateUsernameAndPassword(username, password) {
+  if (typeof username !== 'string'
+    || typeof password !== 'string'
+    || !validateUsername(username)
+    || !validatePassword(password)
+  ) {
+    throw new HTTPError(errors.incorrectBody)
+  }
+}
 
 module.exports = {
-  createError,
-  wrapAsyncFunction
+  wrapAsyncFunction,
+  validateUsernameAndPassword
 }

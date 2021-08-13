@@ -1,4 +1,5 @@
-const {logger} = require('../definitions')
+const HTTPError = require('../../misc/HTTPError')
+const {logger} = require('../../definitions')
 
 
 function handleUnexpectedError(error, request, response, next) {
@@ -12,7 +13,7 @@ function handleUnexpectedError(error, request, response, next) {
 }
 
 function handleErrorWithCode(error, request, response, next) {
-  if (!error.code || response.headersSent) {
+  if (!(error instanceof HTTPError) || response.headersSent) {
     return next(error)
   }
 

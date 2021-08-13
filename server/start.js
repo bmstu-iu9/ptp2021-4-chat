@@ -4,13 +4,10 @@ const {host, port} = require('./config');
 
 
 (async () => {
-  // Инициализация middleware
-  require('./middleware')
+  // Инициализация HTTP
+  require('./http')
 
   await initDatabase()
-
-  // Инициализация хендлеров
-  require('./http_handlers')
 
   server.listen(port, host, () => {
     console.log(`Сервер запущен на ${host}:${port}`)

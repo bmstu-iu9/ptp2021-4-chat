@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt')
-const {createError} = require('../misc/utils')
-const {User, Password} = require('../models/user')
+const HTTPError = require('../../misc/HTTPError')
+const {User, Password} = require('../../models/user')
 const {checkUserCredentials} = require('./common')
-const {errors} = require('../../common/common')
+const {errors} = require('../../../common/common')
 
 
 /**
@@ -23,7 +23,7 @@ async function registerOrAuthUser(username, password) {
     const result = await checkUserCredentials(foundUser, password)
 
     if (!result) {
-      throw createError(...Object.values(errors.usernameAlreadyRegistered))
+      throw new HTTPError(errors.usernameAlreadyRegistered)
     }
 
     return foundUser

@@ -1,7 +1,7 @@
-const {createError} = require('../misc/utils')
-const {User} = require('../models/user')
+const HTTPError = require('../../misc/HTTPError')
+const {User} = require('../../models/user')
 const {checkUserCredentials} = require('./common')
-const {errors} = require('../../common/common')
+const {errors} = require('../../../common/common')
 
 
 /**
@@ -18,13 +18,13 @@ async function authenticateUser(username, password) {
   })
 
   if (!foundUser) {
-    throw createError(...Object.values(errors.usernameNotRegistered))
+    throw new HTTPError(errors.usernameNotRegistered)
   }
 
   const result = await checkUserCredentials(foundUser, password)
 
   if (!result) {
-    throw createError(...Object.values(errors.incorrectPassword))
+    throw new HTTPError(errors.incorrectPassword)
   }
 
   return foundUser
