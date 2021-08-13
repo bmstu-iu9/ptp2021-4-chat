@@ -10,6 +10,10 @@ class Password extends Model {
 }
 
 
+class OnlineUser extends Model {
+
+}
+
 User.init({
   username: {
     type: DataTypes.STRING,
@@ -44,8 +48,23 @@ User.hasOne(Password, {
 })
 Password.belongsTo(User)
 
+OnlineUser.init({}, {
+  sequelize,
+  modelName: 'onlineUser',
+  timestamps: false
+})
+
+User.hasOne(OnlineUser, {
+  foreignKey: {
+    allowNull: false
+  },
+  onDelete: 'cascade'
+})
+OnlineUser.belongsTo(User)
+
 
 module.exports = {
   User,
-  Password
+  Password,
+  OnlineUser
 }

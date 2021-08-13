@@ -1,2 +1,5 @@
 require('./user')
 require('./session')
+require('./conversation')
+require('./message')
+require('./content')
