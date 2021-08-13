@@ -10,7 +10,7 @@ class WSServer {
       connection: [],
       message: [],
       close: [],
-      error: []
+      error: [defaultErrorHandler]
     }
 
     this.initWebSocketServer()
@@ -29,7 +29,8 @@ class WSServer {
   }
 
   onError(handler) {
-    this.handlers.error.push(handler)
+    const length = this.handlers.error.length
+    this.handlers.error.splice(length - 1, 0, handler)
   }
 
   runConnectionHandlers(context) {
