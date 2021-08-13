@@ -2,7 +2,7 @@ const http = require('http')
 const express = require('express')
 const ws = require('ws')
 const Sequelize = require('sequelize')
-const WSServer = require('./misc/WSServer') // ORM для PostgreSQL
+const WSServer = require('./misc/WSServer')
 const {postgres} = require('./config')
 const {Logger, logLevels} = require('./misc/logger')
 
