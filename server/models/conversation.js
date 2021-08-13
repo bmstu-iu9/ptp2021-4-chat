@@ -6,6 +6,9 @@ const {sequelize} = require('../definitions')
 class Conversation extends Model {
 }
 
+class ConversationParticipant extends Model {
+}
+
 
 Conversation.init({
   type: {
@@ -18,7 +21,32 @@ Conversation.init({
   updatedAt: false
 })
 
+ConversationParticipant.init({},{
+  sequelize,
+  modelName: 'conversationParticipant',
+  timestamps: false
+})
+
+User.hasMany(ConversationParticipant,{
+  foreignKey: {
+    allowNull: false
+  },
+  onDelete: 'cascade'
+})
+
+ConversationParticipant.belongsTo(User)
+
+Conversation.hasMany(ConversationParticipant,{
+  foreignKey: {
+    allowNull: false
+  },
+  onDelete: 'cascade'
+})
+
+ConversationParticipant.belongsTo(Conversation)
+
 
 module.exports = {
-  Conversation
+  Conversation,
+  ConversationParticipant
 }
