@@ -6,6 +6,9 @@ const {host, port} = require('./config')
 // Инициализация HTTP
 require('./http')
 
+// Инициализация WS
+require('./ws')
+
 server.on('close', async () => {
   await sequelize.close()
 })
