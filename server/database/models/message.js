@@ -2,7 +2,7 @@ const {Content} = require('./content')
 const {User} = require('./user')
 const {Conversation} = require('./conversation')
 const {Model, DataTypes} = require('sequelize')
-const {sequelize} = require('../definitions')
+const sequelize = require('../sequelize')
 
 
 class Message extends Model {
@@ -56,7 +56,7 @@ Content.hasOne(Message, {
 })
 Message.belongsTo(Content)
 
-ReadMessage.init({},{
+ReadMessage.init({}, {
   sequelize,
   modelName: 'readMessage',
   updatedAt: false

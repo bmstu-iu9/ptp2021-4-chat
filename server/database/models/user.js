@@ -1,5 +1,5 @@
 const {Model, DataTypes} = require('sequelize')
-const {sequelize} = require('../definitions')
+const sequelize = require('../sequelize')
 
 
 class User extends Model {
@@ -13,6 +13,7 @@ class Password extends Model {
 class OnlineUser extends Model {
 
 }
+
 
 User.init({
   username: {

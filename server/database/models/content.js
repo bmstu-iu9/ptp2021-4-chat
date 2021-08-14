@@ -1,5 +1,5 @@
 const {Model, DataTypes} = require('sequelize')
-const {sequelize} = require('../definitions')
+const sequelize = require('../sequelize')
 
 
 class Content extends Model {

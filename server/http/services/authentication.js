@@ -1,5 +1,5 @@
 const HTTPError = require('../../misc/HTTPError')
-const {User} = require('../../models/user')
+const {User} = require('../../database/models/user')
 const {checkUserCredentials} = require('./common')
 const {errors} = require('../../../common/common')
 

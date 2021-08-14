@@ -4,8 +4,7 @@ WORKDIR /app
 
 COPY ./ ./
 
-RUN npm i
-RUN npm i -g gulp
-RUN gulp build
+RUN npm install
+RUN npm run frontend-build
 
-CMD ["npm", "run", "server"]
+CMD ["sh", "-c", "npm run migrate && npm run server"]

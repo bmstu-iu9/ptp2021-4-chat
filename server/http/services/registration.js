@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const HTTPError = require('../../misc/HTTPError')
-const {User, Password} = require('../../models/user')
+const {User, Password} = require('../../database/models/user')
 const {checkUserCredentials} = require('./common')
 const {errors} = require('../../../common/common')
 

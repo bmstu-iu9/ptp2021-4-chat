@@ -1,4 +1,4 @@
-const {Session} = require("../../models/session");
+const {Session} = require("../../database/models/session")
 
 
 async function deleteSession(sessionId) {

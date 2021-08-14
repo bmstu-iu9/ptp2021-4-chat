@@ -1,22 +1,17 @@
 const http = require('http')
 const express = require('express')
 const ws = require('ws')
-const Sequelize = require('sequelize')
 const WSServer = require('./misc/WSServer')
-const {postgres} = require('./config')
 const {Logger, logLevels} = require('./misc/logger')
 
 
 const app = express()
 const server = http.createServer(app)
-const sequelize = new Sequelize(
-  `postgres://${postgres.user}:${postgres.password}` +
-  `@${postgres.host}:${postgres.port}/${postgres.schema}`, {
-    logging: false
-  })
 
 const staticRouter = express.Router()
 const apiRouter = express.Router()
+
+const wss = new WSServer(new ws.Server({server}))
 
 const logger = new Logger([{
   levels: [logLevels.DEBUG],
@@ -31,11 +26,10 @@ const logger = new Logger([{
 
 
 module.exports = {
+  server,
+  wss,
   app,
   staticRouter,
-  logger,
   apiRouter,
-  server,
-  sequelize,
-  wss: new WSServer(new ws.Server({server}))
+  logger
 }

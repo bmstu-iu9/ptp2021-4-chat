@@ -1,10 +1,11 @@
 const {User} = require('./user')
 const {Model, DataTypes} = require('sequelize')
-const {sequelize} = require('../definitions')
+const sequelize = require('../sequelize')
 
 
 class Conversation extends Model {
 }
+
 
 class ConversationParticipant extends Model {
 }
@@ -15,19 +16,19 @@ Conversation.init({
     type: DataTypes.ENUM('dialog', 'discussion'),
     allowNull: false
   }
-},{
+}, {
   sequelize,
   modelName: 'conversation',
   updatedAt: false
 })
 
-ConversationParticipant.init({},{
+ConversationParticipant.init({}, {
   sequelize,
   modelName: 'conversationParticipant',
   timestamps: false
 })
 
-User.hasMany(ConversationParticipant,{
+User.hasMany(ConversationParticipant, {
   foreignKey: {
     allowNull: false
   },
@@ -36,7 +37,7 @@ User.hasMany(ConversationParticipant,{
 
 ConversationParticipant.belongsTo(User)
 
-Conversation.hasMany(ConversationParticipant,{
+Conversation.hasMany(ConversationParticipant, {
   foreignKey: {
     allowNull: false
   },
