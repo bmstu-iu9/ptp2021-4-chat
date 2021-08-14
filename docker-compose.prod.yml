@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${PSQL_PASS}
       POSTGRES_DB: ${PSQL_DB_NAME}
     ports:
-      - '5432:5432'
+      - '${PSQL_PORT}:${PSQL_PORT}'
     volumes:
       - database-volume:/var/lib/postgresql/data
   node:
@@ -17,10 +17,11 @@ services:
       - postgres
     ports:
       - '80:80'
+      - '443:443'
     environment:
       NODE_ENV: production
       PSQL_HOST: postgres
-      DOCKER_PSQL_EXTERNAL_PORT: ${DOCKER_PSQL_EXTERNAL_PORT}
+      PSQL_PORT: ${PSQL_PORT}
       PSQL_USER: ${PSQL_USER}
       PSQL_PASS: ${PSQL_PASS}
       PSQL_DB_NAME: ${PSQL_DB_NAME}

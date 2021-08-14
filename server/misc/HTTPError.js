@@ -1,6 +1,6 @@
 class HTTPError extends Error {
   constructor(error) {
-    super(error.message);
+    super(error.message)
     this.code = error.code
 
     Object.freeze(this)

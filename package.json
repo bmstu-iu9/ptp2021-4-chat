@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "description": "Web-чат",
   "scripts": {
-    "server": "node server/start.js"
+    "database": "docker compose up --build",
+    "migrate": "node server/database/migrate.js",
+    "migrate-force": "node server/database/migrate.js --force",
+    "server": "node server/start.js",
+    "frontend-build": "gulp build",
+    "frontend": "gulp",
+    "deploy": "docker-compose -f docker-compose.prod.yml up --build"
   },
   "repository": {
     "type": "git",
@@ -35,7 +41,7 @@
     "express": "^4.17.1",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.6.5",
+    "sequelize": "6.6.5",
     "ws": "^7.5.3"
   }
 }

@@ -22,37 +22,34 @@ Web-чат
   `cd ptp2021-4-chat`
 
 
-* **Если проект уже существует**, то синхронизуйте локальную ветку main с удаленной
-
-  `git fetch --all`
-
-  `git checkout main`
-
-  `git reset --hard origin/main`
-
 * Скачайте и установите Docker ([https://www.docker.com/](https://www.docker.com/))
 
-* Скачайте и поместите в папку с проектом (`ptp2021-4-chat`) `.env`-файл
 
-* Соберите и запустите контейнер с базой данных
-
-  `docker-compose up --build`
+* Скачайте и поместите в папку с проектом (`ptp2021-4-chat/`) `.env`-файл
 
 
-* Установите все зависимости и запустите сервер
+* Запустите базу данных
 
-  `npm i`
+  `npm run database`
+
+
+* Установите зависимости и произведите миграции
+
+  `npm install`
+
+  `npm run migrate-force`
+
+
+* Запустите сервер
 
   `npm run server`
 
 
-* Для разработки фронтенда установите и запустите Gulp
+* Для разработки фронтенда
 
-  `npm i -g gulp`
+  `npm run frontend`
 
-  `gulp`
-
-Для деплоя на сервер:
+Для деплоя:
 
 * Скопируйте репозиторий и перейдите в папку с проектом
 
@@ -61,19 +58,13 @@ Web-чат
   `cd ptp2021-4-chat`
 
 
-* **Если проект уже существует**, то синхронизуйте локальную ветку main с удаленной
-
-  `git fetch --all`
-
-  `git checkout main`
-
-  `git reset --hard origin/main`
-  
 * Скачайте и установите Docker ([https://www.docker.com/](https://www.docker.com/))
 
-* Скачайте и поместите в папку с проектом (`ptp2021-4-chat`) `.env`-файл
 
-* Соберите и запустите **production**-контейнеры
+* Скачайте и поместите в папку с проектом (`ptp2021-4-chat/`) `.env`-файл
 
-  `docker-compose -f docker-compose.prod.yml up --build`
+
+* Запустите проект
+
+  `npm run deploy`
   
