@@ -27,9 +27,10 @@ async function generateAndSaveSessionId(user) {
 /**
  * Проверяет наличие куки с сессей, проверят наличие id сессии в базе данных
  * и проверяет, не истекла ли сессия.
- * Если истекла - обновляет её дату истечения
- * @param request - объект запроса express
- * @param response - объект ответа express
+ * Если истекла - обновляет её дату истечения. Если при этом передан
+ * объект response из express, то клиенту также обновляется куки с сессией
+ * @param request - объект запроса со свойством cookies
+ * @param [response] - объект ответа express
  * @returns {Promise<boolean>} - true если сессия валидна, false в противном
  * случае
  */
@@ -51,7 +52,10 @@ async function checkSession(request, response) {
     // Обновление сессии в случае, если она истекла
     const newExpirationDate = new Date(Date.now() + sessionLifetime)
     await session.update({newExpirationDate})
-    response.cookie('sessionId', sessionId, {expires: newExpirationDate})
+
+    if (response) {
+      response.cookie('sessionId', sessionId, {expires: newExpirationDate})
+    }
   }
 
   return true
