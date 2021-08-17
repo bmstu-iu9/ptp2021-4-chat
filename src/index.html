@@ -19,11 +19,15 @@
 <div class="container-fluid main">
   <div class="row main-row justify-content-center">
     <div class="col-md-10 main-window">
-      <div class="window-dialogs">
+      <div class="dialogs-window dialogs-window-mobile-closed">
         <div class="dialogs-header small-header">
           <p>Текущие диалоги</p>
         </div>
         <div class="dialogs-list">
+          <div class="conversation" id="">
+            <p class="conversation-username">Игорь Павлов</p>
+            <p class="conversation-last-message">Привет!</p>
+          </div>
         </div>
         <div class="search-window">
           <p class="search-label">Добавление собеседника</p>
@@ -36,7 +40,7 @@
           </form>
         </div>
         </div>
-      <div class="window-opened-dialog">
+      <div class="opened-dialog-window hidden-window">
         <div class="opened-dialog-header small-header">
           <a class="btn-menu-trigger" id="btn-menu-trigger">
             <i class="fa fa-bars" aria-hidden="true"></i>
