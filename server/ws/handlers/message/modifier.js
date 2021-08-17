@@ -15,7 +15,7 @@ wss.onMessage((context, data, next) => {
   }
 
   const id = parsed.$id
-  if (Number.isInteger(id)) {
+  if (!Number.isInteger(id)) {
     throw new WSError('Сообщение должно содержать свойство $id')
   }
 
