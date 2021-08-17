@@ -12,5 +12,5 @@ wss.onMessage(wrapAsyncFunction(async (context, data) => {
 
   const endpoint = endpoints[payload.request]
 
-  await endpoint(payload, data)
+  await endpoint(context, payload)
 }))

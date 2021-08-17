@@ -1,12 +1,17 @@
-const WSError = require("../../misc/WSError");
-const {logger} = require("../../definitions");
+const WSError = require("../../misc/WSError")
+const {isDev} = require('../../config')
+const {logger} = require("../../definitions")
 const {wss} = require("../../definitions");
 
 
 wss.onError((context, error, next) => {
     const socket = context.socket
 
-    if (error instanceof WSError && socket.readyState === socket.OPEN)  {
+    if (error instanceof WSError && socket.readyState === socket.OPEN) {
+        if (isDev) {
+            console.log('Ошибка запроса', error.stack)
+        }
+
         socket.close(1007, error.message)
         return
     }
@@ -21,5 +26,5 @@ wss.onError((context, error) => {
         socket.close(1011)
     }
 
-    logger.error(error)
+    logger.error(error.stack)
 })
