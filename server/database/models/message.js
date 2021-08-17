@@ -25,7 +25,11 @@ Message.init({
     defaultValue: false
   },
   editedAt: DataTypes.DATE,
-  deletedAt: DataTypes.DATE
+  deletedAt: DataTypes.DATE,
+  relativeId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }
 }, {
   sequelize,
   modelName: 'message',
