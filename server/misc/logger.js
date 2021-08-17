@@ -10,8 +10,9 @@ const logLevels = {
 
 
 class Logger {
-  constructor(options) {
+  constructor(options, consoleLogLevels = []) {
     this.options = this.parseOptions(options)
+    this.consoleLogLevels = consoleLogLevels
   }
 
   parseOptions(options) {
@@ -53,6 +54,12 @@ class Logger {
   emit(message, level) {
     if (!(level in this.options)) {
       return
+    }
+
+    const formatted = this.formatMessage(message, level)
+
+    if (this.consoleLogLevels.includes(level)) {
+      console.log(formatted)
     }
 
     this.options[level].forEach(filePath => {
