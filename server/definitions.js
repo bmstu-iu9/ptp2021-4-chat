@@ -22,7 +22,7 @@ const logger = new Logger([{
 }, {
   levels: [logLevels.ERROR],
   filePath: './server/logs/error.log'
-}])
+}], [logLevels.WARNING, logLevels.ERROR])
 
 
 module.exports = {
