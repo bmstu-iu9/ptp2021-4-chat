@@ -1,13 +1,11 @@
-const {User} = require("../../../../database/models/user");
-const {Session} = require("../../../../database/models/session");
-const {wss} = require('../../../../definitions')
+const {wrapAsyncFunction} = require('../../../../misc/utils')
 
 
-module.exports = async (context, payload) => {
+module.exports = wrapAsyncFunction(async (context, payload) => {
     const user = context.user
 
     const userObject = user.toJSON()
     delete userObject.createdAt
 
     context.socket.answer(userObject)
-}
+})
