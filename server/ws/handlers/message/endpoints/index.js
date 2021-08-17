@@ -12,6 +12,10 @@ const schema = {
 }
 
 const metaSchemas = {
+  getUser: {
+    type: 'object',
+    properties: {}
+  },
   getAllConversations: {
     type: 'object',
     properties: {}
@@ -67,23 +71,24 @@ validator.customFormats.contentTypeENUM = (input) => {
 }
 
 function validateSchema(payload) {
-  if (!validator.validate(payload, schema)) {
+  if (!payload || !validator.validate(payload, schema)) {
     return false
   }
 
   const metaSchema = metaSchemas[payload.request]
 
-  if (!metaSchema) {
+  if (!payload.meta || !metaSchema) {
     return false
   }
 
-  return validator.validate(payload.meta, metaSchema, {required: true})
+  return validator.validate(payload.meta, metaSchema)
 }
 
 
 module.exports = {
   validateSchema,
   endpoints: {
+    getUser: require('./getUser'),
     getAllConversations: require('./getAllConversations'),
     getConversation: require('./getConversation'),
     createMessage: require('./createMessage'),
