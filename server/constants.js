@@ -3,5 +3,6 @@ module.exports = {
   urls: { // url для статических файлов (.html)
     index: '/',                             // главная страница
     authenticationAndRegistration: '/entry' // страница аутентификации/регистрации
-  }
+  },
+  messagesCountPerRequest: 50
 }
