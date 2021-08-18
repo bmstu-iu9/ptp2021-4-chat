@@ -5,6 +5,60 @@ const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
 
+/* Пример уведомления нового сообщения */
+const exampleMessageNotification = {
+  notificationType: "newMessage",
+  conversation: {
+    id: 0,
+    type: "dialog",
+    username: "Igor Pavlov",
+    unreadCount: 0,
+    generationTimestamp: 100,
+  },
+  message: {
+    relativeId: 0,
+    self: false,
+    read: true,
+    author: {
+      username: "Igor Pavlov"
+    },
+    creationTimestamp: 120,
+    edited: false,
+    content: {
+      type: "text",
+      value: "Привет!",
+      files: null,
+    },
+    generationTimestamp: 122
+  }
+}
+
+const exampleConversationNotification = [{
+  conversation: {
+    id: 0,
+    type: "dialog",
+    username: "Igor Pavlov",
+    unreadCount: 0,
+    generationTimestamp: 100,
+  },
+  lastMessage: {
+    relativeId: 0,
+    self: false,
+    read: true,
+    author: {
+      username: "Igor Pavlov"
+    },
+    creationTimestamp: 120,
+    edited: false,
+    content: {
+      type: "text",
+      value: "Привет!",
+      files: null,
+    },
+    generationTimestamp: 122
+  }
+}]
+
 /* Вспомогательные функции */
 function createElementWithClass(elementName, className) {
   let newElem = document.createElement(elementName)
