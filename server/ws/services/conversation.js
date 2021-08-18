@@ -42,7 +42,6 @@ async function getConversationsWithMessages(user, meta) {
     request
   } = parseMeta(meta)
 
-
   const entry = await request.method({
     attributes: {
       exclude: ['createdAt'],
@@ -53,7 +52,14 @@ async function getConversationsWithMessages(user, meta) {
           ` (SELECT COUNT(*) FROM "readMessages" WHERE "userId" = ${user.id} AND "messageId" IN` +
           ` (SELECT "id" FROM "messages" WHERE "userId" != ${user.id} AND "conversationId" = "conversation"."id")` +
           '))'
-        ), 'integer'), 'unreadCount']
+        ), 'integer'), 'unreadCount'],
+        [Sequelize.literal(
+          '(SELECT ARRAY(SELECT "username" FROM "users" WHERE "id" IN' +
+          ' (SELECT "userId" FROM "conversationParticipants"' +
+          ` WHERE "conversationId" = "conversation"."id" AND "userId" != ${user.id})))`
+        ),
+          'participants'
+        ]
       ]
     },
     where: whereOption.conversation,
@@ -112,7 +118,7 @@ async function getConversationsWithMessages(user, meta) {
 function parseMeta(meta) {
   const {conversationId, relativeId} = meta || {}
 
-  const whereOption = {}
+  const whereOption = {conversation: {}, message: {}}
   const request = {}
 
   request.method = Conversation.findAll.bind(Conversation)
@@ -124,7 +130,9 @@ function parseMeta(meta) {
     request.method = Conversation.findOne.bind(Conversation)
     request.isFindOne = true
 
-    whereOption.message.relativeId = Number.isInteger(relativeId) ? {[Op.lt]: relativeId} : undefined
+    if (Number.isInteger(relativeId)) {
+      whereOption.message.relativeId = {[Op.lt]: relativeId}
+    }
   }
 
   return {
