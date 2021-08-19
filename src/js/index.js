@@ -33,6 +33,8 @@ const exampleMessageNotification = {
   }
 }
 
+/* Пример ответа сервера на getAllConversations */
+
 const exampleConversationNotification = [{
   conversation: {
     id: 0,
@@ -66,6 +68,13 @@ function createElementWithClass(elementName, className) {
   return newElem
 }
 
+function createTextElement(elementName, className, innerText='') {
+  let newElem = document.createElement(elementName)
+  newElem.setAttribute("class", className)
+  newElem.innerText = innerText
+  return newElem
+}
+
 /* Очистка всех сообщений и полей в открытом диалоге */
 function clearOpenedDialog() {
   messageInputField.value = ""
@@ -83,33 +92,53 @@ function closeOpenedDialog() {
 }
 
 /* Создание элемента диалога */
-function createConversationElement(username, lastMessage) {
-  const conversationFirstMessage = createElementWithClass("p",
+function createConversationElement(username, lastMessage, selfMark) {
+  const conversationLastMessage = createElementWithClass("p",
     "conversation-last-message")
-  conversationFirstMessage.innerText = lastMessage
-  const conversationText = createElementWithClass("p",
-    "conversation-username")
-  conversationText.innerText = username
+  if (selfMark) {
+    const conversationLastMessageSelf = createTextElement("span",
+      "conversation-last-message-self", 'Я:')
+    conversationLastMessage.append(conversationLastMessageSelf)
+  }
+  conversationLastMessage.append(lastMessage)
+  const conversationUsername = createTextElement("p",
+    "conversation-username", username)
   const newConversation = createElementWithClass("div",
     "conversation")
-  newConversation.append(conversationText, conversationFirstMessage)
+  newConversation.append(conversationUsername, conversationLastMessage)
 
   newConversation.onclick = showOpenedDialog
 
   return newConversation
 }
 
-/* Добавление диалога в список всех диалогов */
+/* Рендеринг нового диалога по объекту уведомления */
+function renderConversation(conversation) {
+  const username = conversation.conversation.username
+  const lastMessage = conversation.lastMessage.content.value
+  const fromSelf = conversation.lastMessage.self
+  const newConversation = createConversationElement(username, lastMessage, fromSelf)
+  dialogsContainer.appendChild(newConversation)
+
+  dialogsContainer.scrollTop = dialogsContainer.scrollHeight
+}
+
+/* Добавление диалога в список всех диалогов с помощью кнопки */
 function addConversation() {
   const inputField = document.getElementById('search-user-input')
   let username = inputField.value
   if (username === "") {
     return
   }
-  const newConversation = createConversationElement(username, "")
+  const newConversation = createConversationElement(username, "", false)
   dialogsContainer.appendChild(newConversation)
   inputField.value = ""
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
+}
+
+/* Рендеринг нового сообщения по объекту уведомления */
+function renderMessage(message) {
+
 }
 
 /* Создание объекта сообщения */
