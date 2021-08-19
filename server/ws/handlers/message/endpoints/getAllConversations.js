@@ -3,7 +3,7 @@ const {wrapAsyncFunction} = require('../../../../misc/utils')
 
 
 module.exports = wrapAsyncFunction(async (context, payload) => {
-  const user = context.user
+  const user = context.current.user
 
   const conversations = await getConversationsWithLastMessage(user)
 

@@ -15,7 +15,10 @@ async function getUser(sessionId) {
         }
     })
 
-    return user
+    return {
+        user,
+        session
+    }
 }
 
 

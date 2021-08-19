@@ -1,4 +1,5 @@
 const WSError = require('../../misc/WSError')
+const {Session} = require('../../database/models/session')
 const {Sequelize} = require('sequelize')
 const {messagesCountPerRequest} = require('../../constants')
 const {Op} = require('sequelize')
@@ -8,6 +9,65 @@ const {Message} = require('../../database/models/message')
 const {Conversation} = require('../../database/models/conversation')
 const {ConversationParticipant} = require('../../database/models/conversation')
 
+
+async function getConversationParticipants(conversationId) {
+  const participants = await ConversationParticipant.findAll({
+    where: {
+      conversationId
+    },
+    attributes: [],
+    include: {
+      model: User,
+      attributes: {
+        exclude: ['createdAt']
+      },
+      include: {
+        model: Session,
+        attributes: {
+          exclude: ['expirationDate', 'userId']
+        }
+      }
+    }
+  })
+
+  return participants.map(participant => participant.user.toJSON())
+}
+
+async function checkUserHasAccessToConversation(user, conversationId) {
+  return (await getConversation(user, conversationId)) !== null
+}
+
+async function getConversation(user, conversationId) {
+  const conversation = await Conversation.findOne({
+    where: {
+      id: conversationId
+    },
+    include: {
+      model: ConversationParticipant,
+      where: {
+        userId: user.id
+      }
+    }
+  })
+
+  return conversation
+}
+
+
+async function getConversationWithLastMessage(user, conversationId) {
+  const conversation = await getConversationsWithMessages(user, {conversationId})
+
+  conversation.lastMessage = conversation.messages[0]
+  conversation.lastMessage.self = conversation.lastMessage.user.id === user.id
+
+  if (!conversation.lastMessage.self) {
+    conversation.lastMessage.read = null
+  }
+
+  delete conversation.messages
+
+  return conversation
+}
 
 async function getConversationsWithLastMessage(user) {
   const conversations = await getConversationsWithMessages(user)
@@ -144,5 +204,9 @@ function parseMeta(meta) {
 
 module.exports = {
   getConversationsWithLastMessage,
-  getConversationsWithMessages
+  getConversationsWithMessages,
+  getConversationWithLastMessage,
+  getConversation,
+  checkUserHasAccessToConversation,
+  getConversationParticipants
 }

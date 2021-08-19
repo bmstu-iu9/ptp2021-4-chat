@@ -6,6 +6,41 @@ const {User} = require('../../database/models/user')
 const {Sequelize} = require('sequelize')
 const {Message} = require('../../database/models/message')
 
+
+async function editMessage(conversationId, relativeId, content) {
+  const message = await Message.findOne({
+    where: {
+      conversationId,
+      relativeId
+    },
+    include: [Content]
+  })
+
+  message.content.value = content
+  await message.content.save()
+
+  return message
+}
+
+async function saveMessage(user, conversationId, contentType, value, files) {
+  const content = await Content.create({
+    type: contentType,
+    value,
+    files
+  })
+
+  const lastRelativeId = await getLastMessageRelativeId(conversationId)
+
+  const message = await Message.create({
+    conversationId,
+    relativeId: lastRelativeId + 1,
+    contentId: content.id,
+    userId: user.id
+  })
+
+  return message
+}
+
 async function getMessagesFromConversation(conversationId, user, relativeId) {
   const whereOption = {
     conversationId
@@ -42,6 +77,18 @@ async function getMessagesFromConversation(conversationId, user, relativeId) {
   }
 }
 
+async function getLastMessageRelativeId(conversationId) {
+  const message = await Message.findOne({
+    where: {
+      conversationId
+    },
+    order: [['relativeId', 'DESC']],
+    attributes: ['relativeId']
+  })
+
+  return message.relativeId
+}
+
 async function getUnreadCount(messages) {
   const notSelfMessages = messages.filter(message => !message.self)
   return notSelfMessages.length - await ReadMessage.count({
@@ -74,5 +121,8 @@ function cleanupMessage(message) {
 
 module.exports = {
   getMessagesFromConversation,
-  getUnreadCount
+  getUnreadCount,
+  getLastMessageRelativeId,
+  editMessage,
+  saveMessage
 }

@@ -5,6 +5,7 @@ function defaultErrorHandler(context, error) {
 
 class WSServer {
   constructor(wss) {
+    this.clients = []
     this.wss = wss
     this.handlers = {
       connection: [],
@@ -99,7 +100,7 @@ class WSServer {
 
   initWebSocketServer() {
     this.wss.on('connection', (socket, request) => {
-      const context = {socket, request}
+      const context = {socket, request, clients: this.clients}
       this.runConnectionHandlers(context)
 
       socket.on('message', (buffer, isBinary) => {
