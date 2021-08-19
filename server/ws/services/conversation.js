@@ -144,5 +144,9 @@ function parseMeta(meta) {
 
 module.exports = {
   getConversationsWithLastMessage,
-  getConversationsWithMessages
+  getConversationsWithMessages,
+  getConversationWithLastMessage,
+  getConversation,
+  checkUserHasAccessToConversation,
+  getConversationParticipants
 }
