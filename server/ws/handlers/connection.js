@@ -16,5 +16,14 @@ wss.onConnection(wrapAsyncFunction(async (context) => {
     throw new WSError('Не предоставлена сессия')
   }
 
-  context.user = await getUser(request.cookies.sessionId)
+  const {user, session} = await getUser(request.cookies.sessionId)
+
+  context.current = {
+    user,
+    session
+  }
+
+  context.clients.push({
+    session, socket: context.socket
+  })
 }))
