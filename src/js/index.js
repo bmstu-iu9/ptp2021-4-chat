@@ -122,6 +122,11 @@ class VirtualConversation extends Updatable {
     let message = new VirtualMessage(messageUpdate)
 
     this.messages.toBeUpdated[id] = this.messages.list[id] = message
+
+    if (id >= this.lastMessageId) {
+      this.lastMessageId = id
+      this.lastMessage = message
+    }
   }
 
   updateMessage(messageStateUpdate) {
@@ -146,8 +151,7 @@ class VirtualConversation extends Updatable {
   }
 
   getMessagesList() {
-    const copy = Object.assign({}, this.messages.list)
-    return copy
+    return Object.assign({}, this.messages.list)
   }
 
   #updateMessageState(message, messageStateUpdate) {
@@ -272,23 +276,24 @@ function addConversation() {
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
 
-/* Рендеринг нового сообщения по объекту уведомления */
-function renderMessage(message) {
-
-}
-
 /* Создание объекта сообщения */
 function createMessageElement(fromUser, messageText) {
-  const messageAuthorElem = createElementWithClass('p',
-    'message-author')
-  messageAuthorElem.innerText = fromUser
-  const messageTextElem = createElementWithClass('p',
-    'message-text')
-  messageTextElem.innerText = messageText
+  const messageAuthorElem = createTextElement('p',
+    'message-author', fromUser)
+  const messageTextElem = createTextElement('p',
+    'message-text', messageText)
   const newMessage = createElementWithClass('div',
     'message-container')
   newMessage.append(messageAuthorElem, messageTextElem)
   return newMessage
+}
+
+/* Рендеринг нового сообщения по объекту уведомления */
+function renderMessage(message) {
+  let fromUser = message.user.username
+  const newMessage = createMessageElement(fromUser, message.content.value)
+  messagesContainer.appendChild(newMessage)
+  messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
 }
 
 /* Добавление сообщения в диалог */
