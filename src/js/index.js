@@ -100,97 +100,90 @@ class VirtualMessage extends Updatable {
 }
 
 class VirtualConversation extends Updatable {
-  #messages
-  #id
-  #name
+  messages
+  lastMessage
+  lastMessageId
 
   constructor(conversationUpdate) {
-    super(conversationUpdate)
+    super(conversationUpdate.conversation)
 
-    this.#messages = {
+    if (conversationUpdate.lastMessage) {
+      this.lastMessage = new VirtualMessage(conversationUpdate.lastMessage)
+      this.lastMessageId = conversationUpdate.lastMessage.relativeId
+    }
+    this.messages = {
       list: {},
-      toBeUpdated: {},
-      states: {}
+      toBeUpdated: {}
     }
   }
 
   addMessage(messageUpdate) {
     const id = messageUpdate.relativeId
-    let message
-    if (id in this.#messages.states) {
-      message = this.#messages.states[id]
-      delete this.#messages.states[id]
-      message.update(messageUpdate)
-    } else {
-      message = new VirtualMessage(messageUpdate)
-    }
+    let message = new VirtualMessage(messageUpdate)
 
-    this.#messages.toBeUpdated[id] = this.#messages.list[id] = message
+    this.messages.toBeUpdated[id] = this.messages.list[id] = message
   }
 
   updateMessage(messageStateUpdate) {
     const id = messageStateUpdate.relativeId
 
-    if (id in this.#messages.list) {
-      this.#updateMessageState(this.#messages.list[id], messageStateUpdate)
-    } else {
-      this.#createMessageState(messageStateUpdate)
+    if (id in this.messages.list) {
+      this.#updateMessageState(this.messages.list[id], messageStateUpdate)
     }
   }
 
   getUpdatedMessages() {
-    for (const message of Object.values(this.#messages.toBeUpdated)) {
+    for (const message of Object.values(this.messages.toBeUpdated)) {
       if (message.getState().deleted) {
-        delete this.#messages.list[message.relativeId]
+        delete this.messages.list[message.relativeId]
       }
     }
 
-    const copy = Object.assign({}, this.#messages.toBeUpdated)
-    this.#messages.toBeUpdated = {}
+    const copy = Object.assign({}, this.messages.toBeUpdated)
+    this.messages.toBeUpdated = {}
 
     return copy
   }
 
-  #createMessageState(messageStateUpdate) {
-    this.#messages.states[messageStateUpdate.relativeId] = new VirtualMessage(
-      messageStateUpdate
-    )
+  getMessagesList() {
+    const copy = Object.assign({}, this.messages.list)
+    return copy
   }
 
   #updateMessageState(message, messageStateUpdate) {
     message.update(messageStateUpdate)
 
-    this.#messages.toBeUpdated[messageStateUpdate.relativeId] = message
+    this.messages.toBeUpdated[messageStateUpdate.relativeId] = message
   }
 }
 
 class ConversationsList {
-  #activeConversation
-  #conversations
+  activeConversation
+  conversations
 
   constructor() {
-    this.#conversations = {}
-    this.#activeConversation = null
+    this.conversations = {}
+    this.activeConversation = null
   }
 
   create(conversationUpdate) {
-    return this.#conversations[conversationUpdate.id] = new VirtualConversation(conversationUpdate)
+    return this.conversations[conversationUpdate.id] = new VirtualConversation(conversationUpdate)
   }
 
   get(id) {
-    return this.#conversations[id]
+    return this.conversations[id]
   }
 
   setActive(conversation) {
-    this.#activeConversation = conversation
+    this.activeConversation = conversation
   }
 
   getActive() {
-    return this.#activeConversation
+    return this.activeConversation
   }
 
   getAll() {
-    return Object.assign({}, this.#conversations)
+    return Object.assign({}, this.conversations)
   }
 }
 
@@ -204,6 +197,16 @@ function createElementWithClass(elementName, className) {
 function createTextElement(elementName, className, innerText='') {
   let newElem = document.createElement(elementName)
   newElem.setAttribute("class", className)
+  newElem.innerText = innerText
+  return newElem
+}
+
+function createCustomElement(elementName, className, id=NaN, innerText='') {
+  let newElem = document.createElement(elementName)
+  newElem.setAttribute("class", className)
+  if (id) {
+    newElem.setAttribute("id", id)
+  }
   newElem.innerText = innerText
   return newElem
 }
