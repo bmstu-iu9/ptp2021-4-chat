@@ -1,27 +1,16 @@
-const {getUnreadCount} = require('../../../services/messages')
-const {getMessagesFromConversation} = require('../../../services/messages')
-const {getConversation} = require('../../../services/conversation')
+const {getConversationsWithMessages} = require('../../../services/conversation')
 const {wrapAsyncFunction} = require('../../../../misc/utils')
 
 
 module.exports = wrapAsyncFunction(async (context, payload) => {
-  const conversationId = payload.meta.conversationId
-  const relativeId = payload.meta.relativeId
-  const user = context.user
+  const {conversationId, relativeId} = payload.meta
+  const user = context.current.user
 
-  const conversation = await getConversation(conversationId, user)
+  const conversation = await getConversationsWithMessages(user, {
+    conversationId,
+    relativeId
+  })
 
-  const messages = await getMessagesFromConversation(conversationId, user, relativeId)
-  const unreadCount = await getUnreadCount(messages.list)
-
-  const answer = {
-    conversation: {
-      ...conversation,
-      unreadCount,
-    },
-    messages
-  }
-
-  context.socket.answer(answer)
+  return context.socket.answer(conversation)
 })
 
