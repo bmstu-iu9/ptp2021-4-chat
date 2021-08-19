@@ -114,9 +114,9 @@ async function getConversationsWithMessages(user, meta) {
           '))'
         ), 'integer'), 'unreadCount'],
         [Sequelize.literal(
-          '(SELECT ARRAY(SELECT "username" FROM "users" WHERE "id" IN' +
-          ' (SELECT "userId" FROM "conversationParticipants"' +
-          ` WHERE "conversationId" = "conversation"."id" AND "userId" != ${user.id})))`
+            '(SELECT json_agg(row) FROM (SELECT "id", "username" FROM "users" WHERE "id" IN' +
+            ' (SELECT "userId" FROM "conversationParticipants"' +
+            ` WHERE "conversationId" = "conversation"."id" AND "userId" != ${user.id})) as "row")`
         ),
           'participants'
         ]
