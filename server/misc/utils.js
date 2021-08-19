@@ -1,4 +1,5 @@
 const HTTPError = require('./HTTPError')
+const {getConversationParticipants} = require('../ws/services/conversation')
 const {
   errors,
   validateUsername,
@@ -34,7 +35,15 @@ function validateUsernameAndPassword(username, password) {
 }
 
 
+async function sendDataToClients(clients, data) {
+  clients.forEach(client => {
+    client.socket.send(JSON.stringify(data))
+  })
+}
+
+
 module.exports = {
   wrapAsyncFunction,
-  validateUsernameAndPassword
+  validateUsernameAndPassword,
+  sendDataToClients
 }
