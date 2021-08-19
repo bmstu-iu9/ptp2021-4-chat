@@ -3,9 +3,8 @@ const {wrapAsyncFunction} = require('../../../../misc/utils')
 
 
 module.exports = wrapAsyncFunction(async (context, payload) => {
-  const conversationId = payload.meta.conversationId
-  const relativeId = payload.meta.relativeId
-  const user = context.user
+  const {conversationId, relativeId} = payload.meta
+  const user = context.current.user
 
   const conversation = await getConversationsWithMessages(user, {
     conversationId,
