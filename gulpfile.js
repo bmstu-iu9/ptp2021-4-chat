@@ -62,7 +62,7 @@ function buildJs(done) {
     .bundle()
     .pipe(source(path.basename(file)))
     .pipe(buffer())
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(gulp.dest(paths.destinations.js))
   })
 
