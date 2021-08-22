@@ -1,14 +1,23 @@
+const ws = require('ws')
+const WSError = require('./WSError')
+const {isDev} = require('../config')
+
+
 function defaultErrorHandler(context, error) {
   console.log(error)
 }
 
 
 class WSServer {
-  constructor(wss) {
+  constructor(httpServer) {
+    this.wss = new ws.Server({
+      server: httpServer,
+      verifyClient: this.verifyClient.bind(this)
+    })
+
     this.clients = []
-    this.wss = wss
     this.handlers = {
-      connection: [],
+      preConnection: [],
       message: [],
       close: [],
       error: [defaultErrorHandler]
@@ -17,8 +26,27 @@ class WSServer {
     this.initWebSocketServer()
   }
 
-  onConnection(handler) {
-    this.handlers.connection.push(handler)
+  async verifyClient(info, done) {
+    const request = info.req
+    const context = {request}
+    await this.runPreConnectionHandlers(context, (_, error) => {
+      if (isDev) {
+        console.log('Ошибка при попытке подключения к WS-серверу', error.stack)
+      }
+
+      if (error instanceof WSError) {
+        done(false, 400)
+      } else {
+        done(false, 500)
+      }
+    })
+
+    request.context = context
+    done(true)
+  }
+
+  onPreConnection(handler) {
+    this.handlers.preConnection.push(handler)
   }
 
   onMessage(handler) {
@@ -34,53 +62,53 @@ class WSServer {
     this.handlers.error.splice(length - 1, 0, handler)
   }
 
-  runConnectionHandlers(context) {
+  async runPreConnectionHandlers(context, errorCallback) {
     const next = this.generateNextFunction(
-      'connection',
-      this.runErrorHandlers.bind(this),
+      'preConnection',
+      errorCallback,
       context
     )
 
-    next()
+    await next()
   }
 
-  runMessageHandlers(context, data) {
+  async runMessageHandlers(context, data) {
     const next = this.generateNextFunction(
       'message',
       this.runErrorHandlers.bind(this),
       context, data
     )
 
-    next()
+    await next()
   }
 
-  runCloseHandlers(context, code, reason) {
+  async runCloseHandlers(context, code, reason) {
     const next = this.generateNextFunction(
       'close',
       this.runErrorHandlers.bind(this),
       context, code, reason
     )
 
-    next()
+    await next()
   }
 
-  runErrorHandlers(context, error) {
+  async runErrorHandlers(context, error) {
     const next = this.generateNextFunction(
       'error',
       defaultErrorHandler,
       context, error
     )
 
-    next()
+    await next()
   }
 
   generateNextFunction(handlerType, errorCallBack, context, ...args) {
     let index = 0
     const handlers = this.handlers[handlerType]
 
-    return function next(error) {
+    return async function next(error) {
       if (error) {
-        errorCallBack(context, error)
+        await errorCallBack(context, error)
         return
       }
 
@@ -91,28 +119,32 @@ class WSServer {
       const handler = handlers[index++]
 
       try {
-        handler(context, ...args, next)
+        await handler(context, ...args, next)
       } catch (error) {
-        errorCallBack(context, error)
+        await errorCallBack(context, error)
       }
     }
   }
 
   initWebSocketServer() {
     this.wss.on('connection', (socket, request) => {
-      const context = {socket, request, clients: this.clients}
-      this.runConnectionHandlers(context)
+      const context = request.context
+      context.clients = this.clients
+      context.socket = socket
+      delete request.context
 
-      socket.on('message', (buffer, isBinary) => {
-        this.runMessageHandlers(context, {payload: buffer, isBinary})
+      this.clients.push({session: context.current.session, socket})
+
+      socket.on('message', async (buffer, isBinary) => {
+        await this.runMessageHandlers(context, {payload: buffer, isBinary})
       })
 
-      socket.on('close', (code, reason) => {
-        this.runCloseHandlers(context, code, reason)
+      socket.on('close', async (code, reason) => {
+        await this.runCloseHandlers(context, code, reason)
       })
 
-      socket.on('error', error => {
-        this.runErrorHandlers(context, error)
+      socket.on('error', async error => {
+        await this.runErrorHandlers(context, error)
       })
     })
   }
