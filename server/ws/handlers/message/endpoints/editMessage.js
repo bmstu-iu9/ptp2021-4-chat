@@ -6,7 +6,7 @@ const {checkUserHasAccessToConversation} = require('../../../services/conversati
 const {wrapAsyncFunction} = require('../../../../misc/utils')
 
 
-module.exports = wrapAsyncFunction(async (context, payload) => {
+module.exports = async (context, payload) => {
   const user = context.current.user
   const {conversationId, relativeId, content} = payload.meta
 
@@ -15,8 +15,8 @@ module.exports = wrapAsyncFunction(async (context, payload) => {
   const message = await editMessage(conversationId, relativeId, content)
 
   const sessions = (await getConversationParticipants(conversationId))
-                      .flatMap(participant => participant.sessions)
-                      .map(session => session.sessionId)
+  .flatMap(participant => participant.sessions)
+  .map(session => session.sessionId)
 
   const clients = context.clients.filter(client =>
       sessions.includes(client.session.sessionId)
@@ -34,5 +34,4 @@ module.exports = wrapAsyncFunction(async (context, payload) => {
       generationTimestamp: new Date().toISOString()
     }
   })
-
-})
+}
