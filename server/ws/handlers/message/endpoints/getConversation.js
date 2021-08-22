@@ -2,7 +2,7 @@ const {getConversationsWithMessages} = require('../../../services/conversation')
 const {wrapAsyncFunction} = require('../../../../misc/utils')
 
 
-module.exports = wrapAsyncFunction(async (context, payload) => {
+module.exports = async (context, payload) => {
   const {conversationId, relativeId} = payload.meta
   const user = context.current.user
 
@@ -12,5 +12,5 @@ module.exports = wrapAsyncFunction(async (context, payload) => {
   })
 
   return context.socket.answer(conversation)
-})
+}
 

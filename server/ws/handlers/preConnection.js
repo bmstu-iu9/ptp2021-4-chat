@@ -6,7 +6,7 @@ const WSError = require("../../misc/WSError");
 const {getUser} = require("../services/user");
 
 
-wss.onConnection(wrapAsyncFunction(async (context) => {
+wss.onPreConnection(wrapAsyncFunction(async context => {
   const request = context.request
   request.cookies = cookie.parse(request.headers.cookie || '')
 
@@ -22,8 +22,4 @@ wss.onConnection(wrapAsyncFunction(async (context) => {
     user,
     session
   }
-
-  context.clients.push({
-    session, socket: context.socket
-  })
 }))
