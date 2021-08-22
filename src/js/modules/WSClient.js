@@ -1,10 +1,10 @@
 function randomInteger(min, max) {
-  let rand = min + Math.random() * (max + 1 - min);
-  return Math.floor(rand);
+  const random = min + Math.random() * (max + 1 - min)
+  return Math.floor(random)
 }
 
 function generateID() {
-  return randomInteger(1, 2**64)
+  return randomInteger(1, 2 ** 64)
 }
 
 
@@ -13,6 +13,7 @@ export default class WSClient {
   #pendingRequests
   #messageHandler
   #closeHandler
+  #errorHandler
   url
 
   constructor(url) {
@@ -24,7 +25,7 @@ export default class WSClient {
     let id
     do {
       id = generateID()
-    } while (!(id in this.#pendingRequests))
+    } while (id in this.#pendingRequests)
 
     return id
   }
@@ -33,7 +34,7 @@ export default class WSClient {
     this.#socket = new WebSocket(this.url)
 
     this.#socket.onmessage = (event) => {
-      this.#handleOnMessage(event)
+      this.#handleMessage(event)
     }
 
     this.#socket.onclose = (event) => {
@@ -51,31 +52,29 @@ export default class WSClient {
 
       this.#socket.onerror = () => {
         if (!resolved) {
-          return reject()
+          reject()
+          return
         }
 
-        this.#handleOnError()
+        this.#handleError()
+
+        if (this.#errorHandler) {
+          this.#errorHandler()
+        }
       }
     })
   }
 
-  #handleOnError() {
-    for (const controls of Object.values(this.#pendingRequests)) {
-      controls.reject({
-        code: 228,
-        message: "Ошибка при подключении"
-      })
-    }
-
+  #handleError() {
     this.#pendingRequests = {}
   }
 
-  #handleOnMessage(event) {
+  #handleMessage(event) {
     let message
     try {
       message = JSON.parse(event.data)
     } catch {
-      throw new Error("Сервер ответил не в JSON формате")
+      throw new Error('Сервер ответил не в JSON формате')
     }
 
     const id = message.$id
@@ -86,10 +85,10 @@ export default class WSClient {
     }
 
     if (!payload) {
-      throw new Error("JSON, который вернул сервер, имеет неправильный формат.")
+      throw new Error('JSON, который вернул сервер, имеет неправильный формат')
     }
     if (!(id in this.#pendingRequests)) {
-      throw new Error("Сервер вернул сообщение с несуществующим id")
+      throw new Error('Сервер вернул сообщение с несуществующим id')
     }
 
     // Обработка event
@@ -105,19 +104,18 @@ export default class WSClient {
     if (this.#socket.readyState !== 1) {
       return new Promise.reject({
         code: this.#socket.readyState,
-        message: "Нет соединения с сервером"
+        message: 'Статус соединения с сервером не позволяет отправлять сообщения'
       })
     }
 
     const id = this.#generateUniqueID()
     const promise = new Promise((resolve, reject) => {
-      this.#pendingRequests[id].resolve = resolve
-      this.#pendingRequests[id].reject = reject
+      this.#pendingRequests[id] = {resolve, reject}
     })
 
     const message = {
-      "$id": id,
-      "payload": data
+      $id: id,
+      payload: data
     }
     this.#socket.send(JSON.stringify(message))
 
@@ -130,5 +128,9 @@ export default class WSClient {
 
   setOnCloseHandler(handler) {
     this.#closeHandler = handler
+  }
+
+  setOnErrorHandler(handler) {
+    this.#errorHandler = handler
   }
 }
