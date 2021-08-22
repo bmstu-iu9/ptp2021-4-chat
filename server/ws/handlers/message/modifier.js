@@ -15,6 +15,7 @@ wss.onMessage((context, data, next) => {
   }
 
   const id = parsed.$id
+
   if (!Number.isInteger(id)) {
     throw new WSError('Сообщение должно содержать свойство $id')
   }
@@ -25,9 +26,6 @@ wss.onMessage((context, data, next) => {
 })
 
 function addMethod(socket, id) {
-  if (socket.answer) {
-    return
-  }
   socket.answer = (data, options, callback) => {
     let payload
     try {
