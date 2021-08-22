@@ -13,7 +13,6 @@ export default class WSClient {
   #pendingRequests
   #messageHandler
   #closeHandler
-  #errorHandler
   url
 
   constructor(url) {
@@ -57,10 +56,6 @@ export default class WSClient {
         }
 
         this.#handleError()
-
-        if (this.#errorHandler) {
-          this.#errorHandler()
-        }
       }
     })
   }
@@ -128,9 +123,5 @@ export default class WSClient {
 
   setOnCloseHandler(handler) {
     this.#closeHandler = handler
-  }
-
-  setOnErrorHandler(handler) {
-    this.#errorHandler = handler
   }
 }
