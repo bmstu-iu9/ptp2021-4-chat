@@ -11,7 +11,7 @@ const server = http.createServer(app)
 const staticRouter = express.Router()
 const apiRouter = express.Router()
 
-const wss = new WSServer(new ws.Server({server}))
+const wss = new WSServer(server)
 
 const logger = new Logger([{
   levels: [logLevels.DEBUG],
