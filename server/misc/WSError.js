@@ -1,9 +1,9 @@
 class WSError extends Error {
-    constructor(message) {
-        super(message)
+  constructor(message) {
+    super(message)
 
-        Object.freeze(this)
-    }
+    Object.freeze(this)
+  }
 }
 
 

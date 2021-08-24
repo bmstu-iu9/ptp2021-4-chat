@@ -33,10 +33,10 @@ const metaSchemas = {
     properties: {
       conversationId: {type: 'integer'},
       contentType: {type: 'string', format: 'contentTypeENUM'},
-      content: {type: 'string'},
+      value: {type: 'string'},
       files: {type: 'array', items: {type: 'string'}}
     },
-    required: ['conversationId', 'contentType', 'content']
+    required: ['conversationId', 'contentType', 'value']
   },
   readMessage: {
     type: 'object',
@@ -51,9 +51,9 @@ const metaSchemas = {
     properties: {
       conversationId: {type: 'integer'},
       relativeId: {type: 'integer'},
-      content: {type: 'string'}
+      value: {type: 'string'}
     },
-    required: ['conversationId', 'relativeId', 'content']
+    required: ['conversationId', 'relativeId', 'value']
   },
   deleteMessage: {
     type: 'object',

@@ -1,22 +1,45 @@
 const WSError = require('../../../../misc/WSError')
-const {sendDataToClients} = require('../../../../misc/utils')
-const {checkUserHasAccessToConversation} = require('../../../services/conversation')
+const {getMessage} = require('../../../services/messages')
+const {getConversation} = require('../../../services/conversations')
+const {getConversationClients} = require('../../../services/common')
+const {emit} = require('../../../services/common')
+const {checkUserHasAccessToConversation} = require('../../../services/conversations')
 const {saveMessage} = require('../../../services/messages')
-const {getConversationWithLastMessage} = require('../../../services/conversation')
+const {
+  onlyIdConversationConfig,
+  newMessageConversationConfig
+} = require('../../../services/conversations/configs')
+const {
+  newMessageConfig,
+  createMessageConfig
+} = require('../../../services/messages/configs')
 
 
 module.exports = async (context, payload) => {
-  const user = context.current.user
-  const {conversationId, contentType, content, files} = payload.meta
+  const {user, session} = context.current
+  const {conversationId, contentType, value, files} = payload.meta
 
-  await checkUserHasAccessToConversation(user, conversationId)
+  if (contentType === 'text' && value === '') {
+    throw new WSError('Сообщение не может быть пустым')
+  }
 
-  await saveMessage(user, conversationId, contentType, content, files)
+  await checkUserHasAccessToConversation(conversationId, user)
 
-  const conversation = await getConversationWithLastMessage(user, conversationId)
+  const relativeId = await saveMessage(conversationId, contentType, value, files, user)
 
-  await sendDataToClients(context.clients, {
-    ...conversation,
-    notificationType: 'newMessage'
+  await emit('newMessage', {
+    getClients: async () => await getConversationClients(conversationId, session.sessionId),
+    getPayloadToOther: async (user) => {
+      return {
+        conversation: await getConversation(conversationId, user, newMessageConversationConfig),
+        message: await getMessage(conversationId, relativeId, user, newMessageConfig)
+      }
+    },
+    getPayloadToCurrent: async () => {
+      return {
+        conversation: await getConversation(conversationId, user, onlyIdConversationConfig),
+        message: await getMessage(conversationId, relativeId, user, createMessageConfig)
+      }
+    }
   })
 }

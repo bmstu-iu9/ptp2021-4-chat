@@ -1,12 +1,11 @@
 const {checkSession} = require('../../http/services/common')
-const {wrapAsyncFunction} = require('../../misc/utils')
 const {wss} = require('../../definitions')
 const cookie = require('cookie')
-const WSError = require("../../misc/WSError");
-const {getUser} = require("../services/user");
+const WSError = require("../../misc/WSError")
+const {getUser} = require("../services/users")
 
 
-wss.onPreConnection(wrapAsyncFunction(async context => {
+wss.onPreConnection(async context => {
   const request = context.request
   request.cookies = cookie.parse(request.headers.cookie || '')
 
@@ -16,10 +15,10 @@ wss.onPreConnection(wrapAsyncFunction(async context => {
     throw new WSError('Не предоставлена сессия')
   }
 
-  const {user, session} = await getUser(request.cookies.sessionId)
+  const {session, ...user} = await getUser(request.cookies.sessionId)
 
   context.current = {
     user,
     session
   }
-}))
+})

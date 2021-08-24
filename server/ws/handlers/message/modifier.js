@@ -4,7 +4,7 @@ const {wss} = require('../../../definitions')
 
 wss.onMessage((context, data, next) => {
   if (data.isBinary) {
-    throw new WSError('Бинарные данные должны быть закодированны в base64')
+    throw new WSError('Бинарные данные должны быть закодированы в base64')
   }
 
   let parsed
