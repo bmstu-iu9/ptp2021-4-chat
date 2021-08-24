@@ -1,6 +1,6 @@
 
 import {exampleConversationNotification, exampleMessageNotification} from './modules/notificationExamples.js'
-import ConversationsList from './modules/virtualObjects.js'
+import {ConversationsList} from './modules/virtualObjects.js'
 
 window.convNotif = exampleConversationNotification
 window.msgNotif = exampleMessageNotification
@@ -59,7 +59,7 @@ function createConversationElement(username, id, lastMessage, self) {
       "conversation-last-message")
     if (self) {
       const conversationLastMessageSelf = createTextElement("span",
-        "conversation-last-message-self", 'Я:')
+        "conversation-last-message-self", 'Я: ')
       conversationLastMessage.append(conversationLastMessageSelf)
     }
     conversationLastMessage.append(lastMessage)
@@ -82,7 +82,12 @@ function createConversationElement(username, id, lastMessage, self) {
 
 /* Рендеринг нового диалога по объекту уведомления */
 function renderConversation(conversation, addToBegin) {
-  const username = conversation.conversation.username
+  let username
+  if (conversation.conversation.type === "dialog") {
+    username = conversation.conversation.participants[0].username
+  } else {
+    username = conversation.conversation.name
+  }
   const id = conversation.conversation.id
   const lastMessage = conversation.lastMessage.content.value
   const self = conversation.lastMessage.self
@@ -97,29 +102,24 @@ function renderConversation(conversation, addToBegin) {
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
 
-
-/* Смена диалогов местами */
+/* Перенос диалога на первое место */
 function moveConversationToBegin(conversationId) {
   const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
+
   if (conversationElement && dialogsContainer.hasChildNodes()) {
     dialogsContainer.insertBefore(conversationElement, dialogsContainer.firstChild)
-    conversationElement.remove()
   }
-
 }
 
 function setActiveConversation(conversationId) {
   const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
   conversationElement.classList.add("active-conversation")
-
 }
 
 function unsetActiveConversation(conversationId) {
   const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
   conversationElement.classList.remove("active-conversation")
-
 }
-
 
 /* Добавление диалога в список всех диалогов с помощью кнопки */
 function addConversation() {
