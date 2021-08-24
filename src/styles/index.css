@@ -86,6 +86,10 @@ body{
     font-weight: 350;
 }
 
+.active-conversation{
+    background-color: lightblue !important;
+}
+
 /* форма с поиском собеседников */
 
 .search-window{

@@ -79,6 +79,7 @@ function createConversationElement(username, id, lastMessage, self) {
   return newConversation
 }
 
+
 /* Рендеринг нового диалога по объекту уведомления */
 function renderConversation(conversation, addToBegin) {
   const username = conversation.conversation.username
@@ -96,14 +97,29 @@ function renderConversation(conversation, addToBegin) {
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
 
+
 /* Смена диалогов местами */
 function moveConversationToBegin(conversationId) {
-  const conversationElement = document.querySelector(`[data-conversation-id=${conversationId}]`)
+  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
   if (conversationElement && dialogsContainer.hasChildNodes()) {
     dialogsContainer.insertBefore(conversationElement, dialogsContainer.firstChild)
     conversationElement.remove()
   }
+
 }
+
+function setActiveConversation(conversationId) {
+  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
+  conversationElement.classList.add("active-conversation")
+
+}
+
+function unsetActiveConversation(conversationId) {
+  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
+  conversationElement.classList.remove("active-conversation")
+
+}
+
 
 /* Добавление диалога в список всех диалогов с помощью кнопки */
 function addConversation() {
