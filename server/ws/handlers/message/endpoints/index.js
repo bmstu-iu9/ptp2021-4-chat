@@ -62,6 +62,26 @@ const metaSchemas = {
       relativeId: {type: 'integer'}
     },
     required: ['conversationId', 'relativeId']
+  },
+  createDialog: {
+    type: 'object',
+    properties: {
+      userId: {type: 'integer'}
+    },
+    required: ['userId']
+  },
+  createDiscussion: {
+    type: 'object',
+    properties: {
+      name: {type: 'string'},
+      userIds: {
+        type: 'array',
+        items: {
+          type: 'integer'
+        }
+      }
+    },
+    required: ['name', 'userIds']
   }
 }
 
@@ -94,6 +114,8 @@ module.exports = {
     createMessage: require('./createMessage'),
     readMessage: require('./readMessage'),
     editMessage: require('./editMessage'),
-    deleteMessage: require('./deleteMessage')
+    deleteMessage: require('./deleteMessage'),
+    createDialog: require('./createDialog'),
+    createDiscussion: require('./createDiscussion')
   }
 }

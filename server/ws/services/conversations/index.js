@@ -1,5 +1,6 @@
 const WSError = require('../../../misc/WSError')
 const processObjectAccordingConfig = require('../../../misc/objectProcessor')
+const {fullConversationConfig} = require('./configs')
 const {Session} = require('../../../database/models/session')
 const {User} = require('../../../database/models/user')
 const {Op} = require('sequelize')
@@ -9,22 +10,22 @@ const {Sequelize} = require('sequelize')
 const {ConversationParticipant} = require('../../../database/models/conversation')
 
 
-function getIncludesForConversation(user) {
+function getIncludesForConversation(userId) {
   return [
     [Sequelize.literal('CURRENT_TIMESTAMP'), 'generatedAt'],
     [Sequelize.cast(Sequelize.literal(
       `(
-         (SELECT COUNT(*) FROM "messages" WHERE "userId" != ${user.id} AND "conversationId" = "conversation"."id") 
+         (SELECT COUNT(*) FROM "messages" WHERE "userId" != ${userId} AND "conversationId" = "conversation"."id") 
            - 
-         (SELECT COUNT(*) FROM "readMessages" WHERE "userId" = ${user.id} AND "messageId" IN 
-           (SELECT "id" FROM "messages" WHERE "userId" != ${user.id} AND "conversationId" = "conversation"."id")
+         (SELECT COUNT(*) FROM "readMessages" WHERE "userId" = ${userId} AND "messageId" IN 
+           (SELECT "id" FROM "messages" WHERE "userId" != ${userId} AND "conversationId" = "conversation"."id")
          )
        )`
     ), 'integer'), 'unreadCount'],
     [Sequelize.literal(
       `(SELECT json_agg(row) FROM 
          (SELECT "id", "username" FROM "users" WHERE "id" IN 
-           (SELECT "userId" FROM "conversationParticipants" WHERE "conversationId" = "conversation"."id" AND "userId" != ${user.id})
+           (SELECT "userId" FROM "conversationParticipants" WHERE "conversationId" = "conversation"."id" AND "userId" != ${userId})
          ) as "row"
        )`
     ),
@@ -33,10 +34,10 @@ function getIncludesForConversation(user) {
   ]
 }
 
-async function fetchConversation(conversationId, user) {
+async function fetchConversation(conversationId, userId) {
   const conversation = await Conversation.findOne({
     attributes: {
-      include: getIncludesForConversation(user)
+      include: getIncludesForConversation(userId)
     },
     where: {
       id: conversationId
@@ -45,7 +46,7 @@ async function fetchConversation(conversationId, user) {
       model: ConversationParticipant,
       attributes: [],
       where: {
-        userId: user.id
+        userId
       }
     }, DiscussionMeta]
   })
@@ -53,23 +54,23 @@ async function fetchConversation(conversationId, user) {
   return conversation ? conversation.toJSON() : null
 }
 
-async function fetchAllConversations(user) {
+async function fetchAllConversations(userId) {
   return (await Conversation.findAll({
     attributes: {
-      include: getIncludesForConversation(user)
+      include: getIncludesForConversation(userId)
     },
     include: [{
       model: ConversationParticipant,
       attributes: [],
       where: {
-        userId: user.id
+        userId
       }
     }, DiscussionMeta]
   })).map(conversation => conversation.toJSON())
 }
 
 async function getConversation(conversationId, user, config = null) {
-  const conversation = await fetchConversation(conversationId, user)
+  const conversation = await fetchConversation(conversationId, user.id)
 
   if (conversation && config) {
     processObjectAccordingConfig(conversation, config)
@@ -79,7 +80,7 @@ async function getConversation(conversationId, user, config = null) {
 }
 
 async function getAllConversations(user, config = null) {
-  const conversations = await fetchAllConversations(user)
+  const conversations = await fetchAllConversations(user.id)
 
   if (config) {
     conversations.forEach(conversation => processObjectAccordingConfig(conversation, config))
@@ -89,7 +90,7 @@ async function getAllConversations(user, config = null) {
 }
 
 async function checkUserHasAccessToConversation(conversationId, user) {
-  const conversation = await fetchConversation(conversationId, user)
+  const conversation = await fetchConversation(conversationId, user.id)
   if (!conversation) {
     throw new WSError('Conversation с таким id не существует')
   }
@@ -127,11 +128,64 @@ async function getConversationParticipantsSessionsIds(conversationId) {
   return sessions
 }
 
+async function getDialog(userId1, userId2) {
+  const dialog = fetchUsersDialog(userId1, userId2)
+
+  if (dialog) {
+    processObjectAccordingConfig(dialog, fullConversationConfig)
+  }
+
+  return dialog
+}
+
+async function fetchUsersDialog(userId1, userId2) {
+  const userDialogs1 = (await fetchAllConversations(userId1))
+  .filter(conversation => conversation.type === 'dialog')
+
+  const dialog = await ConversationParticipant.findOne({
+    where: {
+      userId: userId2
+    },
+    attributes: [],
+    include: {
+      model: Conversation,
+      where: {
+        type: 'dialog',
+        id: {
+          [Op.in]: userDialogs1.map(dialog => dialog.id)
+        }
+      }
+    }
+  })
+
+  return dialog ? dialog.toJSON() : null
+}
+
+async function saveConversation(type, userIds) {
+  const createdConversation = await Conversation.create({type})
+  const conversationId = createdConversation.id
+
+  await ConversationParticipant.bulkCreate(
+    userIds.map(userId => {
+      return {userId, conversationId}
+    })
+  )
+
+  return conversationId
+}
+
+async function saveDiscussionMeta(conversationId, name) {
+  await DiscussionMeta.create({name, conversationId})
+}
+
 
 module.exports = {
   getConversation,
   getAllConversations,
   checkUserHasAccessToConversation,
   getConversationParticipantsSessionsIds,
-  getIncludesForConversation
+  getIncludesForConversation,
+  getDialog,
+  saveConversation,
+  saveDiscussionMeta
 }
