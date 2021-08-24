@@ -3,26 +3,26 @@ export const exampleMessageNotification = {
   notificationType: "newMessage",
   conversation: {
     id: 0,
-    type: "dialog",
-    username: "Igor Pavlov",
     unreadCount: 0,
-    generationTimestamp: 100,
+    generatedAt: 1629739557, //unixtimestamp
   },
   message: {
     relativeId: 0,
+    server: false,
     self: false,
     read: true,
-    author: {
-      username: "Igor Pavlov"
+    user: {
+      id: 0,
+      username: "Igor Pavlov",
     },
-    creationTimestamp: 120,
-    edited: false,
+    createdAt: 1629739557,
+
     content: {
       type: "text",
       value: "Привет!",
       files: null,
     },
-    generationTimestamp: 122
+    generatedAt: 1629739557
   }
 }
 
@@ -32,24 +32,30 @@ export const exampleConversationNotification = [{
   conversation: {
     id: 0,
     type: "dialog",
-    username: "Igor Pavlov",
     unreadCount: 0,
-    generationTimestamp: 100,
+    participants: [{
+      id: 0,
+      username: "Igor Pavlov",
+    }],
+    generatedAt: 1629739557
   },
   lastMessage: {
     relativeId: 0,
-    self: false,
-    read: true,
-    author: {
-      username: "Igor Pavlov"
+    server: false,
+    self: true,
+    read: false,
+    user: {
+      id: 0,
+      username: "Igor Pavlov",
     },
-    creationTimestamp: 120,
+    createdAt: 1629739557,
     edited: false,
     content: {
       type: "text",
       value: "Привет!",
       files: null,
     },
-    generationTimestamp: 122
+    generatedAt: 1629739557
   }
 }]
+
