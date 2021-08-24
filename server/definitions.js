@@ -12,6 +12,7 @@ const staticRouter = express.Router()
 const apiRouter = express.Router()
 
 const wss = new WSServer(server)
+const wssClients = {}
 
 const logger = new Logger([{
   levels: [logLevels.DEBUG],
@@ -30,6 +31,7 @@ module.exports = {
   wss,
   app,
   staticRouter,
+  wssClients,
   apiRouter,
   logger
 }

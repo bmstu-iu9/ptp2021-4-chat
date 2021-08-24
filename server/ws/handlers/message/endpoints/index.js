@@ -33,10 +33,10 @@ const metaSchemas = {
     properties: {
       conversationId: {type: 'integer'},
       contentType: {type: 'string', format: 'contentTypeENUM'},
-      content: {type: 'string'},
+      value: {type: 'string'},
       files: {type: 'array', items: {type: 'string'}}
     },
-    required: ['conversationId', 'contentType', 'content']
+    required: ['conversationId', 'contentType', 'value']
   },
   readMessage: {
     type: 'object',
@@ -51,9 +51,9 @@ const metaSchemas = {
     properties: {
       conversationId: {type: 'integer'},
       relativeId: {type: 'integer'},
-      content: {type: 'string'}
+      value: {type: 'string'}
     },
-    required: ['conversationId', 'relativeId', 'content']
+    required: ['conversationId', 'relativeId', 'value']
   },
   deleteMessage: {
     type: 'object',
@@ -62,6 +62,26 @@ const metaSchemas = {
       relativeId: {type: 'integer'}
     },
     required: ['conversationId', 'relativeId']
+  },
+  createDialog: {
+    type: 'object',
+    properties: {
+      userId: {type: 'integer'}
+    },
+    required: ['userId']
+  },
+  createDiscussion: {
+    type: 'object',
+    properties: {
+      name: {type: 'string'},
+      userIds: {
+        type: 'array',
+        items: {
+          type: 'integer'
+        }
+      }
+    },
+    required: ['name', 'userIds']
   }
 }
 
@@ -94,6 +114,8 @@ module.exports = {
     createMessage: require('./createMessage'),
     readMessage: require('./readMessage'),
     editMessage: require('./editMessage'),
-    deleteMessage: require('./deleteMessage')
+    deleteMessage: require('./deleteMessage'),
+    createDialog: require('./createDialog'),
+    createDiscussion: require('./createDiscussion')
   }
 }

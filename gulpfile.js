@@ -43,8 +43,6 @@ const paths = {
   }
 }
 
-console.log(paths.sources.js)
-
 function buildStyles() {
   return gulp.src(paths.sources.styles)
   .pipe(autoprefixer())
