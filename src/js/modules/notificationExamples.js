@@ -57,5 +57,34 @@ export const exampleConversationNotification = [{
     },
     generatedAt: 1629739557
   }
+}, {
+  conversation: {
+    id: 1,
+    type: "dialog",
+    unreadCount: 0,
+    participants: [{
+      id: 120,
+      username: "skorb",
+    }],
+    generatedAt: 1629739557
+  },
+  lastMessage: {
+    relativeId: 0,
+    server: false,
+    self: false,
+    read: false,
+    user: {
+      id: 120,
+      username: "skorb",
+    },
+    createdAt: 1629739590,
+    edited: false,
+    content: {
+      type: "text",
+      value: "Кинул хмурого",
+      files: null,
+    },
+    generatedAt: 1629739590
+  }
 }]
 
