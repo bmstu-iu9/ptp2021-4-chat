@@ -133,6 +133,13 @@ class VirtualConversation extends Updatable {
       lastId: id
     }
   }
+
+  getUserInfo(){
+    return {
+      username: this.username,
+      userId: this.userId
+    }
+  }
 }
 
 export class ConversationsList {
