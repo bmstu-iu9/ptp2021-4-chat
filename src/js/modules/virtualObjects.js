@@ -3,8 +3,8 @@ class Updatable {
   #data
 
   constructor(update) {
-    if (!update.generationTimestamp) {
-      throw new Error('В объекте update обязательно должно присутствовать свойство generationTimestamp')
+    if (!update.generatedAt) {
+      throw new Error('В объекте update обязательно должно присутствовать свойство generatedAt')
     }
 
     this.#data = {}
@@ -12,14 +12,14 @@ class Updatable {
   }
 
   update(update) {
-    if (update.generationTimestamp > this.#data.generationTimestamp) {
+    if (update.generatedAt > this.#data.generatedAt) {
       this.#applyUpdate(update)
     }
   }
 
   getData() {
     return Object.assign({}, this.#data)
-  }
+  } 
 
   #applyUpdate(update) {
     for (const property of Object.keys(update)) {
@@ -96,9 +96,14 @@ class VirtualConversation extends Updatable {
 
     this.messages.toBeUpdated[messageStateUpdate.relativeId] = message
   }
+
+
+  getLastNMessages(N){
+    return this.messages.list.slice(this.lastMessageId - N)
+  }
 }
 
-class ConversationsList {
+export class ConversationsList {
   activeConversation
   conversations
 
