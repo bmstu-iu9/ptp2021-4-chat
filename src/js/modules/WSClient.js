@@ -20,6 +20,10 @@ export default class WSClient {
     this.#pendingRequests = {}
   }
 
+  getConnectionStatus() {
+    return this.#socket.readyState
+  }
+
   #generateUniqueID() {
     let id
     do {
@@ -45,13 +49,19 @@ export default class WSClient {
     let resolved = false
     return new Promise((resolve, reject) => {
       this.#socket.onopen = () => {
-        resolve()
+        resolve({
+          code: 1,
+          message: "Successfully connected!"
+        })
         resolved = true
       }
 
       this.#socket.onerror = () => {
         if (!resolved) {
-          reject()
+          reject({
+            code: 0,
+            message: "Can't connect to server"
+          })
           return
         }
 
@@ -97,7 +107,7 @@ export default class WSClient {
 
   send(data) {
     if (this.#socket.readyState !== 1) {
-      return new Promise.reject({
+      return Promise.reject({
         code: this.#socket.readyState,
         message: 'Статус соединения с сервером не позволяет отправлять сообщения'
       })
