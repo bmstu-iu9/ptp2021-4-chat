@@ -1,10 +1,9 @@
 const WSError = require("../../../misc/WSError");
 const {endpoints, validateSchema} = require('./endpoints')
-const {wrapAsyncFunction} = require('../../../misc/utils')
 const {wss} = require('../../../definitions')
 
 
-wss.onMessage(wrapAsyncFunction(async (context, data) => {
+wss.onMessage(async (context, data) => {
   const payload = data.payload
 
   if (!validateSchema(payload)) {
@@ -14,4 +13,4 @@ wss.onMessage(wrapAsyncFunction(async (context, data) => {
   const endpoint = endpoints[payload.request]
 
   await endpoint(context, payload)
-}))
+})
