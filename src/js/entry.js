@@ -83,6 +83,7 @@ authFormSubmitButton.addEventListener('click', event => {
 
   const username = authForm.querySelector('input[name="username"]').value
   const password = authForm.querySelector('input[name="password"]').value
+  const rememberCheck = authForm.querySelector('input[name="rememberCheck"]').value
 
   if (username === '' || password === '') {
     return showNotification(errorsMessages.fieldsEmpty)
@@ -91,7 +92,7 @@ authFormSubmitButton.addEventListener('click', event => {
   authFormSubmitButton.disabled = true
   authFormSwitchButton.disabled = true
 
-  makeAPIRequest('auth', {username, password})
+  makeAPIRequest('auth', {username, password, rememberCheck})
   .finally(() => {
     authFormSubmitButton.disabled = false
     authFormSwitchButton.disabled = false
@@ -104,6 +105,7 @@ registrationFormSubmitButton.addEventListener('click', event => {
   const username = registrationForm.querySelector('input[name="username"]').value
   const password = registrationForm.querySelector('input[name="password"]').value
   const passwordRetry = registrationForm.querySelector('input[name="passwordRetry"]').value
+  const rememberCheck = registrationForm.querySelector('input[name="rememberCheck"]').value
 
   if (username === '' || password === '' || passwordRetry === '') {
     return showNotification(errorsMessages.fieldsEmpty)
@@ -124,7 +126,7 @@ registrationFormSubmitButton.addEventListener('click', event => {
   registrationFormSubmitButton.disabled = true
   registrationFormSwitchButton.disabled = true
 
-  makeAPIRequest('register', {username, password})
+  makeAPIRequest('register', {username, password,rememberCheck})
   .finally(() => {
     registrationFormSubmitButton.disabled = false
     registrationFormSwitchButton.disabled = false
