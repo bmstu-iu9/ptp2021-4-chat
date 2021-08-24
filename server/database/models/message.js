@@ -29,6 +29,11 @@ Message.init({
   relativeId: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  server: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   }
 }, {
   sequelize,
@@ -44,12 +49,7 @@ Conversation.hasMany(Message, {
 })
 Message.belongsTo(Conversation)
 
-User.hasMany(Message, {
-  foreignKey: {
-    allowNull: false
-  },
-  onDelete: 'cascade'
-})
+User.hasMany(Message)
 Message.belongsTo(User)
 
 Content.hasOne(Message, {
