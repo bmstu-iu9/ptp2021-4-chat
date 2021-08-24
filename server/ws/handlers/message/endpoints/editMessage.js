@@ -1,37 +1,47 @@
-const {getConversation} = require('../../../services/conversation')
-const {sendDataToClients} = require('../../../../misc/utils')
-const {getConversationParticipants} = require('../../../services/conversation')
-const {editMessage} = require('../../../services/messages')
-const {checkUserHasAccessToConversation} = require('../../../services/conversation')
-const {wrapAsyncFunction} = require('../../../../misc/utils')
+const WSError = require('../../../../misc/WSError')
+const {getMessage} = require('../../../services/messages')
+const {getConversation} = require('../../../services/conversations')
+const {getConversationClients} = require('../../../services/common')
+const {emit} = require('../../../services/common')
+const {editedMessageStateConfig} = require('../../../services/messages/configs')
+const {onlyIdConversationConfig} = require('../../../services/conversations/configs')
+const {
+  editMessage,
+  checkUserHasAccessToMessage
+} = require('../../../services/messages')
+const {checkUserHasAccessToConversation} = require('../../../services/conversations')
 
 
 module.exports = async (context, payload) => {
-  const user = context.current.user
-  const {conversationId, relativeId, content} = payload.meta
+  const {user, session} = context.current
+  const {conversationId, relativeId, value} = payload.meta
 
-  await checkUserHasAccessToConversation(user, conversationId)
+  if (value === '') {
+    throw new WSError('Сообщение не может быть пустым')
+  }
 
-  const message = await editMessage(conversationId, relativeId, content)
+  await checkUserHasAccessToConversation(conversationId, user)
+  const message = await checkUserHasAccessToMessage(conversationId, relativeId, user)
 
-  const sessions = (await getConversationParticipants(conversationId))
-  .flatMap(participant => participant.sessions)
-  .map(session => session.sessionId)
+  if (message.content.type !== 'text') {
+    throw new WSError('Сообщение не может быть отредактировано')
+  }
 
-  const clients = context.clients.filter(client =>
-      sessions.includes(client.session.sessionId)
-  )
+  await editMessage(conversationId, relativeId, value)
 
-  const conversation = await getConversation(user, conversationId)
-
-  await sendDataToClients(clients, {
-    notificationType: 'newMessageState',
-    conversation,
-    messageState: {
-      relativeId: message.relativeId,
-      edited: true,
-      content,
-      generationTimestamp: new Date().toISOString()
+  await emit('newMessageState', {
+    getClients: async () => await getConversationClients(conversationId, session.sessionId),
+    getPayloadToOther: async (user) => {
+      return {
+        conversation: await getConversation(conversationId, user, onlyIdConversationConfig),
+        messageState: await getMessage(conversationId, relativeId, user, editedMessageStateConfig)
+      }
+    },
+    getPayloadToCurrent: async () => {
+      return {
+        conversation: await getConversation(conversationId, user, onlyIdConversationConfig),
+        messageState: await getMessage(conversationId, relativeId, user, editedMessageStateConfig)
+      }
     }
   })
 }
