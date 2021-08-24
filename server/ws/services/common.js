@@ -99,7 +99,6 @@ async function getAllConversationsWithLastMessage(user) {
 
 async function emit(type, functions) {
   const clients = await functions.getClients()
-  console.log(clients)
   await notifyClients(type, clients.other, async user => {
     return await functions.getPayloadToOther(user)
   })
