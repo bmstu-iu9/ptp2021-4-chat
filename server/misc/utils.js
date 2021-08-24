@@ -1,5 +1,4 @@
 const HTTPError = require('./HTTPError')
-const {getConversationParticipants} = require('../ws/services/conversation')
 const {
   errors,
   validateUsername,
@@ -34,16 +33,24 @@ function validateUsernameAndPassword(username, password) {
   }
 }
 
+function mapArrayToObject(array, mapper) {
+  return array.reduce((result, item) => {
+    result[item] = mapper(item)
+    return result
+  }, {})
+}
 
-async function sendDataToClients(clients, data) {
-  clients.forEach(client => {
-    client.socket.send(JSON.stringify(data))
-  })
+function intersectObjectKeys(o1, o2) {
+  const [k1, k2] = [Object.keys(o1), Object.keys(o2)]
+  const [first, next] = k1.length > k2.length ? [k2, o1] : [k1, o2]
+
+  return first.filter(k => k in next)
 }
 
 
 module.exports = {
   wrapAsyncFunction,
   validateUsernameAndPassword,
-  sendDataToClients
+  mapArrayToObject,
+  intersectObjectKeys
 }
