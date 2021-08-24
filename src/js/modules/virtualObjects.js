@@ -41,8 +41,8 @@ class VirtualConversation extends Updatable {
   name
   conversationId
 
-  constructor(update) {
-    super(update.conversation)
+  constructor(conversationUpdate) {
+    super(conversationUpdate)
 
     this.conversationId = this.getData().id
     if (this.getData().type === "dialog") {
@@ -58,7 +58,7 @@ class VirtualConversation extends Updatable {
   }
 
   getLastMessageId() {
-    const ids = this.messages.list.keys()
+    const ids = Object.keys(this.messages.list)
     return parseInt(ids[ids.length - 1])
   }
 
@@ -143,8 +143,8 @@ export class ConversationsList {
     this.activeConversation = null
   }
 
-  create(update) {
-    return this.conversations[update.conversation.id] = new VirtualConversation(update)
+  create(conversationUpdate) {
+    return this.conversations[conversationUpdate.id] = new VirtualConversation(conversationUpdate)
   }
 
   get(id) {
