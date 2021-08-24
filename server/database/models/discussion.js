@@ -10,8 +10,7 @@ class DiscussionMeta extends Model {
 
 DiscussionMeta.init({
   name: {
-    type: DataTypes.TEXT,
-    allowNull: true
+    type: DataTypes.TEXT
   }
 }, {
   sequelize,
