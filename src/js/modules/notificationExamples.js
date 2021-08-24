@@ -4,7 +4,7 @@ export const exampleMessageNotification = {
   conversation: {
     id: 0,
     unreadCount: 0,
-    generatedAt: "1629739557", //unixtimestamp
+    generatedAt: 1629739557, //unixtimestamp
   },
   message: {
     relativeId: 0,
@@ -15,14 +15,14 @@ export const exampleMessageNotification = {
       id: 0,
       username: "Igor Pavlov",
     },
-    createdAt: "1629739557",
+    createdAt: 1629739557,
 
     content: {
       type: "text",
       value: "Привет!",
       files: null,
     },
-    generatedAt: "1629739557"
+    generatedAt: 1629739557
   }
 }
 
@@ -32,24 +32,30 @@ export const exampleConversationNotification = [{
   conversation: {
     id: 0,
     type: "dialog",
-    username: "Igor Pavlov",
     unreadCount: 0,
-    generatedAt: "100",
+    participants: [{
+      id: 0,
+      username: "Igor Pavlov",
+    }],
+    generatedAt: 1629739557
   },
   lastMessage: {
     relativeId: 0,
-    self: false,
-    read: true,
-    author: {
-      username: "Igor Pavlov"
+    server: false,
+    self: true,
+    read: false,
+    user: {
+      id: 0,
+      username: "Igor Pavlov",
     },
-    createdAt: "120",
+  },
+    createdAt: 1629739557,
     edited: false,
     content: {
       type: "text",
       value: "Привет!",
       files: null,
     },
-    generatedAt: "122"
-  }
-}]
+    generatedAt: 1629739557
+  }]
+
