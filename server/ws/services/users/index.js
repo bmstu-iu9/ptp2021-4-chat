@@ -1,4 +1,5 @@
 const processObjectAccordingConfig = require('../../../misc/objectProcessor')
+const {Op} = require('sequelize')
 const {singleSessionUserConfig} = require('./configs')
 const {User} = require("../../../database/models/user")
 const {Session} = require("../../../database/models/session")
@@ -27,7 +28,20 @@ async function getUser(sessionId) {
   return user
 }
 
+async function checkUsersExist(userIds) {
+  const count = await User.count({
+    where: {
+      id: {
+        [Op.in]: userIds
+      }
+    }
+  })
+
+  return count === userIds.length
+}
+
 
 module.exports = {
-  getUser
+  getUser,
+  checkUsersExist
 }
