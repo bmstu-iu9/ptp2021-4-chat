@@ -82,7 +82,6 @@ export class PageManager {
   }
 
   loadMessages(update) {
-    console.log(update)
     const conversation = this.conversationsList.get(update.conversation.id)
 
     update.messages.forEach(
