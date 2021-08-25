@@ -9,18 +9,18 @@ const {sessionLifetime} = require('../../constants')
  * Гененрирует session id и сохраняет его в базу данных, привязывая
  * к указанному пользователю
  * @param {User} user - Модель пользователя из базы данных
+ * @param {boolean} remember - Пользовательский флаг для запоминания
  * @returns {{string, Date}} - Id сессии и дата истечения ее срока жизни
  */
-async function generateAndSaveSessionId(user) {
+async function generateAndSaveSessionId(user, remember) {
   const sessionId = crypto.randomBytes(16).toString('base64')
-  const expirationDate = new Date(Date.now() + sessionLifetime)
+  let expirationDate =  remember? new Date(Date.now() + sessionLifetime):0
 
   await Session.create({
     sessionId,
-    expirationDate,
+    expirationDate: remember ? expirationDate: null,
     userId: user.id
   })
-
   return {sessionId, expirationDate}
 }
 
@@ -48,7 +48,7 @@ async function checkSession(request, response) {
     return false
   }
 
-  if (session.expirationDate.getSeconds() <= Date.now()) {
+  if (session.expirationDate && session.expirationDate.getSeconds() <= Date.now()) {
     // Обновление сессии в случае, если она истекла
     const newExpirationDate = new Date(Date.now() + sessionLifetime)
     await session.update({newExpirationDate})

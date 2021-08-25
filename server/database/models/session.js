@@ -15,7 +15,6 @@ Session.init({
   },
   expirationDate: {
     type: DataTypes.DATE,
-    allowNull: false
   }
 }, {
   sequelize,
