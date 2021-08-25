@@ -49,6 +49,24 @@ header {
     display: none !important;
 }
 
+.auth-form__password-form{
+    position: relative;
+
+}
+
+.auth-form__password-input{
+    display: block;
+}
+
+.auth-form__password-show{
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    right: 5px;
+    top: 7px;
+    background: url("https://icon2.cleanpng.com/20180409/qow/kisspng-computer-icons-eye-clip-art-eye-5acb3e37da4182.722290961523269175894.jpg") no-repeat 50% 50% inherit;
+}
+
 @media (max-width: 768px) {
     .login-window {
         order: 0;
