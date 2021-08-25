@@ -106,7 +106,6 @@ async function fetchConversationParticipants(conversationId) {
     attributes: [],
     include: {
       model: User,
-      required: true,
       include: [Session]
     }
   }))
@@ -128,8 +127,8 @@ async function getConversationParticipantsSessionsIds(conversationId) {
   return sessions
 }
 
-async function getDialog(userId1, userId2) {
-  const dialog = fetchUsersDialog(userId1, userId2)
+async function getDialog(currentUserId, participantUserId) {
+  const dialog = await fetchUsersDialog(currentUserId, participantUserId)
 
   if (dialog) {
     processObjectAccordingConfig(dialog, fullConversationConfig)
@@ -138,17 +137,22 @@ async function getDialog(userId1, userId2) {
   return dialog
 }
 
-async function fetchUsersDialog(userId1, userId2) {
-  const userDialogs1 = (await fetchAllConversations(userId1))
+async function fetchUsersDialog(currentUserId, participantId) {
+  const userDialogs1 = (await fetchAllConversations(currentUserId))
   .filter(conversation => conversation.type === 'dialog')
 
   const dialog = await ConversationParticipant.findOne({
     where: {
-      userId: userId2
+      userId: participantId
     },
     attributes: [],
     include: {
       model: Conversation,
+      attributes: {
+        include: getIncludesForConversation(currentUserId)
+      },
+      required: true,
+      include: DiscussionMeta,
       where: {
         type: 'dialog',
         id: {
@@ -158,7 +162,7 @@ async function fetchUsersDialog(userId1, userId2) {
     }
   })
 
-  return dialog ? dialog.toJSON() : null
+  return dialog ? dialog.conversation.toJSON() : null
 }
 
 async function saveConversation(type, userIds) {

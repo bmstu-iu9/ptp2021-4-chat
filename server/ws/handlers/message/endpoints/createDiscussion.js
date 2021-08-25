@@ -12,6 +12,10 @@ module.exports = async (context, payload) => {
   const {user, session} = context.current
   const {name, userIds} = payload.meta
 
+  if (userIds.includes(user.id)) {
+    throw new WSError('Массив НЕ должен содержать id текущего пользователя')
+  }
+
   if (userIds.length < 1) {
     throw new WSError('Массив id должен содержать хотя бы один элемент')
   }
@@ -20,7 +24,7 @@ module.exports = async (context, payload) => {
     throw new WSError('Пользователей с такими id не существует')
   }
 
-  const conversationId = await saveConversation('discussion', userIds)
+  const conversationId = await saveConversation('discussion', [user.id, ...userIds])
   await saveDiscussionMeta(conversationId, name)
 
   await emit('newConversation', {
