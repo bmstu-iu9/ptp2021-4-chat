@@ -12,7 +12,7 @@ class Updatable {
   }
 
   update(update) {
-    if (update.generatedAt > this.#data.generatedAt) {
+    if (new Date(update.generatedAt).getTime() > new Date(this.#data.generatedAt).getTime()) {
       this.#applyUpdate(update)
     }
   }
@@ -38,44 +38,36 @@ class VirtualMessage extends Updatable {
 
 class VirtualConversation extends Updatable {
   messages
-  lastMessage
-  lastMessageId
-  username
-  userId
+  name
+  conversationId
 
   constructor(conversationUpdate) {
-    super(conversationUpdate.conversation)
+    super(conversationUpdate)
 
-    this.lastMessageId = -1
-    this.username = conversationUpdate.conversation.participants[0].username
-    this.userId = conversationUpdate.conversation.participants[0].id
+    this.conversationId = this.getData().id
+    if (this.getData().type === "dialog") {
+      this.name = this.getData().participants[0].username
+    } else {
+      this.name = this.getData().name
+    }
+
     this.messages = {
       list: {},
       toBeUpdated: {}
     }
+  }
 
-    if (conversationUpdate.lastMessage) {
-      this.addMessage(conversationUpdate.lastMessage, false)
-    }
-    if (conversationUpdate.messages) {
-      for (const message of conversationUpdate.messages) {
-        this.addMessage(message, false)
-      }
-    }
+  getLastMessageId() {
+    const ids = Object.keys(this.messages.list)
+    return parseInt(ids[ids.length - 1])
   }
 
   addMessage(messageUpdate, isNew=true) {
     const id = messageUpdate.relativeId
-    let message = new VirtualMessage(messageUpdate)
+    this.messages.list[id] = new VirtualMessage(messageUpdate)
 
-    this.messages.list[id] = message
     if (isNew) {
       this.messages.toBeUpdated[id] = this.messages.list[id]
-    }
-
-    if (id >= this.lastMessageId) {
-      this.lastMessageId = id
-      this.lastMessage = message
     }
   }
 
@@ -111,7 +103,7 @@ class VirtualConversation extends Updatable {
   }
 
   getLastMessages(N){
-    return this.getMessagesFromId(N, this.lastMessageId)
+    return this.getMessagesFromId(N, this.getLastMessageId())
   }
 
   getMessagesFromId(N, fromRelativeId){
@@ -123,7 +115,7 @@ class VirtualConversation extends Updatable {
     }
 
     let allMessagesLoaded = false
-    if (id === -1 || id === this.lastMessageId - N + 1){
+    if (id === -1 || id === fromRelativeId - N){
       allMessagesLoaded = true
     }
 
@@ -134,10 +126,10 @@ class VirtualConversation extends Updatable {
     }
   }
 
-  getUserInfo(){
+  getConversationInfo(){
     return {
-      username: this.username,
-      userId: this.userId
+      name: this.name,
+      conversationId: this.conversationId
     }
   }
 }
@@ -152,7 +144,7 @@ export class ConversationsList {
   }
 
   create(conversationUpdate) {
-    return this.conversations[conversationUpdate.conversation.id] = new VirtualConversation(conversationUpdate)
+    return this.conversations[conversationUpdate.id] = new VirtualConversation(conversationUpdate)
   }
 
   get(id) {

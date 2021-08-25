@@ -48,7 +48,6 @@ export const exampleConversationNotification = [{
       id: 0,
       username: "Igor Pavlov",
     },
-  },
     createdAt: 1629739557,
     edited: false,
     content: {
@@ -57,5 +56,6 @@ export const exampleConversationNotification = [{
       files: null,
     },
     generatedAt: 1629739557
-  }]
+  }
+}]
 
