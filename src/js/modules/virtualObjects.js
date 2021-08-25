@@ -102,6 +102,10 @@ class VirtualConversation extends Updatable {
     this.messages.toBeUpdated[messageStateUpdate.relativeId] = message
   }
 
+  getLastMessage() {
+    return this.messages.list[this.getLastMessageId()]
+  }
+
   getLastMessages(N){
     return this.getMessagesFromId(N, this.getLastMessageId())
   }
