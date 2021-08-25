@@ -1,31 +1,15 @@
+import {createElementWithClass, createTextElement} from './renderUtils.js'
+
 const dialogsContainer = document.querySelector('.dialogs-list')
 const dialogsWindow = document.querySelector('.dialogs-window')
 const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
+const openedDialogUsername = document.querySelector('.opened-dialog-username')
 
-/* Вспомогательные функции */
-function createElementWithClass(elementName, className) {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  return newElem
-}
-
-function createTextElement(elementName, className, innerText='') {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  newElem.innerText = innerText
-  return newElem
-}
-
-function createCustomElement(elementName, className, id=NaN, innerText='') {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  if (id) {
-    newElem.setAttribute("id", id)
-  }
-  newElem.innerText = innerText
-  return newElem
+/* Изменение имени диалога */
+function renameOpenedDialog(name) {
+  openedDialogUsername.textContent = name
 }
 
 /* Создание элемента диалога */
@@ -114,5 +98,7 @@ function unsetConversationActive(conversationId) {
 }
 
 /* exports */
-export {renderConversation, createConversationElement, changeConversationLastMessage,
-  setConversationActive, unsetConversationActive}
+export {renderConversation, createConversationElement,
+  changeConversationLastMessage, moveConversationToBegin,
+  setConversationActive, unsetConversationActive,
+  renameOpenedDialog}

@@ -43,26 +43,6 @@ function addConversation() {
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
 
-/* Создание объекта сообщения */
-function createMessageElement(fromUser, messageText) {
-  const messageAuthorElem = createTextElement('p',
-    'message-author', fromUser)
-  const messageTextElem = createTextElement('p',
-    'message-text', messageText)
-  const newMessage = createElementWithClass('div',
-    'message-container')
-  newMessage.append(messageAuthorElem, messageTextElem)
-  return newMessage
-}
-
-/* Рендеринг нового сообщения по объекту уведомления */
-function renderMessage(message) {
-  let fromUser = message.user.username
-  const newMessage = createMessageElement(fromUser, message.content.value)
-  messagesContainer.appendChild(newMessage)
-  messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
-}
-
 /* Добавление сообщения в диалог */
 function addMessage() {
   let message = messageInputField.value
@@ -84,11 +64,13 @@ function toggleMenu() {
 
 /* Обработчик нажатия на диалог */
 function conversationOnclickHandler(clickedElement) {
+  clearOpenedDialog()
   showOpenedDialog()
-  sidePanel.setConversationActive(clickedElement.getAttribute('data-conversation-id'))
+  sidePanel.openConversation(clickedElement.getAttribute('data-conversation-id'))
 }
 
-const sidePanel = new SidePanel(conversationOnclickHandler)
+const sidePanel = new SidePanel()
+sidePanel.setConversationOnclickHandler(conversationOnclickHandler)
 sidePanel.addConversation(exampleConversationNotification[0])
 sidePanel.addConversation(exampleConversationNotification[1])
 window.sidePanel = sidePanel

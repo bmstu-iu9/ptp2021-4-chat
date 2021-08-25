@@ -57,6 +57,11 @@ class VirtualConversation extends Updatable {
     }
   }
 
+  getLastLoadedMessageId() {
+    const ids = Object.keys(this.messages.list)
+    return parseInt(ids[0])
+  }
+
   getLastMessageId() {
     const ids = Object.keys(this.messages.list)
     return parseInt(ids[ids.length - 1])
