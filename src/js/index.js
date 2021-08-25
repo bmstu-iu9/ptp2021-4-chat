@@ -10,6 +10,12 @@ const dialogsWindow = document.querySelector('.dialogs-window')
 const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
+const closeButton = document.querySelector('.btn-close')
+const notificationWindow = document.querySelector('.notification-window')
+
+closeButton.addEventListener('click', function() {
+  notificationWindow.classList.add('notification-window_hidden')
+})
 
 /* Вспомогательные функции */
 function createElementWithClass(elementName, className) {
@@ -94,6 +100,13 @@ function addConversation() {
   dialogsContainer.appendChild(newConversation)
   inputField.value = ""
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
+}
+
+/*Сообщение об ошибке*/
+
+function showNotificationWindow() {
+  const notificationWindow = document.querySelector('.notification-window')
+  notificationWindow.classList.remove('notification-window_hidden')
 }
 
 /* Создание объекта сообщения */
