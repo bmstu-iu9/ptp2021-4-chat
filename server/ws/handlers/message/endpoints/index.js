@@ -82,6 +82,13 @@ const metaSchemas = {
       }
     },
     required: ['name', 'userIds']
+  },
+  searchUser: {
+    type: 'object',
+    properties: {
+      username: {type: 'string'}
+    },
+    required: ['username']
   }
 }
 
@@ -116,6 +123,7 @@ module.exports = {
     editMessage: require('./editMessage'),
     deleteMessage: require('./deleteMessage'),
     createDialog: require('./createDialog'),
-    createDiscussion: require('./createDiscussion')
+    createDiscussion: require('./createDiscussion'),
+    searchUser: require('./searchUser')
   }
 }

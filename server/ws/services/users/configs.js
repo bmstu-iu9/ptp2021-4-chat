@@ -21,7 +21,12 @@ const singleSessionUserConfig = {
   ]
 }
 
+const justUserConfig = {
+  exclude: ['createdAt']
+}
+
 
 module.exports = {
-  singleSessionUserConfig
+  singleSessionUserConfig,
+  justUserConfig
 }
