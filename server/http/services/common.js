@@ -14,15 +14,13 @@ const {sessionLifetime} = require('../../constants')
  */
 async function generateAndSaveSessionId(user, remember) {
   const sessionId = crypto.randomBytes(16).toString('base64')
-  let expirationDate = new Date(Date.now() + sessionLifetime)
-  if (remember === false){expirationDate = null}
+  let expirationDate =  remember? new Date(Date.now() + sessionLifetime):0
 
   await Session.create({
     sessionId,
-    expirationDate,
+    expirationDate: remember ? expirationDate: null,
     userId: user.id
   })
-  if(remember === false){expirationDate = 0}
   return {sessionId, expirationDate}
 }
 
