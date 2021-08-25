@@ -3,8 +3,8 @@ class Updatable {
   #data
 
   constructor(update) {
-    if (!update.generationTimestamp) {
-      throw new Error('В объекте update обязательно должно присутствовать свойство generationTimestamp')
+    if (!update.generatedAt) {
+      throw new Error('В объекте update обязательно должно присутствовать свойство generatedAt')
     }
 
     this.#data = {}
@@ -12,14 +12,14 @@ class Updatable {
   }
 
   update(update) {
-    if (update.generationTimestamp > this.#data.generationTimestamp) {
+    if (new Date(update.generatedAt).getTime() > new Date(this.#data.generatedAt).getTime()) {
       this.#applyUpdate(update)
     }
   }
 
   getData() {
     return Object.assign({}, this.#data)
-  }
+  } 
 
   #applyUpdate(update) {
     for (const property of Object.keys(update)) {
@@ -38,31 +38,36 @@ class VirtualMessage extends Updatable {
 
 class VirtualConversation extends Updatable {
   messages
-  lastMessage
-  lastMessageId
+  name
+  conversationId
 
   constructor(conversationUpdate) {
-    super(conversationUpdate.conversation)
+    super(conversationUpdate)
 
-    if (conversationUpdate.lastMessage) {
-      this.lastMessage = new VirtualMessage(conversationUpdate.lastMessage)
-      this.lastMessageId = conversationUpdate.lastMessage.relativeId
+    this.conversationId = this.getData().id
+    if (this.getData().type === "dialog") {
+      this.name = this.getData().participants[0].username
+    } else {
+      this.name = this.getData().name
     }
+
     this.messages = {
       list: {},
       toBeUpdated: {}
     }
   }
 
-  addMessage(messageUpdate) {
+  getLastMessageId() {
+    const ids = Object.keys(this.messages.list)
+    return parseInt(ids[ids.length - 1])
+  }
+
+  addMessage(messageUpdate, isNew=true) {
     const id = messageUpdate.relativeId
-    let message = new VirtualMessage(messageUpdate)
+    this.messages.list[id] = new VirtualMessage(messageUpdate)
 
-    this.messages.toBeUpdated[id] = this.messages.list[id] = message
-
-    if (id >= this.lastMessageId) {
-      this.lastMessageId = id
-      this.lastMessage = message
+    if (isNew) {
+      this.messages.toBeUpdated[id] = this.messages.list[id]
     }
   }
 
@@ -96,9 +101,40 @@ class VirtualConversation extends Updatable {
 
     this.messages.toBeUpdated[messageStateUpdate.relativeId] = message
   }
+
+  getLastMessages(N){
+    return this.getMessagesFromId(N, this.getLastMessageId())
+  }
+
+  getMessagesFromId(N, fromRelativeId){
+    const lastMessages = {}
+    let id
+
+    for (id = fromRelativeId; (id in this.messages.list) && (id>fromRelativeId - N) && (id>=0); id--) {
+      lastMessages[id] = this.messages.list[id]
+    }
+
+    let allMessagesLoaded = false
+    if (id === -1 || id === fromRelativeId - N){
+      allMessagesLoaded = true
+    }
+
+    return {
+      messages: lastMessages,
+      allLoaded: allMessagesLoaded,
+      lastId: id
+    }
+  }
+
+  getConversationInfo(){
+    return {
+      name: this.name,
+      conversationId: this.conversationId
+    }
+  }
 }
 
-class ConversationsList {
+export class ConversationsList {
   activeConversation
   conversations
 

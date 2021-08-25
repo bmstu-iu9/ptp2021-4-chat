@@ -15,9 +15,9 @@ class WSServer {
       verifyClient: this.verifyClient.bind(this)
     })
 
-    this.clients = []
     this.handlers = {
       preConnection: [],
+      connection: [],
       message: [],
       close: [],
       error: [defaultErrorHandler]
@@ -29,6 +29,7 @@ class WSServer {
   async verifyClient(info, done) {
     const request = info.req
     const context = {request}
+
     await this.runPreConnectionHandlers(context, (_, error) => {
       if (isDev) {
         console.log('Ошибка при попытке подключения к WS-серверу', error.stack)
@@ -47,6 +48,14 @@ class WSServer {
 
   onPreConnection(handler) {
     this.handlers.preConnection.push(handler)
+  }
+
+  onConnection(handler) {
+    if (handler.constructor.name === 'AsyncFunction') {
+      throw new Error('Обработчики события connection не могут быть асинхронными')
+    }
+
+    this.handlers.connection.push(handler)
   }
 
   onMessage(handler) {
@@ -70,6 +79,16 @@ class WSServer {
     )
 
     await next()
+  }
+
+  runConnectionHandlers(context, data) {
+    const next = this.generateNextFunction(
+      'connection',
+      this.runErrorHandlers.bind(this),
+      context, data
+    )
+
+    next()
   }
 
   async runMessageHandlers(context, data) {
@@ -129,11 +148,11 @@ class WSServer {
   initWebSocketServer() {
     this.wss.on('connection', (socket, request) => {
       const context = request.context
-      context.clients = this.clients
-      context.socket = socket
       delete request.context
 
-      this.clients.push({session: context.current.session, socket})
+      context.socket = socket
+
+      this.runConnectionHandlers(context)
 
       socket.on('message', async (buffer, isBinary) => {
         await this.runMessageHandlers(context, {payload: buffer, isBinary})
