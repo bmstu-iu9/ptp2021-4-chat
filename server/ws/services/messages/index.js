@@ -111,7 +111,6 @@ async function fetchMessages(conversationId, user, maxRelativeId) {
 }
 
 async function fetchMessage(conversationId, relativeId, user) {
-
   const fetchedMessage = await Message.findOne({
     where: {
       conversationId,
