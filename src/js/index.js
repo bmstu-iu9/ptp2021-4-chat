@@ -14,7 +14,7 @@ const dialogsWindow = document.querySelector('.dialogs-window')
 const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
-
+const searchField = document.getElementById('search-user-input')
 
 /* Очистка всех сообщений и полей в открытом диалоге */
 function clearOpenedDialog() {
@@ -32,18 +32,28 @@ function closeOpenedDialog() {
   openedDialogWindow.classList.toggle('hidden-window', true)
 }
 
-/* Добавление диалога в список всех диалогов с помощью кнопки */
-function addConversation() {
-  const inputField = document.getElementById('search-user-input')
-  let username = inputField.value
+/* Поиск пользователя и добавление его в диалоги! */
+function searchUser() {
+  let username = searchField.value
   if (username === '') {
     return
   }
-  const newConversation = createConversationElement(username, '', false)
-  dialogsContainer.appendChild(newConversation)
+
+  wsClient.makeAPIRequest('getUser', {}).then(
+    data => pageManager.setUserInfo(data.username, data.id)
+  )
+
   inputField.value = ''
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
+
+document.getElementById('btn-find').onclick = searchUser
+document.getElementById('search-user-input').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    searchUser()
+  }
+})
 
 /* Добавление сообщения в диалог */
 function addMessage() {
@@ -71,8 +81,6 @@ function conversationOnclickHandler(clickedElement) {
   pageManager.openConversation(clickedElement.getAttribute('data-conversation-id'))
 }
 
-/* отправка сообщения на ws с проверкой */
-
 /* Основные объекты! */
 const pageManager = new PageManager()
 const wsClient = new WSClient('ws://localhost:80')
@@ -83,7 +91,7 @@ wsClient.makeAPIRequest('getUser', {}).then(
 pageManager.setConversationOnclickHandler(conversationOnclickHandler)
 pageManager.addConversation(exampleConversationNotification[0])
 pageManager.addConversation(exampleConversationNotification[1])
-window.sidePanel = pageManager
+window.pageManager = pageManager
 window.ws = wsClient
 
 /* Привязка */
@@ -92,14 +100,6 @@ document.getElementById('input-message-text-area').addEventListener('keydown', f
   if (event.key === 'Enter') {
     event.preventDefault()
     addMessage()
-  }
-})
-
-document.getElementById('btn-find').onclick = addConversation
-document.getElementById('search-user-input').addEventListener('keydown', function(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault()
-    addConversation()
   }
 })
 

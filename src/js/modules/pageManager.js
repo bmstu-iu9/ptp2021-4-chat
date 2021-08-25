@@ -22,6 +22,10 @@ export class PageManager {
     this.userId = id
   }
 
+  hasConversation(conversationId) {
+    return this.conversationsList.includesConversationById(conversationId)
+  }
+
   addConversation(update) {
     if (this.conversationsList.get(update.conversation.id)) {
       throw new Error(`Диалог с id=${update.conversation.id} уже существует!`)

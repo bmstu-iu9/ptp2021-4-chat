@@ -156,6 +156,10 @@ export class ConversationsList {
     return this.conversations[conversationUpdate.id] = new VirtualConversation(conversationUpdate)
   }
 
+  includesConversationById(id) {
+    return id in this.conversations
+  }
+
   get(id) {
     return this.conversations[id]
   }
