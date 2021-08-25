@@ -9,72 +9,72 @@ function generateID() {
 
 
 export default class WSClient {
-  #socket
-  #pendingRequests
-  #messageHandler
-  #closeHandler
+  socket
+  pendingRequests
+  messageHandler
+  closeHandler
   url
 
   constructor(url) {
     this.url = url
-    this.#pendingRequests = {}
+    this.pendingRequests = {}
   }
 
   getConnectionStatus() {
-    return this.#socket.readyState
+    return this.socket.readyState
   }
 
-  #generateUniqueID() {
+  generateUniqueID() {
     let id
     do {
       id = generateID()
-    } while (id in this.#pendingRequests)
+    } while (id in this.pendingRequests)
 
     return id
   }
 
   connect() {
-    this.#socket = new WebSocket(this.url)
+    this.socket = new WebSocket(this.url)
 
-    this.#socket.onmessage = (event) => {
-      this.#handleMessage(event)
+    this.socket.onmessage = (event) => {
+      this.handleMessage(event)
     }
 
-    this.#socket.onclose = (event) => {
-      if (this.#closeHandler) {
-        this.#closeHandler(event.code, event.reason)
+    this.socket.onclose = (event) => {
+      if (this.closeHandler) {
+        this.closeHandler(event.code, event.reason)
       }
     }
 
     let resolved = false
     return new Promise((resolve, reject) => {
-      this.#socket.onopen = () => {
+      this.socket.onopen = () => {
         resolve({
           code: 1,
-          message: "Successfully connected!"
+          message: 'Successfully connected!'
         })
         resolved = true
       }
 
-      this.#socket.onerror = () => {
+      this.socket.onerror = () => {
         if (!resolved) {
           reject({
             code: 0,
-            message: "Can't connect to server"
+            message: 'Can\'t connect to server'
           })
           return
         }
 
-        this.#handleError()
+        this.handleError()
       }
     })
   }
 
-  #handleError() {
-    this.#pendingRequests = {}
+  handleError() {
+    this.pendingRequests = {}
   }
 
-  #handleMessage(event) {
+  handleMessage(event) {
     let message
     try {
       message = JSON.parse(event.data)
@@ -85,53 +85,75 @@ export default class WSClient {
     const id = message.$id
     const payload = message.payload
 
-    if (!Number.isInteger(id) && this.#messageHandler) {
-      return this.#messageHandler(message)
+    if (!Number.isInteger(id) && this.messageHandler) {
+      return this.messageHandler(message)
     }
 
     if (!payload) {
       throw new Error('JSON, который вернул сервер, имеет неправильный формат')
     }
-    if (!(id in this.#pendingRequests)) {
+    if (!(id in this.pendingRequests)) {
       throw new Error('Сервер вернул сообщение с несуществующим id')
     }
 
     // Обработка event
     if (payload.error) {
-      this.#pendingRequests[id].reject(payload.error)
+      this.pendingRequests[id].reject(payload.error)
     } else {
-      this.#pendingRequests[id].resolve(payload)
+      this.pendingRequests[id].resolve(payload)
     }
-    delete this.#pendingRequests[id]
+    delete this.pendingRequests[id]
   }
 
   send(data) {
-    if (this.#socket.readyState !== 1) {
+    if (this.socket.readyState !== 1) {
       return Promise.reject({
-        code: this.#socket.readyState,
+        code: this.socket.readyState,
         message: 'Статус соединения с сервером не позволяет отправлять сообщения'
       })
     }
 
-    const id = this.#generateUniqueID()
+    const id = this.generateUniqueID()
     const promise = new Promise((resolve, reject) => {
-      this.#pendingRequests[id] = {resolve, reject}
+      this.pendingRequests[id] = {resolve, reject}
     })
 
     const message = {
       $id: id,
       payload: data
     }
-    this.#socket.send(JSON.stringify(message))
+    this.socket.send(JSON.stringify(message))
 
     return promise
   }
 
+  makeAPIRequest(method, metaData) {
+    if (!this.socket || [2, 3].includes(this.getConnectionStatus())) {
+      return new Promise((resolve, reject) => {
+        this.connect().then(() => {
+          this.send({request: method, meta: metaData})
+          .then(resolve).catch(reject)
+        })
+      })
+    }
+
+    if (this.getConnectionStatus() === 0) {
+      return new Promise((resolve, reject) => {
+        this.socket.addEventListener('open', () => {
+          this.send({request: method, meta: metaData})
+          .then(resolve).catch(reject)
+        })
+      })
+    }
+
+    return this.send({request: method, meta: metaData})
+  }
+
   setOnMessageHandler(handler) {
-    this.#messageHandler = handler
+    this.messageHandler = handler
   }
 
   setOnCloseHandler(handler) {
-    this.#closeHandler = handler
+    this.closeHandler = handler
   }
 }

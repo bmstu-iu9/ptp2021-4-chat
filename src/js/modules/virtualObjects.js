@@ -45,7 +45,7 @@ class VirtualConversation extends Updatable {
     super(conversationUpdate)
 
     this.conversationId = this.getData().id
-    if (this.getData().type === "dialog") {
+    if (this.getData().type === 'dialog') {
       this.name = this.getData().participants[0].username
     } else {
       this.name = this.getData().name
