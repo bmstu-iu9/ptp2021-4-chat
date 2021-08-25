@@ -274,8 +274,6 @@ const authTogglePassword = document.getElementById('auth-toggle-password');
 const authShowOrHidePassword = () => {
   const password = document.getElementById('auth-password');
 
-  console.log("auth show pass")
-
   if (password.type === 'password') {
     password.type = 'text';
   } else {
