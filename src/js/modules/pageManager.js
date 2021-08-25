@@ -1,9 +1,8 @@
 import {ConversationsList} from './virtualObjects.js'
 import * as render from './renderConversations.js'
 import {renderMessage} from './renderMessages.js'
-import {renameOpenedDialog} from './renderConversations.js'
 
-export class SidePanel {
+export class PageManager {
   conversationsList
   openedConversation
   conversationOnclickFunc

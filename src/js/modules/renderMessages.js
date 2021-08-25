@@ -16,7 +16,7 @@ function createMessageElement(fromUser, id, messageText) {
   const newMessage = createElementWithClass('div',
     'message-container')
 
-  newMessage.setAttribute("data-message-id", id)
+  newMessage.setAttribute('data-message-id', id)
 
   newMessage.append(messageAuthorElem, messageTextElem)
   return newMessage
