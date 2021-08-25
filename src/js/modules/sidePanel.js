@@ -1,5 +1,7 @@
 import {ConversationsList} from './virtualObjects.js'
 import * as render from './renderConversations.js'
+import {renderMessage} from './renderMessages.js'
+import {renameOpenedDialog} from './renderConversations.js'
 
 export class SidePanel {
   conversationsList
@@ -8,8 +10,11 @@ export class SidePanel {
   username
   userId
 
-  constructor(conversationOnclickFunc) {
+  constructor() {
     this.conversationsList = new ConversationsList()
+  }
+
+  setConversationOnclickHandler(conversationOnclickFunc) {
     this.conversationOnclickFunc = conversationOnclickFunc
   }
 
@@ -47,6 +52,34 @@ export class SidePanel {
 
     this.openedConversation = this.conversationsList.get(conversationId)
     render.setConversationActive(conversationId)
+  }
+
+  openConversation(conversationId) {
+    this.setConversationActive(conversationId)
+    render.renameOpenedDialog(this.openedConversation.name)
+
+    const loadedMessagesInfo = this.openedConversation.getLastMessages(50)
+    for (const message of Object.values(loadedMessagesInfo.messages)) {
+      renderMessage(message.getData(), false, true)
+    }
+  }
+
+  newMessageHandler(update) {
+    const conversation = this.conversationsList.get(update.conversation.id)
+
+    if (!conversation) {
+      throw new Error(`Пришло сообщение в диалог, которого нет! (id=${update.conversation.id})`)
+    }
+
+    conversation.addMessage(update.message, true)
+
+    render.changeConversationLastMessage(conversation.getData().id, update.message.content.text,
+      update.message.self)
+    render.moveConversationToBegin(conversation.getData().id)
+
+    if (conversation.getData().id === this.openedConversation.getData().id) {
+      //do_something
+    }
   }
 
 }
