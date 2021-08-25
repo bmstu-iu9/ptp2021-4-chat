@@ -53,7 +53,8 @@ class VirtualConversation extends Updatable {
 
     this.messages = {
       list: {},
-      toBeUpdated: {}
+      toBeUpdated: {},
+      new: {}
     }
   }
 
@@ -67,13 +68,9 @@ class VirtualConversation extends Updatable {
     return parseInt(ids[ids.length - 1])
   }
 
-  addMessage(messageUpdate, isNew=true) {
+  addMessage(messageUpdate) {
     const id = messageUpdate.relativeId
     this.messages.list[id] = new VirtualMessage(messageUpdate)
-
-    if (isNew) {
-      this.messages.toBeUpdated[id] = this.messages.list[id]
-    }
   }
 
   updateMessage(messageStateUpdate) {
@@ -119,12 +116,12 @@ class VirtualConversation extends Updatable {
     const lastMessages = {}
     let id
 
-    for (id = fromRelativeId; (id in this.messages.list) && (id>fromRelativeId - N) && (id>=0); id--) {
+    for (id = fromRelativeId; (id in this.messages.list) && (id>fromRelativeId - N) && (id>0); id--) {
       lastMessages[id] = this.messages.list[id]
     }
 
     let allMessagesLoaded = false
-    if (id === -1 || id === fromRelativeId - N){
+    if (id === 0 || id === fromRelativeId - N){
       allMessagesLoaded = true
     }
 

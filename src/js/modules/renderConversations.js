@@ -50,8 +50,12 @@ function renderConversation(conversation, lastMessage, addToBegin, onclickFunc) 
     username = conversation.name
   }
   const id = conversation.id
-  const message = lastMessage.content.value
-  const self = lastMessage.self
+  let message
+  let self
+  if (lastMessage) {
+    message = lastMessage.content.value
+    self = lastMessage.self
+  }
   const newConversation = createConversationElement(username, id, message, self, onclickFunc)
   if (addToBegin && dialogsContainer.hasChildNodes()) {
     dialogsContainer.insertBefore(newConversation, dialogsContainer.firstChild)
