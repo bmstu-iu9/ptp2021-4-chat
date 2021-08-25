@@ -269,10 +269,13 @@ function showFormOnLoad() {
 }
 
 
-const togglePassword = document.getElementById('togglePassword');
+const authTogglePassword = document.getElementById('auth-toggle-password');
 
-const showOrHidePassword = () => {
-  const password = document.getElementById('password');
+const authShowOrHidePassword = () => {
+  const password = document.getElementById('auth-password');
+
+  console.log("auth show pass")
+
   if (password.type === 'password') {
     password.type = 'text';
   } else {
@@ -280,10 +283,25 @@ const showOrHidePassword = () => {
   }
 };
 
-togglePassword.addEventListener('change', showOrHidePassword);
+authTogglePassword.addEventListener('change', authShowOrHidePassword);
 
 
+const regTogglePassword = document.getElementById('registration-toggle-password');
 
+const regShowOrHidePassword = () => {
+  const password = document.getElementById('registration-password');
+  const repPassword = document.getElementById('registration-repeat-password');
+
+  if (password.type === 'password') {
+    password.type = 'text';
+    repPassword.type = 'text';
+  } else {
+    password.type = 'password';
+    repPassword.type = 'password';
+  }
+};
+
+regTogglePassword.addEventListener('change', regShowOrHidePassword);
 
 function setUsernameInputValue(form) {
   const username = getURLParam('username')

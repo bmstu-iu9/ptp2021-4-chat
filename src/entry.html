@@ -50,8 +50,9 @@
           </div>
           <div class="mb-3 auth-form__password-form">
             <input type="password" class="form-control auth-form__password-input"
-                   name="password" id="password" placeholder="Пароль">
-            <input type="checkbox" class=" auth-form__password-show" name="show-password" id="togglePassword">
+                   name="password" id="auth-password" placeholder="Пароль">
+            <input type="checkbox" class=" auth-form__password-show"
+                   name="show-password" id="auth-toggle-password">
           </div>
           <div class="mb-3">
             <input type="checkbox" class="form-check-input auth-form__checkbox-input"
@@ -71,16 +72,21 @@
           </div>
           <div class="mb-3">
             <input type="password" class="form-control registration-from__password-input"
-                   name="password"
+                   name="password" id="registration-password"
                    placeholder="Пароль">
           </div>
           <div class="mb-3">
             <input type="password" class="form-control registration-from__password-retry-input"
-                   name="passwordRetry"
+                   name="passwordRetry" id="registration-repeat-password"
                    placeholder="Повтор пароля">
           </div>
           <div class="mb-3">
-            <input type="checkbox" class="form-check-input auth-form__checkbox-input"
+            <input type="checkbox" class="form-check-input registration-form__password-show"
+                   name="show-password" id="registration-toggle-password">
+            <label class="registration-form__checkbox-label"> &nbsp Показать пароль </label>
+          </div>
+          <div class="mb-3">
+            <input type="checkbox" class="form-check-input registration-form__checkbox-input"
                    name="rememberCheck">
             <label class="auth-form__checkbox-label"> &nbsp Запомнить меня </label>
           </div>
