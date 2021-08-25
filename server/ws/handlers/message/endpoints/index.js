@@ -98,7 +98,7 @@ validator.customFormats.contentTypeENUM = (input) => {
 }
 
 function validateSchema(payload) {
-  if (!payload || !validator.validate(payload, schema)) {
+  if (!payload || !validator.validate(payload, schema).valid) {
     return false
   }
 
@@ -108,7 +108,7 @@ function validateSchema(payload) {
     return false
   }
 
-  return validator.validate(payload.meta, metaSchema)
+  return validator.validate(payload.meta, metaSchema).valid
 }
 
 
