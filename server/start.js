@@ -13,6 +13,11 @@ server.on('close', async () => {
   await sequelize.close()
 })
 
-server.listen(port, host, () => {
+server.on('', async () => {
+
+})
+
+server.listen(port, host, async () => {
+  await sequelize.authenticate()
   console.log(`Сервер запущен на ${host}:${port}`)
 })
