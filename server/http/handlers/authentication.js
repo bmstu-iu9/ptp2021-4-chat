@@ -12,11 +12,11 @@ apiRouter.post('/auth',
   validateBody({username: 'string', password: 'string'}),
 
   wrapAsyncFunction(async (request, response) => {
-    const {username, password} = request.body
+    const {username, password, remember} = request.body
 
     const user = await authenticateUser(username, password)
 
-    const {sessionId, expirationDate} = await generateAndSaveSessionId(user)
+    const {sessionId, expirationDate} = await generateAndSaveSessionId(user, remember)
 
     response.cookie('sessionId', sessionId, {
       expires: expirationDate
