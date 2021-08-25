@@ -82,6 +82,13 @@ const metaSchemas = {
       }
     },
     required: ['name', 'userIds']
+  },
+  searchUser: {
+    type: 'object',
+    properties: {
+      username: {type: 'string'}
+    },
+    required: ['username']
   }
 }
 
@@ -91,7 +98,7 @@ validator.customFormats.contentTypeENUM = (input) => {
 }
 
 function validateSchema(payload) {
-  if (!payload || !validator.validate(payload, schema)) {
+  if (!payload || !validator.validate(payload, schema).valid) {
     return false
   }
 
@@ -101,7 +108,7 @@ function validateSchema(payload) {
     return false
   }
 
-  return validator.validate(payload.meta, metaSchema)
+  return validator.validate(payload.meta, metaSchema).valid
 }
 
 
@@ -116,6 +123,7 @@ module.exports = {
     editMessage: require('./editMessage'),
     deleteMessage: require('./deleteMessage'),
     createDialog: require('./createDialog'),
-    createDiscussion: require('./createDiscussion')
+    createDiscussion: require('./createDiscussion'),
+    searchUser: require('./searchUser')
   }
 }

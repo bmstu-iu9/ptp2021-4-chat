@@ -1,4 +1,5 @@
 const processObjectAccordingConfig = require('../../../misc/objectProcessor')
+const {justUserConfig} = require('./configs')
 const {Op} = require('sequelize')
 const {singleSessionUserConfig} = require('./configs')
 const {User} = require("../../../database/models/user")
@@ -13,6 +14,14 @@ async function fetchUser(sessionId) {
         sessionId
       }
     }]
+  })
+
+  return user ? user.toJSON() : null
+}
+
+async function fetchUserByUsername(username) {
+  const user = await User.findOne({
+    where: {username: username.toLowerCase()}
   })
 
   return user ? user.toJSON() : null
@@ -40,8 +49,19 @@ async function checkUsersExist(userIds) {
   return count === userIds.length
 }
 
+async function getUserByUsername(username) {
+  const user = await fetchUserByUsername(username)
+
+  if (user) {
+    processObjectAccordingConfig(user, justUserConfig)
+  }
+
+  return user
+}
+
 
 module.exports = {
   getUser,
-  checkUsersExist
+  checkUsersExist,
+  getUserByUsername
 }
