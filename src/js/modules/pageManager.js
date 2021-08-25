@@ -30,16 +30,24 @@ export class PageManager {
     if (this.conversationsList.get(update.conversation.id)) {
       throw new Error(`Диалог с id=${update.conversation.id} уже существует!`)
     }
+
     const conversation = this.conversationsList.create(update.conversation)
+
     if (update.lastMessage) {
-      conversation.addMessage(update.lastMessage, false)
+      conversation.addMessage(update.lastMessage)
     }
+
     if (update.messages) {
       update.messages.forEach(
-        message => conversation.addMessage(message, false)
+        message => conversation.addMessage(message)
       )
     }
-    render.renderConversation(conversation.getData(), conversation.getLastMessage().getData(),
+
+    let lastMessage
+    if (conversation.getLastMessage()) {
+      lastMessage = conversation.getLastMessage().getData()
+    }
+    render.renderConversation(conversation.getData(), lastMessage,
       true, this.conversationOnclickFunc)
   }
 
@@ -62,10 +70,48 @@ export class PageManager {
     render.renameOpenedDialog(this.openedConversation.name)
 
     const loadedMessagesInfo = this.openedConversation.getLastMessages(50)
+    if (!loadedMessagesInfo.allLoaded) {
+      return {needLoad: true}
+    }
+
     for (const message of Object.values(loadedMessagesInfo.messages)) {
       renderMessage(message.getData(), false, true)
     }
+
+    return {needLoad: false}
   }
+
+  loadMessages(update) {
+    console.log(update)
+    const conversation = this.conversationsList.get(update.conversation.id)
+
+    update.messages.forEach(
+      message => conversation.addMessage(message)
+    )
+
+    const lastMessage = conversation.getLastMessage()
+    if (lastMessage) {
+      render.changeConversationLastMessage(conversation.getData().id,
+        lastMessage.getData().content.value,
+        lastMessage.getData().self)
+    }
+  }
+
+  createMessage(messageUpdate) {
+    const conversation = this.conversationsList.get(messageUpdate.conversation.id)
+
+    messageUpdate.message.self = true
+    messageUpdate.message.server = false
+    messageUpdate.message.user = {id: this.userId, username: this.username}
+    messageUpdate.message.edited = false
+
+    conversation.addMessage(messageUpdate.message)
+    renderMessage(messageUpdate.message, false, true)
+    render.changeConversationLastMessage(conversation.getData().id,
+      conversation.getLastMessage().getData().content.value,
+      conversation.getLastMessage().getData().self)
+  }
+
 
   newMessageHandler(update) {
     const conversation = this.conversationsList.get(update.conversation.id)
@@ -74,15 +120,31 @@ export class PageManager {
       throw new Error(`Пришло сообщение в диалог, которого нет! (id=${update.conversation.id})`)
     }
 
-    conversation.addMessage(update.message, true)
+    conversation.addMessage(update.message)
 
-    render.changeConversationLastMessage(conversation.getData().id, update.message.content.text,
-      update.message.self)
+    render.changeConversationLastMessage(conversation.getData().id,
+      conversation.getLastMessage().getData().content.value,
+      conversation.getLastMessage().getData().self)
     render.moveConversationToBegin(conversation.getData().id)
 
     if (conversation.getData().id === this.openedConversation.getData().id) {
-      //do_something
+      renderMessage(update.message, false, true)
     }
   }
 
+  newConversationHandler(update) {
+    const conversation = this.conversationsList.create(update.conversation)
+
+    render.renderConversation(conversation.getData(), undefined,
+      true, this.conversationOnclickFunc)
+  }
+
+  runHandlers(update) {
+    if (update.notificationType === 'newConversation') {
+      this.newConversationHandler(update)
+    }
+    if (update.notificationType === 'newMessage') {
+      this.newMessageHandler(update)
+    }
+  }
 }

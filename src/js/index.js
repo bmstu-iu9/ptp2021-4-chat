@@ -14,7 +14,7 @@ const dialogsWindow = document.querySelector('.dialogs-window')
 const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
-const searchField = document.getElementById('search-user-input')
+const searchUserField = document.getElementById('search-user-input')
 
 /* Очистка всех сообщений и полей в открытом диалоге */
 function clearOpenedDialog() {
@@ -34,16 +34,26 @@ function closeOpenedDialog() {
 
 /* Поиск пользователя и добавление его в диалоги! */
 function searchUser() {
-  let username = searchField.value
+  let username = searchUserField.value
   if (username === '') {
     return
   }
 
-  wsClient.makeAPIRequest('getUser', {}).then(
-    data => pageManager.setUserInfo(data.username, data.id)
+  wsClient.makeAPIRequest('searchUser', {username}).then(
+    userInfo => {
+      if (userInfo.user) {
+        wsClient.makeAPIRequest('createDialog', {userId: userInfo.user.id}).then(
+          data => {
+            pageManager.addConversation(data)
+          }
+        )
+      } else {
+        console.log('Такого пользователя не существует!')
+      }
+    }
   )
 
-  inputField.value = ''
+  searchUserField.value = ''
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
 
@@ -55,18 +65,31 @@ document.getElementById('search-user-input').addEventListener('keydown', functio
   }
 })
 
+
 /* Добавление сообщения в диалог */
-function addMessage() {
+function sendMessage() {
   let message = messageInputField.value
-  let fromUser = 'Я'
   if (message === '') {
     return
   }
-  const newMessage = createMessageElement(fromUser, message)
-  messagesContainer.appendChild(newMessage)
+
+  wsClient.makeAPIRequest("createMessage", {
+    conversationId: pageManager.openedConversation.conversationId,
+    contentType: 'text',
+    value: message
+  }).then(messageUpdate => pageManager.createMessage(messageUpdate))
+
   messageInputField.value = ''
   messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
 }
+
+document.getElementById('send-button').onclick = sendMessage
+document.getElementById('input-message-text-area').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    sendMessage()
+  }
+})
 
 /* Переключение менюшки на мобилах */
 function toggleMenu() {
@@ -74,34 +97,40 @@ function toggleMenu() {
   dialogsWindow.classList.toggle('dialogs-window-mobile-opened')
 }
 
-/* Обработчик нажатия на диалог */
-function conversationOnclickHandler(clickedElement) {
-  clearOpenedDialog()
-  showOpenedDialog()
-  pageManager.openConversation(clickedElement.getAttribute('data-conversation-id'))
-}
-
 /* Основные объекты! */
 const pageManager = new PageManager()
 const wsClient = new WSClient('ws://localhost:80')
+
+wsClient.connect().then(() => {
+  wsClient.setOnMessageHandler(pageManager.runHandlers.bind(pageManager))
+})
+
 wsClient.makeAPIRequest('getUser', {}).then(
   data => pageManager.setUserInfo(data.username, data.id)
 )
 
+wsClient.makeAPIRequest('getAllConversations', {}).then(
+  data => {
+    data.forEach(conversationUpdate => pageManager.addConversation(conversationUpdate))
+  }
+)
+
+/* Обработчик нажатия на диалог */
+function conversationOnclickHandler(clickedElement) {
+  clearOpenedDialog()
+  showOpenedDialog()
+  let result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id'))
+  if (result.needLoad) {
+    const conversationId = pageManager.openedConversation.conversationId
+    wsClient.makeAPIRequest('getConversation', {conversationId}).then(
+      data => pageManager.loadMessages(data)
+    ).then(() => result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id')))
+  }
+}
+
 pageManager.setConversationOnclickHandler(conversationOnclickHandler)
-pageManager.addConversation(exampleConversationNotification[0])
-pageManager.addConversation(exampleConversationNotification[1])
 window.pageManager = pageManager
 window.ws = wsClient
-
-/* Привязка */
-document.getElementById('send-button').onclick = addMessage
-document.getElementById('input-message-text-area').addEventListener('keydown', function(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault()
-    addMessage()
-  }
-})
 
 /* Закрытие текущего диалога нажатием на esc */
 document.body.addEventListener('keyup', function(e) {
