@@ -10,15 +10,15 @@ const {apiRouter} = require('../../definitions')
 
 apiRouter.post('/register',
   redirectIfSessionProvided(urls.index),
-  validateBody({username: 'string', password: 'string'}),
+  validateBody({username: 'string', password: 'string', remember: 'boolean'}),
 
   wrapAsyncFunction(async (request, response) => {
-    const {username, password} = request.body
+    const {username, password, remember} = request.body
     validateUsernameAndPassword(username, password)
 
     const user = await registerOrAuthUser(username, password)
 
-    const {sessionId, expirationDate} = await generateAndSaveSessionId(user)
+    const {sessionId, expirationDate} = await generateAndSaveSessionId(user, remember)
 
     response.cookie('sessionId', sessionId, {
       expires: expirationDate

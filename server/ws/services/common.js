@@ -53,7 +53,7 @@ async function notifyClients(type, clients, buildPayload) {
 async function fetchAllConversationsWithLastMessage(user) {
   return (await Conversation.findAll({
     attributes: {
-      include: getIncludesForConversation(user)
+      include: getIncludesForConversation(user.id)
     },
     include: [{
       model: ConversationParticipant,
