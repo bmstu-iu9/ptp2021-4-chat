@@ -86,10 +86,6 @@ body{
     font-weight: 350;
 }
 
-.active-conversation{
-    background-color: lightblue !important;
-}
-
 /* форма с поиском собеседников */
 
 .search-window{
@@ -118,6 +114,19 @@ body{
     background-color: #ebebeb;
     margin-right: .25rem;
     margin-left: .25rem;
+}
+
+.notification-window {
+    background-color: #bc8f8f;
+    padding: .75rem;
+    border-radius: .25rem;
+    position: inherit;
+    z-index: 999;
+}
+
+.notification-window_hidden {
+    display: none;
+    width: 0;
 }
 
 /* Окно с диалогом */

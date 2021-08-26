@@ -11,6 +11,9 @@ const openedDialogWindow = document.querySelector('.opened-dialog-window')
 const searchUserField = document.getElementById('search-user-input')
 const pageManager = new PageManager()
 const wsClient = new WSClient('ws://localhost:80')
+const closeButton = document.querySelector('.btn-close')
+const notificationWindow = document.querySelector('.notification-window')
+
 
 pageManager.setConversationOnclickHandler(conversationOnclickHandler)
 
@@ -31,6 +34,10 @@ wsClient.makeAPIRequest('getAllConversations', {}).then(data => {
 document.getElementById('btn-menu-trigger').onclick = toggleMenu
 document.getElementById('btn-find').onclick = searchUser
 document.getElementById('send-button').onclick = sendMessage
+
+closeButton.onclick = function() {
+  notificationWindow.classList.add('notification-window_hidden')
+}
 
 document.getElementById('search-user-input').onkeydown = function(event) {
   if (event.key === 'Enter') {
@@ -53,6 +60,12 @@ document.body.onkeyup = function(event) {
     closeOpenedDialog()
     pageManager.unsetConversationActive()
   }
+}
+
+/* Отображение сообщения об ошибке */
+function showNotificationWindow() {
+  const notificationWindow = document.querySelector('.notification-window')
+  notificationWindow.classList.remove('notification-window_hidden')
 }
 
 /* Загрузка сообщений при прокрутке вверх */
