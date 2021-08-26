@@ -1,4 +1,4 @@
-const WSError = require('../../../../misc/WSError')
+const {WSRequestError} = require('../../../../misc/wsErrors')
 const {checkUsersExist} = require('../../../services/users')
 const {saveConversation} = require('../../../services/conversations')
 const {emit} = require('../../../services/common')
@@ -13,11 +13,11 @@ module.exports = async (context, payload) => {
   const userId = payload.meta.userId
 
   if (!await checkUsersExist([userId])) {
-    throw new WSError('Пользователя с таким id не существует')
+    throw new WSRequestError('Пользователя с таким id не существует')
   }
 
   if (user.id === userId) {
-    throw new WSError('Нельзя создать диалог с самим собой')
+    throw new WSRequestError('Нельзя создать диалог с самим собой')
   }
 
   const dialog = await getDialog(user.id, userId)
