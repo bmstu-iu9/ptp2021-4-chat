@@ -23,7 +23,7 @@ function createMessageElement(fromUser, id, messageText) {
 }
 
 /* Рендеринг нового сообщения по объекту уведомления */
-function renderMessage(message, addToBegin=false, scrollDown=true) {
+function renderMessage(message, addToBegin=false, scrollDown=true, scrollTo=undefined) {
   let fromUser = message.user.username
 
   const newMessage = createMessageElement(fromUser, message.relativeId, message.content.value)
@@ -35,7 +35,9 @@ function renderMessage(message, addToBegin=false, scrollDown=true) {
     messagesContainer.appendChild(newMessage)
   }
 
-  if (scrollDown) {
+  if (scrollTo) {
+    messagesContainer.scrollTo(0, scrollTo)
+  } else if (scrollDown) {
     messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
   }
 }

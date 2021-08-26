@@ -83,12 +83,20 @@ function changeConversationLastMessage(conversationId, messageText, self) {
   if (!conversationElement) {
     return
   }
+
+  let conversationLastMessage = conversationElement.querySelector('.conversation-last-message')
+  if (!conversationLastMessage) {
+    conversationLastMessage = createElementWithClass('p',
+      'conversation-last-message')
+    conversationElement.appendChild(conversationLastMessage)
+  }
+
   let newInnerHTML = ''
   if (self) {
     newInnerHTML += '<span class=\\"conversation-last-message-self\\">Я: </span>'
   }
   newInnerHTML += messageText
-  conversationElement.lastChild.innerHTML = newInnerHTML
+  conversationLastMessage.innerHTML = newInnerHTML
 }
 
 function setConversationActive(conversationId) {
