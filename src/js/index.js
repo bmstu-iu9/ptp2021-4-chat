@@ -50,6 +50,7 @@ function searchUser() {
           }
         )
       } else {
+        // Здесь будет вызов окна!
         console.log('Такого пользователя не существует!')
       }
     }
@@ -93,8 +94,25 @@ document.getElementById('input-message-text-area').addEventListener('keydown', f
   }
 })
 
+
+/* Обработчик нажатия на диалог */
+function conversationOnclickHandler(clickedElement) {
+  clearOpenedDialog()
+  showOpenedDialog()
+  let result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id'))
+  if (result.needLoad) {
+    const conversationId = pageManager.openedConversation.conversationId
+    wsClient.makeAPIRequest('getConversation', {conversationId}).then(
+      data => pageManager.addOldMessages(data)
+    ).then(() => result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id')))
+  }
+}
+
+
 /* Основные объекты! */
 const pageManager = new PageManager()
+pageManager.setConversationOnclickHandler(conversationOnclickHandler)
+
 const wsClient = new WSClient('ws://localhost:80')
 
 wsClient.connect().then(() => {
@@ -110,23 +128,6 @@ wsClient.makeAPIRequest('getAllConversations', {}).then(
     data.forEach(conversationUpdate => pageManager.addConversation(conversationUpdate))
   }
 )
-
-/* Обработчик нажатия на диалог */
-function conversationOnclickHandler(clickedElement) {
-  clearOpenedDialog()
-  showOpenedDialog()
-  let result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id'))
-  if (result.needLoad) {
-    const conversationId = pageManager.openedConversation.conversationId
-    wsClient.makeAPIRequest('getConversation', {conversationId}).then(
-      data => pageManager.addOldMessages(data)
-    ).then(() => result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id')))
-  }
-}
-
-pageManager.setConversationOnclickHandler(conversationOnclickHandler)
-window.pageManager = pageManager
-window.ws = wsClient
 
 /* Закрытие текущего диалога нажатием на esc */
 document.body.addEventListener('keyup', function(e) {
