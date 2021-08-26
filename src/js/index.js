@@ -1,15 +1,13 @@
+import {PageManager} from './modules/pageManager.js'
+import WSClient from './modules/WSClient.js'
 
-import {exampleConversationNotification, exampleMessageNotification} from './modules/notificationExamples.js'
-import ConversationsList from './modules/virtualObjects.js'
-
-window.convNotif = exampleConversationNotification
-window.msgNotif = exampleMessageNotification
 
 const dialogsContainer = document.querySelector('.dialogs-list')
 const dialogsWindow = document.querySelector('.dialogs-window')
 const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
+
 const closeButton = document.querySelector('.btn-close')
 const notificationWindow = document.querySelector('.notification-window')
 
@@ -17,45 +15,34 @@ closeButton.addEventListener('click', function() {
   notificationWindow.classList.add('notification-window_hidden')
 })
 
-/* Вспомогательные функции */
-function createElementWithClass(elementName, className) {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  return newElem
+const searchUserField = document.getElementById('search-user-input')
+
+
+/* Переключение менюшки на мобилах */
+function toggleMenu() {
+  dialogsWindow.classList.toggle('dialogs-window-mobile-closed')
+  dialogsWindow.classList.toggle('dialogs-window-mobile-opened')
 }
 
-function createTextElement(elementName, className, innerText='') {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  newElem.innerText = innerText
-  return newElem
-}
+document.getElementById('btn-menu-trigger').onclick = toggleMenu
 
-function createCustomElement(elementName, className, id=NaN, innerText='') {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  if (id) {
-    newElem.setAttribute("id", id)
-  }
-  newElem.innerText = innerText
-  return newElem
-}
 
 /* Очистка всех сообщений и полей в открытом диалоге */
 function clearOpenedDialog() {
-  messageInputField.value = ""
-  messagesContainer.innerHTML = ""
+  messageInputField.value = ''
+  messagesContainer.innerHTML = ''
 }
 
 /* Показать окно с текущим диалогом */
 function showOpenedDialog() {
-  openedDialogWindow.classList.toggle("hidden-window", false)
+  openedDialogWindow.classList.toggle('hidden-window', false)
 }
 
 /* Спрятать окно с текущим диалогом */
 function closeOpenedDialog() {
-  openedDialogWindow.classList.toggle("hidden-window", true)
+  openedDialogWindow.classList.toggle('hidden-window', true)
 }
+
 
 /* Создание элемента диалога */
 function createConversationElement(username, lastMessage, selfMark) {
@@ -86,96 +73,137 @@ function renderConversation(conversation) {
   const newConversation = createConversationElement(username, lastMessage, fromSelf)
   dialogsContainer.appendChild(newConversation)
 
-  dialogsContainer.scrollTop = dialogsContainer.scrollHeight
-}
-
-/* Добавление диалога в список всех диалогов с помощью кнопки */
-function addConversation() {
-  const inputField = document.getElementById('search-user-input')
-  let username = inputField.value
-  if (username === "") {
+/* Поиск пользователя и добавление его в диалоги! */
+function searchUser() {
+  let username = searchUserField.value
+  if (username === '') {
     return
   }
-  const newConversation = createConversationElement(username, "", false)
-  dialogsContainer.appendChild(newConversation)
-  inputField.value = ""
+
+  wsClient.makeAPIRequest('searchUser', {username}).then(
+    userInfo => {
+      if (userInfo.user) {
+        wsClient.makeAPIRequest('createDialog', {userId: userInfo.user.id}).then(
+          data => {
+            pageManager.addConversation(data)
+          }
+        )
+      } else {
+        // Здесь будет вызов окна!
+        console.log('Такого пользователя не существует!')
+      }
+    }
+  )
+
+
+  searchUserField.value = ''
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
 
-/*Сообщение об ошибке*/
+function sendMessage() {
+  let message = messageInputField.value
+  if (message === '') {
+    return
+  }
 
+  wsClient.makeAPIRequest("createMessage", {
+    conversationId: pageManager.openedConversation.conversationId,
+    contentType: 'text',
+    value: message
+  }).then(messageUpdate => pageManager.createMessage(messageUpdate))
+
+  messageInputField.value = ''
+  messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
+}
+
+
+/*Сообщение об ошибке*/
 function showNotificationWindow() {
   const notificationWindow = document.querySelector('.notification-window')
   notificationWindow.classList.remove('notification-window_hidden')
 }
 
-/* Создание объекта сообщения */
-function createMessageElement(fromUser, messageText) {
-  const messageAuthorElem = createTextElement('p',
-    'message-author', fromUser)
-  const messageTextElem = createTextElement('p',
-    'message-text', messageText)
-  const newMessage = createElementWithClass('div',
-    'message-container')
-  newMessage.append(messageAuthorElem, messageTextElem)
-  return newMessage
-}
 
-/* Рендеринг нового сообщения по объекту уведомления */
-function renderMessage(message) {
-  let fromUser = message.user.username
-  const newMessage = createMessageElement(fromUser, message.content.value)
-  messagesContainer.appendChild(newMessage)
+  wsClient.makeAPIRequest("createMessage", {
+    conversationId: pageManager.openedConversation.conversationId,
+    contentType: 'text',
+    value: message
+  }).then(messageUpdate => pageManager.createMessage(messageUpdate))
+
+
+  messageInputField.value = ''
   messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
 }
 
-/* Добавление сообщения в диалог */
-function addMessage() {
-  let message = messageInputField.value
-  let fromUser = "Я"
-  if (message === "") {
-    return
+document.getElementById('send-button').onclick = sendMessage
+document.getElementById('input-message-text-area').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    sendMessage()
   }
-  const newMessage = createMessageElement(fromUser, message)
-  messagesContainer.appendChild(newMessage)
-  messageInputField.value = ""
-  messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
+})
+
+
+/* Обработчик нажатия на диалог */
+function conversationOnclickHandler(clickedElement) {
+  clearOpenedDialog()
+  showOpenedDialog()
+  let result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id'))
+  if (result.needLoad) {
+    const conversationId = pageManager.openedConversation.conversationId
+    wsClient.makeAPIRequest('getConversation', {conversationId}).then(
+      data => pageManager.addOldMessages(data)
+    ).then(() => result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id')))
+  }
 }
 
-/* Переключение менюшки на мобилах */
-function toggleMenu() {
-  dialogsWindow.classList.toggle("dialogs-window-mobile-closed")
-  dialogsWindow.classList.toggle("dialogs-window-mobile-opened")
-}
 
+/* Основные объекты! */
+const pageManager = new PageManager()
+pageManager.setConversationOnclickHandler(conversationOnclickHandler)
 
-/* Привязка */
-document.getElementById('send-button').onclick = addMessage
-document.getElementById('input-message-text-area').addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    addMessage();
+const wsClient = new WSClient('ws://localhost:80')
+
+wsClient.connect().then(() => {
+  wsClient.setOnMessageHandler(pageManager.runHandlers.bind(pageManager))
+})
+
+wsClient.makeAPIRequest('getUser', {}).then(
+  data => pageManager.setUserInfo(data.username, data.id)
+)
+
+wsClient.makeAPIRequest('getAllConversations', {}).then(
+  data => {
+    data.forEach(conversationUpdate => pageManager.addConversation(conversationUpdate))
   }
-});
-
-document.getElementById('btn-find').onclick = addConversation
-document.getElementById('search-user-input').addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    addConversation();
-  }
-});
+)
 
 /* Закрытие текущего диалога нажатием на esc */
 document.body.addEventListener('keyup', function(e) {
-  if (e.key === "Escape") {
+  if (e.key === 'Escape') {
     clearOpenedDialog()
     closeOpenedDialog()
+    pageManager.unsetConversationActive()
   }
-});
+})
 
-document.getElementById('btn-menu-trigger').onclick = toggleMenu
+/* Загрузка сообщений при прокрутке вверх */
+messagesContainer.addEventListener('scroll', function() {
+  if (messagesContainer.scrollTop === 0 &&
+      pageManager.openedConversation &&
+      pageManager.openedConversation.lastShownMessageId !== 1) {
 
-document.querySelectorAll('.conversation').forEach(
-  elem => elem.onclick = showOpenedDialog
-)
+    let result = pageManager.renderOldMessages()
+
+    if (result.needLoad) {
+      const conversationId = pageManager.openedConversation.conversationId
+
+      wsClient.makeAPIRequest('getConversation', {
+        conversationId,
+        relativeId: result.lastId
+      }).then(
+        data => pageManager.addOldMessages(data)
+      ).then(() => result = pageManager.renderOldMessages())
+    }
+  }
+})
