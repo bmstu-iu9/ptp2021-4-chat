@@ -1,8 +1,7 @@
 const {checkSession} = require('../../http/services/common')
 const {wss} = require('../../definitions')
 const cookie = require('cookie')
-const WSError = require("../../misc/WSError")
-const {getUser} = require("../services/users")
+const {getUser} = require('../services/users')
 
 
 wss.onPreConnection(async context => {
@@ -12,7 +11,8 @@ wss.onPreConnection(async context => {
   const result = await checkSession(request)
 
   if (!result) {
-    throw new WSError('Не предоставлена сессия')
+    context.redirectUrl = '/entry'
+    return
   }
 
   const {session, ...user} = await getUser(request.cookies.sessionId)
