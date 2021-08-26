@@ -1,4 +1,4 @@
-const WSError = require('../../../../misc/WSError')
+const {WSRequestError} = require('../../../../misc/wsErrors')
 const {getMessage} = require('../../../services/messages')
 const {getConversation} = require('../../../services/conversations')
 const {getConversationClients} = require('../../../services/common')
@@ -20,7 +20,7 @@ module.exports = async (context, payload) => {
   const {conversationId, contentType, value, files} = payload.meta
 
   if (contentType === 'text' && value === '') {
-    throw new WSError('Сообщение не может быть пустым')
+    throw new WSRequestError('Сообщение не может быть пустым')
   }
 
   await checkUserHasAccessToConversation(conversationId, user)

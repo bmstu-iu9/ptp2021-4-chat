@@ -1,4 +1,4 @@
-const WSError = require('../../../../misc/WSError')
+const {WSRequestError} = require('../../../../misc/wsErrors')
 const {getConversation} = require('../../../services/conversations')
 const {getConversationClients} = require('../../../services/common')
 const {emit} = require('../../../services/common')
@@ -18,15 +18,15 @@ module.exports = async (context, payload) => {
   const message = await getMessage(conversationId, relativeId, user)
 
   if (!message) {
-    throw new WSError('Сообщения с указанным id не существует')
+    throw new WSRequestError('Сообщения с указанным id не существует')
   }
 
   if (message.user.id === user.id) {
-    throw new WSError('Нельзя прочитать собственное сообщение')
+    throw new WSRequestError('Нельзя прочитать собственное сообщение')
   }
 
   if (await checkMessageReadByUser(message, user)) {
-    throw new WSError('Сообщение уже было прочитано')
+    throw new WSRequestError('Сообщение уже было прочитано')
   }
 
   await readMessage(conversationId, relativeId, user)

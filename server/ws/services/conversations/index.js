@@ -1,5 +1,5 @@
-const WSError = require('../../../misc/WSError')
 const processObjectAccordingConfig = require('../../../misc/objectProcessor')
+const {WSRequestError} = require('../../../misc/wsErrors')
 const {fullConversationConfig} = require('./configs')
 const {Session} = require('../../../database/models/session')
 const {User} = require('../../../database/models/user')
@@ -92,7 +92,7 @@ async function getAllConversations(user, config = null) {
 async function checkUserHasAccessToConversation(conversationId, user) {
   const conversation = await fetchConversation(conversationId, user.id)
   if (!conversation) {
-    throw new WSError('Conversation с таким id не существует')
+    throw new WSRequestError('Conversation с таким id не существует')
   }
 
   return conversation

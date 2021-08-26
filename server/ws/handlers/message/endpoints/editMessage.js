@@ -1,4 +1,4 @@
-const WSError = require('../../../../misc/WSError')
+const {WSRequestError} = require('../../../../misc/wsErrors')
 const {getMessage} = require('../../../services/messages')
 const {getConversation} = require('../../../services/conversations')
 const {getConversationClients} = require('../../../services/common')
@@ -17,14 +17,14 @@ module.exports = async (context, payload) => {
   const {conversationId, relativeId, value} = payload.meta
 
   if (value === '') {
-    throw new WSError('Сообщение не может быть пустым')
+    throw new WSRequestError('Сообщение не может быть пустым')
   }
 
   await checkUserHasAccessToConversation(conversationId, user)
   const message = await checkUserHasAccessToMessage(conversationId, relativeId, user)
 
   if (message.content.type !== 'text') {
-    throw new WSError('Сообщение не может быть отредактировано')
+    throw new WSRequestError('Сообщение не может быть отредактировано')
   }
 
   await editMessage(conversationId, relativeId, value)
