@@ -47,7 +47,6 @@ body{
     scrollbar-width: thin;
     scrollbar-color: white #ebebeb;
     scroll-snap-align: start;
-    position: relative;
 }
 
 .dialogs-list::-webkit-scrollbar {
@@ -121,17 +120,13 @@ body{
     background-color: #bc8f8f;
     padding: .75rem;
     border-radius: .25rem;
-    position: fixed;
-    left: 50%;
-    top: 5%;
-    transform: translate(-50%, 0);
-    transition-duration: 0.5s;
+    position: inherit;
+    z-index: 999;
 }
 
 .notification-window_hidden {
     display: none;
     width: 0;
-    transform: translate(-50%, -300%);
 }
 
 /* Окно с диалогом */
