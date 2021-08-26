@@ -47,6 +47,7 @@ body{
     scrollbar-width: thin;
     scrollbar-color: white #ebebeb;
     scroll-snap-align: start;
+    position: relative;
 }
 
 .dialogs-list::-webkit-scrollbar {
@@ -86,10 +87,6 @@ body{
     font-weight: 350;
 }
 
-.active-conversation{
-    background-color: lightblue !important;
-}
-
 /* форма с поиском собеседников */
 
 .search-window{
@@ -118,6 +115,23 @@ body{
     background-color: #ebebeb;
     margin-right: .25rem;
     margin-left: .25rem;
+}
+
+.notification-window {
+    background-color: #bc8f8f;
+    padding: .75rem;
+    border-radius: .25rem;
+    position: fixed;
+    left: 50%;
+    top: 5%;
+    transform: translate(-50%, 0);
+    transition-duration: 0.5s;
+}
+
+.notification-window_hidden {
+    display: none;
+    width: 0;
+    transform: translate(-50%, -300%);
 }
 
 /* Окно с диалогом */

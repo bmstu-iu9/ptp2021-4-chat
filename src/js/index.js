@@ -1,6 +1,6 @@
 
 import {exampleConversationNotification, exampleMessageNotification} from './modules/notificationExamples.js'
-import {ConversationsList} from './modules/virtualObjects.js'
+import ConversationsList from './modules/virtualObjects.js'
 
 window.convNotif = exampleConversationNotification
 window.msgNotif = exampleMessageNotification
@@ -10,6 +10,12 @@ const dialogsWindow = document.querySelector('.dialogs-window')
 const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
+const closeButton = document.querySelector('.btn-close')
+const notificationWindow = document.querySelector('.notification-window')
+
+closeButton.addEventListener('click', function() {
+  notificationWindow.classList.add('notification-window_hidden')
+})
 
 /* Вспомогательные функции */
 function createElementWithClass(elementName, className) {
@@ -52,73 +58,35 @@ function closeOpenedDialog() {
 }
 
 /* Создание элемента диалога */
-function createConversationElement(username, id, lastMessage, self) {
-  let conversationLastMessage
-  if (lastMessage) {
-    conversationLastMessage = createElementWithClass("p",
-      "conversation-last-message")
-    if (self) {
-      const conversationLastMessageSelf = createTextElement("span",
-        "conversation-last-message-self", 'Я: ')
-      conversationLastMessage.append(conversationLastMessageSelf)
-    }
-    conversationLastMessage.append(lastMessage)
+function createConversationElement(username, lastMessage, selfMark) {
+  const conversationLastMessage = createElementWithClass("p",
+    "conversation-last-message")
+  if (selfMark) {
+    const conversationLastMessageSelf = createTextElement("span",
+      "conversation-last-message-self", 'Я:')
+    conversationLastMessage.append(conversationLastMessageSelf)
   }
+  conversationLastMessage.append(lastMessage)
   const conversationUsername = createTextElement("p",
     "conversation-username", username)
   const newConversation = createElementWithClass("div",
     "conversation")
-  newConversation.setAttribute("data-conversation-id", id)
-  newConversation.appendChild(conversationUsername)
-  if (lastMessage) {
-    newConversation.appendChild(conversationLastMessage)
-  }
+  newConversation.append(conversationUsername, conversationLastMessage)
 
   newConversation.onclick = showOpenedDialog
 
   return newConversation
 }
 
-
 /* Рендеринг нового диалога по объекту уведомления */
-function renderConversation(conversation, addToBegin) {
-  let username
-  if (conversation.conversation.type === "dialog") {
-    username = conversation.conversation.participants[0].username
-  } else {
-    username = conversation.conversation.name
-  }
-  const id = conversation.conversation.id
+function renderConversation(conversation) {
+  const username = conversation.conversation.username
   const lastMessage = conversation.lastMessage.content.value
-  const self = conversation.lastMessage.self
-  const newConversation = createConversationElement(username, id, lastMessage, self)
-  if (addToBegin && dialogsContainer.hasChildNodes()) {
-    dialogsContainer.insertBefore(newConversation, dialogsContainer.firstChild)
-  }
-  else {
-    dialogsContainer.appendChild(newConversation)
-  }
+  const fromSelf = conversation.lastMessage.self
+  const newConversation = createConversationElement(username, lastMessage, fromSelf)
+  dialogsContainer.appendChild(newConversation)
 
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
-}
-
-/* Перенос диалога на первое место */
-function moveConversationToBegin(conversationId) {
-  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
-
-  if (conversationElement && dialogsContainer.hasChildNodes()) {
-    dialogsContainer.insertBefore(conversationElement, dialogsContainer.firstChild)
-  }
-}
-
-function setActiveConversation(conversationId) {
-  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
-  conversationElement.classList.add("active-conversation")
-}
-
-function unsetActiveConversation(conversationId) {
-  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
-  conversationElement.classList.remove("active-conversation")
 }
 
 /* Добавление диалога в список всех диалогов с помощью кнопки */
@@ -132,6 +100,13 @@ function addConversation() {
   dialogsContainer.appendChild(newConversation)
   inputField.value = ""
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
+}
+
+/*Сообщение об ошибке*/
+
+function showNotificationWindow() {
+  const notificationWindow = document.querySelector('.notification-window')
+  notificationWindow.classList.remove('notification-window_hidden')
 }
 
 /* Создание объекта сообщения */
