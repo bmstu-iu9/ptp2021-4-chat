@@ -40,6 +40,7 @@ class VirtualConversation extends Updatable {
   messages
   name
   conversationId
+  lastShownMessageId
 
   constructor(conversationUpdate) {
     super(conversationUpdate)
@@ -128,7 +129,7 @@ class VirtualConversation extends Updatable {
     return {
       messages: lastMessages,
       allLoaded: allMessagesLoaded,
-      lastId: id
+      lastId: id + 1
     }
   }
 

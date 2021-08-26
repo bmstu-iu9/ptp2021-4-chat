@@ -2,6 +2,8 @@ import {ConversationsList} from './virtualObjects.js'
 import * as render from './renderConversations.js'
 import {renderMessage} from './renderMessages.js'
 
+const messagesContainer = document.querySelector('.messages-list')
+
 export class PageManager {
   conversationsList
   openedConversation
@@ -71,17 +73,18 @@ export class PageManager {
 
     const loadedMessagesInfo = this.openedConversation.getLastMessages(50)
     if (!loadedMessagesInfo.allLoaded) {
-      return {needLoad: true}
+      return {needLoad: true, lastId: loadedMessagesInfo.lastId}
     }
 
     for (const message of Object.values(loadedMessagesInfo.messages)) {
       renderMessage(message.getData(), false, true)
     }
 
+    this.openedConversation.lastShownMessageId = loadedMessagesInfo.lastId
     return {needLoad: false}
   }
 
-  loadMessages(update) {
+  addOldMessages(update) {
     const conversation = this.conversationsList.get(update.conversation.id)
 
     update.messages.forEach(
@@ -94,6 +97,23 @@ export class PageManager {
         lastMessage.getData().content.value,
         lastMessage.getData().self)
     }
+  }
+
+  renderOldMessages() {
+    const loadedMessagesInfo = this.openedConversation.getMessagesFromId(50,
+      this.openedConversation.lastShownMessageId)
+
+    if (!loadedMessagesInfo.allLoaded) {
+      return {needLoad: true, lastId: loadedMessagesInfo.lastId}
+    }
+
+    const scrollY = messagesContainer.scrollHeight - messagesContainer.scrollTop
+    for (const message of Object.values(loadedMessagesInfo.messages).reverse()) {
+      renderMessage(message.getData(), true, false, messagesContainer.scrollHeight-scrollY)
+    }
+
+    this.openedConversation.lastShownMessageId = loadedMessagesInfo.lastId
+    return {needLoad: false}
   }
 
   createMessage(messageUpdate) {
@@ -126,7 +146,7 @@ export class PageManager {
       conversation.getLastMessage().getData().self)
     render.moveConversationToBegin(conversation.getData().id)
 
-    if (conversation.getData().id === this.openedConversation.getData().id) {
+    if (this.openedConversation && conversation.getData().id === this.openedConversation.getData().id) {
       renderMessage(update.message, false, true)
     }
   }

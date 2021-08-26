@@ -1,13 +1,6 @@
-import {
-  exampleConversationNotification,
-  exampleMessageNotification
-} from './modules/notificationExamples.js'
 import {PageManager} from './modules/pageManager.js'
 import WSClient from './modules/WSClient.js'
 
-
-window.convNotif = exampleConversationNotification
-window.msgNotif = exampleMessageNotification
 
 const dialogsContainer = document.querySelector('.dialogs-list')
 const dialogsWindow = document.querySelector('.dialogs-window')
@@ -15,6 +8,15 @@ const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
 const searchUserField = document.getElementById('search-user-input')
+
+/* Переключение менюшки на мобилах */
+function toggleMenu() {
+  dialogsWindow.classList.toggle('dialogs-window-mobile-closed')
+  dialogsWindow.classList.toggle('dialogs-window-mobile-opened')
+}
+
+document.getElementById('btn-menu-trigger').onclick = toggleMenu
+
 
 /* Очистка всех сообщений и полей в открытом диалоге */
 function clearOpenedDialog() {
@@ -66,7 +68,7 @@ document.getElementById('search-user-input').addEventListener('keydown', functio
 })
 
 
-/* Добавление сообщения в диалог */
+/* Отправка сообщений */
 function sendMessage() {
   let message = messageInputField.value
   if (message === '') {
@@ -90,12 +92,6 @@ document.getElementById('input-message-text-area').addEventListener('keydown', f
     sendMessage()
   }
 })
-
-/* Переключение менюшки на мобилах */
-function toggleMenu() {
-  dialogsWindow.classList.toggle('dialogs-window-mobile-closed')
-  dialogsWindow.classList.toggle('dialogs-window-mobile-opened')
-}
 
 /* Основные объекты! */
 const pageManager = new PageManager()
@@ -123,7 +119,7 @@ function conversationOnclickHandler(clickedElement) {
   if (result.needLoad) {
     const conversationId = pageManager.openedConversation.conversationId
     wsClient.makeAPIRequest('getConversation', {conversationId}).then(
-      data => pageManager.loadMessages(data)
+      data => pageManager.addOldMessages(data)
     ).then(() => result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id')))
   }
 }
@@ -141,4 +137,23 @@ document.body.addEventListener('keyup', function(e) {
   }
 })
 
-document.getElementById('btn-menu-trigger').onclick = toggleMenu
+/* Загрузка сообщений при прокрутке вверх */
+messagesContainer.addEventListener('scroll', function() {
+  if (messagesContainer.scrollTop === 0 &&
+      pageManager.openedConversation &&
+      pageManager.openedConversation.lastShownMessageId !== 1) {
+
+    let result = pageManager.renderOldMessages()
+
+    if (result.needLoad) {
+      const conversationId = pageManager.openedConversation.conversationId
+
+      wsClient.makeAPIRequest('getConversation', {
+        conversationId,
+        relativeId: result.lastId
+      }).then(
+        data => pageManager.addOldMessages(data)
+      ).then(() => result = pageManager.renderOldMessages())
+    }
+  }
+})
