@@ -40,12 +40,13 @@ class VirtualConversation extends Updatable {
   messages
   name
   conversationId
+  lastShownMessageId
 
   constructor(conversationUpdate) {
     super(conversationUpdate)
 
     this.conversationId = this.getData().id
-    if (this.getData().type === "dialog") {
+    if (this.getData().type === 'dialog') {
       this.name = this.getData().participants[0].username
     } else {
       this.name = this.getData().name
@@ -53,8 +54,14 @@ class VirtualConversation extends Updatable {
 
     this.messages = {
       list: {},
-      toBeUpdated: {}
+      toBeUpdated: {},
+      new: {}
     }
+  }
+
+  getLastLoadedMessageId() {
+    const ids = Object.keys(this.messages.list)
+    return parseInt(ids[0])
   }
 
   getLastMessageId() {
@@ -62,13 +69,9 @@ class VirtualConversation extends Updatable {
     return parseInt(ids[ids.length - 1])
   }
 
-  addMessage(messageUpdate, isNew=true) {
+  addMessage(messageUpdate) {
     const id = messageUpdate.relativeId
     this.messages.list[id] = new VirtualMessage(messageUpdate)
-
-    if (isNew) {
-      this.messages.toBeUpdated[id] = this.messages.list[id]
-    }
   }
 
   updateMessage(messageStateUpdate) {
@@ -102,6 +105,10 @@ class VirtualConversation extends Updatable {
     this.messages.toBeUpdated[messageStateUpdate.relativeId] = message
   }
 
+  getLastMessage() {
+    return this.messages.list[this.getLastMessageId()]
+  }
+
   getLastMessages(N){
     return this.getMessagesFromId(N, this.getLastMessageId())
   }
@@ -110,19 +117,19 @@ class VirtualConversation extends Updatable {
     const lastMessages = {}
     let id
 
-    for (id = fromRelativeId; (id in this.messages.list) && (id>fromRelativeId - N) && (id>=0); id--) {
+    for (id = fromRelativeId; (id in this.messages.list) && (id>fromRelativeId - N) && (id>0); id--) {
       lastMessages[id] = this.messages.list[id]
     }
 
     let allMessagesLoaded = false
-    if (id === -1 || id === fromRelativeId - N){
+    if (id === 0 || id === fromRelativeId - N){
       allMessagesLoaded = true
     }
 
     return {
       messages: lastMessages,
       allLoaded: allMessagesLoaded,
-      lastId: id
+      lastId: id + 1
     }
   }
 
@@ -145,6 +152,10 @@ export class ConversationsList {
 
   create(conversationUpdate) {
     return this.conversations[conversationUpdate.id] = new VirtualConversation(conversationUpdate)
+  }
+
+  includesConversationById(id) {
+    return id in this.conversations
   }
 
   get(id) {

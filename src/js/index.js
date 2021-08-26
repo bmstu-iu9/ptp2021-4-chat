@@ -1,206 +1,160 @@
+import {PageManager} from './modules/pageManager.js'
+import WSClient from './modules/WSClient.js'
 
-import {exampleConversationNotification, exampleMessageNotification} from './modules/notificationExamples.js'
-import {ConversationsList} from './modules/virtualObjects.js'
-
-window.convNotif = exampleConversationNotification
-window.msgNotif = exampleMessageNotification
 
 const dialogsContainer = document.querySelector('.dialogs-list')
 const dialogsWindow = document.querySelector('.dialogs-window')
 const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
+const searchUserField = document.getElementById('search-user-input')
 
-/* Вспомогательные функции */
-function createElementWithClass(elementName, className) {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  return newElem
+/* Переключение менюшки на мобилах */
+function toggleMenu() {
+  dialogsWindow.classList.toggle('dialogs-window-mobile-closed')
+  dialogsWindow.classList.toggle('dialogs-window-mobile-opened')
 }
 
-function createTextElement(elementName, className, innerText='') {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  newElem.innerText = innerText
-  return newElem
-}
+document.getElementById('btn-menu-trigger').onclick = toggleMenu
 
-function createCustomElement(elementName, className, id=NaN, innerText='') {
-  let newElem = document.createElement(elementName)
-  newElem.setAttribute("class", className)
-  if (id) {
-    newElem.setAttribute("id", id)
-  }
-  newElem.innerText = innerText
-  return newElem
-}
 
 /* Очистка всех сообщений и полей в открытом диалоге */
 function clearOpenedDialog() {
-  messageInputField.value = ""
-  messagesContainer.innerHTML = ""
+  messageInputField.value = ''
+  messagesContainer.innerHTML = ''
 }
 
 /* Показать окно с текущим диалогом */
 function showOpenedDialog() {
-  openedDialogWindow.classList.toggle("hidden-window", false)
+  openedDialogWindow.classList.toggle('hidden-window', false)
 }
 
 /* Спрятать окно с текущим диалогом */
 function closeOpenedDialog() {
-  openedDialogWindow.classList.toggle("hidden-window", true)
+  openedDialogWindow.classList.toggle('hidden-window', true)
 }
 
-/* Создание элемента диалога */
-function createConversationElement(username, id, lastMessage, self) {
-  let conversationLastMessage
-  if (lastMessage) {
-    conversationLastMessage = createElementWithClass("p",
-      "conversation-last-message")
-    if (self) {
-      const conversationLastMessageSelf = createTextElement("span",
-        "conversation-last-message-self", 'Я: ')
-      conversationLastMessage.append(conversationLastMessageSelf)
+/* Поиск пользователя и добавление его в диалоги! */
+function searchUser() {
+  let username = searchUserField.value
+  if (username === '') {
+    return
+  }
+
+  wsClient.makeAPIRequest('searchUser', {username}).then(
+    userInfo => {
+      if (userInfo.user) {
+        wsClient.makeAPIRequest('createDialog', {userId: userInfo.user.id}).then(
+          data => {
+            pageManager.addConversation(data)
+          }
+        )
+      } else {
+        // Здесь будет вызов окна!
+        console.log('Такого пользователя не существует!')
+      }
     }
-    conversationLastMessage.append(lastMessage)
-  }
-  const conversationUsername = createTextElement("p",
-    "conversation-username", username)
-  const newConversation = createElementWithClass("div",
-    "conversation")
-  newConversation.setAttribute("data-conversation-id", id)
-  newConversation.appendChild(conversationUsername)
-  if (lastMessage) {
-    newConversation.appendChild(conversationLastMessage)
-  }
+  )
 
-  newConversation.onclick = showOpenedDialog
-
-  return newConversation
-}
-
-
-/* Рендеринг нового диалога по объекту уведомления */
-function renderConversation(conversation, addToBegin) {
-  let username
-  if (conversation.conversation.type === "dialog") {
-    username = conversation.conversation.participants[0].username
-  } else {
-    username = conversation.conversation.name
-  }
-  const id = conversation.conversation.id
-  const lastMessage = conversation.lastMessage.content.value
-  const self = conversation.lastMessage.self
-  const newConversation = createConversationElement(username, id, lastMessage, self)
-  if (addToBegin && dialogsContainer.hasChildNodes()) {
-    dialogsContainer.insertBefore(newConversation, dialogsContainer.firstChild)
-  }
-  else {
-    dialogsContainer.appendChild(newConversation)
-  }
-
+  searchUserField.value = ''
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
 
-/* Перенос диалога на первое место */
-function moveConversationToBegin(conversationId) {
-  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
-
-  if (conversationElement && dialogsContainer.hasChildNodes()) {
-    dialogsContainer.insertBefore(conversationElement, dialogsContainer.firstChild)
+document.getElementById('btn-find').onclick = searchUser
+document.getElementById('search-user-input').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    searchUser()
   }
-}
+})
 
-function setActiveConversation(conversationId) {
-  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
-  conversationElement.classList.add("active-conversation")
-}
 
-function unsetActiveConversation(conversationId) {
-  const conversationElement = document.querySelector(`[data-conversation-id="${conversationId}"]`)
-  conversationElement.classList.remove("active-conversation")
-}
-
-/* Добавление диалога в список всех диалогов с помощью кнопки */
-function addConversation() {
-  const inputField = document.getElementById('search-user-input')
-  let username = inputField.value
-  if (username === "") {
-    return
-  }
-  const newConversation = createConversationElement(username, "", false)
-  dialogsContainer.appendChild(newConversation)
-  inputField.value = ""
-  dialogsContainer.scrollTop = dialogsContainer.scrollHeight
-}
-
-/* Создание объекта сообщения */
-function createMessageElement(fromUser, messageText) {
-  const messageAuthorElem = createTextElement('p',
-    'message-author', fromUser)
-  const messageTextElem = createTextElement('p',
-    'message-text', messageText)
-  const newMessage = createElementWithClass('div',
-    'message-container')
-  newMessage.append(messageAuthorElem, messageTextElem)
-  return newMessage
-}
-
-/* Рендеринг нового сообщения по объекту уведомления */
-function renderMessage(message) {
-  let fromUser = message.user.username
-  const newMessage = createMessageElement(fromUser, message.content.value)
-  messagesContainer.appendChild(newMessage)
-  messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
-}
-
-/* Добавление сообщения в диалог */
-function addMessage() {
+/* Отправка сообщений */
+function sendMessage() {
   let message = messageInputField.value
-  let fromUser = "Я"
-  if (message === "") {
+  if (message === '') {
     return
   }
-  const newMessage = createMessageElement(fromUser, message)
-  messagesContainer.appendChild(newMessage)
-  messageInputField.value = ""
+
+  wsClient.makeAPIRequest("createMessage", {
+    conversationId: pageManager.openedConversation.conversationId,
+    contentType: 'text',
+    value: message
+  }).then(messageUpdate => pageManager.createMessage(messageUpdate))
+
+  messageInputField.value = ''
   messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
 }
 
-/* Переключение менюшки на мобилах */
-function toggleMenu() {
-  dialogsWindow.classList.toggle("dialogs-window-mobile-closed")
-  dialogsWindow.classList.toggle("dialogs-window-mobile-opened")
+document.getElementById('send-button').onclick = sendMessage
+document.getElementById('input-message-text-area').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    sendMessage()
+  }
+})
+
+
+/* Обработчик нажатия на диалог */
+function conversationOnclickHandler(clickedElement) {
+  clearOpenedDialog()
+  showOpenedDialog()
+  let result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id'))
+  if (result.needLoad) {
+    const conversationId = pageManager.openedConversation.conversationId
+    wsClient.makeAPIRequest('getConversation', {conversationId}).then(
+      data => pageManager.addOldMessages(data)
+    ).then(() => result = pageManager.openConversation(clickedElement.getAttribute('data-conversation-id')))
+  }
 }
 
 
-/* Привязка */
-document.getElementById('send-button').onclick = addMessage
-document.getElementById('input-message-text-area').addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    addMessage();
-  }
-});
+/* Основные объекты! */
+const pageManager = new PageManager()
+pageManager.setConversationOnclickHandler(conversationOnclickHandler)
 
-document.getElementById('btn-find').onclick = addConversation
-document.getElementById('search-user-input').addEventListener("keydown", function(event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    addConversation();
+const wsClient = new WSClient('ws://localhost:80')
+
+wsClient.connect().then(() => {
+  wsClient.setOnMessageHandler(pageManager.runHandlers.bind(pageManager))
+})
+
+wsClient.makeAPIRequest('getUser', {}).then(
+  data => pageManager.setUserInfo(data.username, data.id)
+)
+
+wsClient.makeAPIRequest('getAllConversations', {}).then(
+  data => {
+    data.forEach(conversationUpdate => pageManager.addConversation(conversationUpdate))
   }
-});
+)
 
 /* Закрытие текущего диалога нажатием на esc */
 document.body.addEventListener('keyup', function(e) {
-  if (e.key === "Escape") {
+  if (e.key === 'Escape') {
     clearOpenedDialog()
     closeOpenedDialog()
+    pageManager.unsetConversationActive()
   }
-});
+})
 
-document.getElementById('btn-menu-trigger').onclick = toggleMenu
+/* Загрузка сообщений при прокрутке вверх */
+messagesContainer.addEventListener('scroll', function() {
+  if (messagesContainer.scrollTop === 0 &&
+      pageManager.openedConversation &&
+      pageManager.openedConversation.lastShownMessageId !== 1) {
 
-document.querySelectorAll('.conversation').forEach(
-  elem => elem.onclick = showOpenedDialog
-)
+    let result = pageManager.renderOldMessages()
+
+    if (result.needLoad) {
+      const conversationId = pageManager.openedConversation.conversationId
+
+      wsClient.makeAPIRequest('getConversation', {
+        conversationId,
+        relativeId: result.lastId
+      }).then(
+        data => pageManager.addOldMessages(data)
+      ).then(() => result = pageManager.renderOldMessages())
+    }
+  }
+})
