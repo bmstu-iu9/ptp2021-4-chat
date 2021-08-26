@@ -2,8 +2,8 @@ const processObjectAccordingConfig = require('../../../misc/objectProcessor')
 const {justUserConfig} = require('./configs')
 const {Op} = require('sequelize')
 const {singleSessionUserConfig} = require('./configs')
-const {User} = require("../../../database/models/user")
-const {Session} = require("../../../database/models/session")
+const {User} = require('../../../database/models/user')
+const {Session} = require('../../../database/models/session')
 
 
 async function fetchUser(sessionId) {

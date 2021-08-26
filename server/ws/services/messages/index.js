@@ -1,5 +1,4 @@
 const processObjectAccordingConfig = require('../../../misc/objectProcessor')
-const WSError = require('../../../misc/WSError')
 const {ReadMessage} = require('../../../database/models/message')
 const {Op} = require('sequelize')
 const {messagesCountPerRequest} = require('../../../constants')
@@ -193,7 +192,7 @@ async function checkUserHasAccessToMessage(conversationId, relativeId, user) {
   const message = await fetchMessageOwnedByUser(conversationId, relativeId, user)
 
   if (!message) {
-    throw new WSError('Сообщения с таким id не существует')
+    throw new WSRequestError('Сообщения с таким id не существует')
   }
 
   return message

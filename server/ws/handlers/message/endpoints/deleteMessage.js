@@ -1,7 +1,6 @@
-const WSError = require('../../../../misc/WSError')
+const {WSRequestError} = require('../../../../misc/wsErrors')
 const {getDeletedMessage} = require('../../../services/messages')
 const {getConversationClients} = require('../../../services/common')
-const {getMessage} = require('../../../services/messages')
 const {getConversation} = require('../../../services/conversations')
 const {emit} = require('../../../services/common')
 const {deletedMessageStateConfig} = require('../../../services/messages/configs')
@@ -22,7 +21,7 @@ module.exports = async (context, payload) => {
   const message = await checkUserHasAccessToMessage(conversationId, relativeId, user)
 
   if (message.deleted) {
-    throw new WSError('Сообщения с указанным id не существует')
+    throw new WSRequestError('Сообщения с указанным id не существует')
   }
 
   await deleteMessage(conversationId, relativeId)

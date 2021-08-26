@@ -1,23 +1,23 @@
-const WSError = require("../../../misc/WSError");
+const {WSRequestError} = require('../../../misc/wsErrors')
 const {wss} = require('../../../definitions')
 
 
 wss.onMessage((context, data, next) => {
   if (data.isBinary) {
-    throw new WSError('Бинарные данные должны быть закодированы в base64')
+    throw new WSRequestError('Бинарные данные должны быть закодированы в base64')
   }
 
   let parsed
   try {
     parsed = JSON.parse(data.payload)
   } catch {
-    throw new WSError('Сообщение должно быть в формате JSON')
+    throw new WSRequestError('Сообщение должно быть в формате JSON')
   }
 
   const id = parsed.$id
 
   if (!Number.isInteger(id)) {
-    throw new WSError('Сообщение должно содержать свойство $id')
+    throw new WSRequestError('Сообщение должно содержать свойство $id')
   }
 
   addMethod(context.socket, id)
@@ -31,7 +31,7 @@ function addMethod(socket, id) {
     try {
       payload = JSON.stringify({$id: id, payload: data})
     } catch {
-      throw new WSError('Объект data должен быть сериализуем в JSON формат')
+      throw new WSRequestError('Объект data должен быть сериализуем в JSON формат')
     }
 
     socket.send(payload, options, callback)

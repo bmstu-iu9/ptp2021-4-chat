@@ -9,7 +9,7 @@ const singleSessionUserConfig = {
       sessions => {
         const session = sessions[0]
         processObjectAccordingConfig(session, {
-          exclude: ['userId', 'expirationDate']
+          exclude: ['userId']
         })
 
         return [

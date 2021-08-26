@@ -1,4 +1,4 @@
-const WSError = require('../../../../misc/WSError')
+const {WSRequestError} = require('../../../../misc/wsErrors')
 const {fullConversationConfig} = require('../../../services/conversations/configs')
 const {getConversation} = require('../../../services/conversations')
 const {getConversationClients} = require('../../../services/common')
@@ -13,15 +13,15 @@ module.exports = async (context, payload) => {
   const {name, userIds} = payload.meta
 
   if (userIds.includes(user.id)) {
-    throw new WSError('Массив НЕ должен содержать id текущего пользователя')
+    throw new WSRequestError('Массив НЕ должен содержать id текущего пользователя')
   }
 
   if (userIds.length < 1) {
-    throw new WSError('Массив id должен содержать хотя бы один элемент')
+    throw new WSRequestError('Массив id должен содержать хотя бы один элемент')
   }
 
   if (!await checkUsersExist(userIds)) {
-    throw new WSError('Пользователей с такими id не существует')
+    throw new WSRequestError('Пользователей с такими id не существует')
   }
 
   const conversationId = await saveConversation('discussion', [user.id, ...userIds])
