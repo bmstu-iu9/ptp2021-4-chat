@@ -7,7 +7,16 @@ const dialogsWindow = document.querySelector('.dialogs-window')
 const messagesContainer = document.querySelector('.messages-list')
 const messageInputField = document.getElementById('input-message-text-area')
 const openedDialogWindow = document.querySelector('.opened-dialog-window')
+
+const closeButton = document.querySelector('.btn-close')
+const notificationWindow = document.querySelector('.notification-window')
+
+closeButton.addEventListener('click', function() {
+  notificationWindow.classList.add('notification-window_hidden')
+})
+
 const searchUserField = document.getElementById('search-user-input')
+
 
 /* Переключение менюшки на мобилах */
 function toggleMenu() {
@@ -34,6 +43,36 @@ function closeOpenedDialog() {
   openedDialogWindow.classList.toggle('hidden-window', true)
 }
 
+
+/* Создание элемента диалога */
+function createConversationElement(username, lastMessage, selfMark) {
+  const conversationLastMessage = createElementWithClass("p",
+    "conversation-last-message")
+  if (selfMark) {
+    const conversationLastMessageSelf = createTextElement("span",
+      "conversation-last-message-self", 'Я:')
+    conversationLastMessage.append(conversationLastMessageSelf)
+  }
+  conversationLastMessage.append(lastMessage)
+  const conversationUsername = createTextElement("p",
+    "conversation-username", username)
+  const newConversation = createElementWithClass("div",
+    "conversation")
+  newConversation.append(conversationUsername, conversationLastMessage)
+
+  newConversation.onclick = showOpenedDialog
+
+  return newConversation
+}
+
+/* Рендеринг нового диалога по объекту уведомления */
+function renderConversation(conversation) {
+  const username = conversation.conversation.username
+  const lastMessage = conversation.lastMessage.content.value
+  const fromSelf = conversation.lastMessage.self
+  const newConversation = createConversationElement(username, lastMessage, fromSelf)
+  dialogsContainer.appendChild(newConversation)
+
 /* Поиск пользователя и добавление его в диалоги! */
 function searchUser() {
   let username = searchUserField.value
@@ -56,20 +95,11 @@ function searchUser() {
     }
   )
 
+
   searchUserField.value = ''
   dialogsContainer.scrollTop = dialogsContainer.scrollHeight
 }
 
-document.getElementById('btn-find').onclick = searchUser
-document.getElementById('search-user-input').addEventListener('keydown', function(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault()
-    searchUser()
-  }
-})
-
-
-/* Отправка сообщений */
 function sendMessage() {
   let message = messageInputField.value
   if (message === '') {
@@ -81,6 +111,25 @@ function sendMessage() {
     contentType: 'text',
     value: message
   }).then(messageUpdate => pageManager.createMessage(messageUpdate))
+
+  messageInputField.value = ''
+  messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
+}
+
+
+/*Сообщение об ошибке*/
+function showNotificationWindow() {
+  const notificationWindow = document.querySelector('.notification-window')
+  notificationWindow.classList.remove('notification-window_hidden')
+}
+
+
+  wsClient.makeAPIRequest("createMessage", {
+    conversationId: pageManager.openedConversation.conversationId,
+    contentType: 'text',
+    value: message
+  }).then(messageUpdate => pageManager.createMessage(messageUpdate))
+
 
   messageInputField.value = ''
   messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
