@@ -1,5 +1,5 @@
 const ws = require('ws')
-const WSError = require('./WSError')
+const {WSError} = require('./wsErrors')
 const {isDev} = require('../config')
 
 
@@ -150,7 +150,7 @@ class WSServer {
       const context = request.context
       delete request.context
 
-      context.socket = socket
+      context.socket = this.modifySocket(socket)
 
       this.runConnectionHandlers(context)
 
@@ -166,6 +166,24 @@ class WSServer {
         await this.runErrorHandlers(context, error)
       })
     })
+  }
+
+  modifySocket(socket) {
+    socket.modifiedClose = function(code, reason, asJson = true) {
+      this.closedByServer = true
+
+      if (asJson) {
+        reason = JSON.stringify(reason)
+      }
+
+      this.close(code, reason)
+    }
+
+    socket.isClosedByServer = function() {
+      return this.closedByServer || false
+    }
+
+    return socket
   }
 }
 
