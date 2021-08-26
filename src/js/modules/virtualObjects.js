@@ -19,7 +19,7 @@ class Updatable {
 
   getData() {
     return Object.assign({}, this.#data)
-  } 
+  }
 
   #applyUpdate(update) {
     for (const property of Object.keys(update)) {
@@ -30,11 +30,13 @@ class Updatable {
   }
 }
 
+
 class VirtualMessage extends Updatable {
   constructor(messageUpdate) {
     super(messageUpdate)
   }
 }
+
 
 class VirtualConversation extends Updatable {
   messages
@@ -109,20 +111,20 @@ class VirtualConversation extends Updatable {
     return this.messages.list[this.getLastMessageId()]
   }
 
-  getLastMessages(N){
+  getLastMessages(N) {
     return this.getMessagesFromId(N, this.getLastMessageId())
   }
 
-  getMessagesFromId(N, fromRelativeId){
+  getMessagesFromId(N, fromRelativeId) {
     const lastMessages = {}
     let id
 
-    for (id = fromRelativeId; (id in this.messages.list) && (id>fromRelativeId - N) && (id>0); id--) {
+    for (id = fromRelativeId; (id in this.messages.list) && (id > fromRelativeId - N) && (id > 0); id--) {
       lastMessages[id] = this.messages.list[id]
     }
 
     let allMessagesLoaded = false
-    if (id === 0 || id === fromRelativeId - N){
+    if (id === 0 || id === fromRelativeId - N) {
       allMessagesLoaded = true
     }
 
@@ -133,13 +135,14 @@ class VirtualConversation extends Updatable {
     }
   }
 
-  getConversationInfo(){
+  getConversationInfo() {
     return {
       name: this.name,
       conversationId: this.conversationId
     }
   }
 }
+
 
 export class ConversationsList {
   activeConversation

@@ -2,7 +2,9 @@ import {ConversationsList} from './virtualObjects.js'
 import * as render from './renderConversations.js'
 import {renderMessage} from './renderMessages.js'
 
+
 const messagesContainer = document.querySelector('.messages-list')
+
 
 export class PageManager {
   conversationsList
@@ -19,9 +21,9 @@ export class PageManager {
     this.conversationOnclickFunc = conversationOnclickFunc
   }
 
-  setUserInfo(username, id) {
-    this.username = username
+  setUserInfo(id, username) {
     this.userId = id
+    this.username = username
   }
 
   hasConversation(conversationId) {
@@ -109,7 +111,7 @@ export class PageManager {
 
     const scrollY = messagesContainer.scrollHeight - messagesContainer.scrollTop
     for (const message of Object.values(loadedMessagesInfo.messages).reverse()) {
-      renderMessage(message.getData(), true, false, messagesContainer.scrollHeight-scrollY)
+      renderMessage(message.getData(), true, false, messagesContainer.scrollHeight - scrollY)
     }
 
     this.openedConversation.lastShownMessageId = loadedMessagesInfo.lastId

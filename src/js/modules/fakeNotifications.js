@@ -4,7 +4,7 @@ export const exampleMessageNotification = {
   conversation: {
     id: 0,
     unreadCount: 0,
-    generatedAt: 1629739557, //unixtimestamp
+    generatedAt: new Date(1629739557).toISOString()
   },
   message: {
     relativeId: 0,
@@ -13,21 +13,20 @@ export const exampleMessageNotification = {
     read: true,
     user: {
       id: 0,
-      username: "Igor Pavlov",
+      username: "Igor Pavlov"
     },
-    createdAt: 1629739557,
+    createdAt: new Date(1629739557).toISOString(),
 
     content: {
       type: "text",
       value: "Привет!",
-      files: null,
+      files: null
     },
-    generatedAt: 1629739557
+    generatedAt: new Date(1629739557).toISOString()
   }
 }
 
 /* Пример ответа сервера на getAllConversations */
-
 export const exampleConversationNotification = [{
   conversation: {
     id: 0,
@@ -37,7 +36,7 @@ export const exampleConversationNotification = [{
       id: 0,
       username: "Igor Pavlov",
     }],
-    generatedAt: 1629739557
+    generatedAt: new Date(1629739557).toISOString()
   },
   lastMessage: {
     relativeId: 0,
@@ -46,16 +45,16 @@ export const exampleConversationNotification = [{
     read: false,
     user: {
       id: 0,
-      username: "Igor Pavlov",
+      username: "Igor Pavlov"
     },
-    createdAt: 1629739557,
+    createdAt: new Date(1629739557).toISOString(),
     edited: false,
     content: {
       type: "text",
       value: "Привет!",
-      files: null,
+      files: null
     },
-    generatedAt: 1629739557
+    generatedAt: new Date(1629739557).toISOString()
   }
 }, {
   conversation: {
@@ -64,9 +63,9 @@ export const exampleConversationNotification = [{
     unreadCount: 0,
     participants: [{
       id: 120,
-      username: "skorb",
+      username: "Skorb"
     }],
-    generatedAt: 1629739557
+    generatedAt: new Date(1629739557).toISOString()
   },
   lastMessage: {
     relativeId: 0,
@@ -75,16 +74,16 @@ export const exampleConversationNotification = [{
     read: false,
     user: {
       id: 120,
-      username: "skorb",
+      username: "skorb"
     },
-    createdAt: 1629739590,
+    createdAt: new Date(1629739557).toISOString(),
     edited: false,
     content: {
       type: "text",
       value: "Кинул хмурого",
-      files: null,
+      files: null
     },
-    generatedAt: 1629739590
+    generatedAt: new Date(1629739557).toISOString()
   }
 }]
 
