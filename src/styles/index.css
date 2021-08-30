@@ -1,10 +1,10 @@
 @import url("normalize.css");
 
-body{
+body {
     background-color: #ebebeb;
 }
 
-.main-window{
+.main-window {
     height: 90vh;
     border: 3px white solid;
     border-radius: .25rem;
@@ -19,7 +19,7 @@ body{
 
 /* Окно со всеми диалогами */
 
-.dialogs-window, .dialogs-window-mobile-opened, .dialogs-window-mobile-closed{
+.dialogs-window, .dialogs-window-mobile-opened, .dialogs-window-mobile-closed {
     visibility: visible;
     height: auto;
     width: 30%;
@@ -30,14 +30,14 @@ body{
     border-radius: .25rem;
 }
 
-.small-header{
+.small-header {
     padding: .25rem;
     padding-right: 1rem;
     border-bottom: 2px white solid;
     text-align: end;
 }
 
-.dialogs-list{
+.dialogs-list {
     display: flex;
     flex-direction: column;
     flex-grow: 2;
@@ -47,18 +47,20 @@ body{
     scrollbar-width: thin;
     scrollbar-color: white #ebebeb;
     scroll-snap-align: start;
+    position: relative;
 }
 
 .dialogs-list::-webkit-scrollbar {
-    width: 6px;               /* ширина scrollbar */
-}
-.dialogs-list::-webkit-scrollbar-thumb {
-    background-color: white;    /* цвет плашки */
-    border-radius: 20px;       /* закругления плашки */
-    border: 0;  /* padding вокруг плашки */
+    width: 6px; /* ширина scrollbar */
 }
 
-.conversation{
+.dialogs-list::-webkit-scrollbar-thumb {
+    background-color: white; /* цвет плашки */
+    border-radius: 20px; /* закругления плашки */
+    border: 0; /* padding вокруг плашки */
+}
+
+.conversation {
     padding: .25rem .75rem;
     border-bottom: 2px white solid;
     word-wrap: break-word;
@@ -66,50 +68,50 @@ body{
     scroll-snap-align: start;
 }
 
-.conversation:hover{
+.conversation:hover {
     cursor: pointer;
 }
 
-.conversation-username{
+.conversation-username {
     font-size: 1rem;
     font-weight: 450;
 }
 
-.conversation-last-message-self{
+.conversation-last-message-self {
     font-size: 0.75rem;
     font-weight: 350;
     font-style: italic;
 }
 
-.conversation-last-message{
+.conversation-last-message {
     font-size: 0.75rem;
     font-weight: 350;
 }
 
 /* форма с поиском собеседников */
 
-.search-window{
+.search-window {
     padding: .5rem;
     padding-top: .25rem;
     border-top: 2px white solid;
 }
 
-.search-form{
+.search-form {
     display: flex;
     flex-direction: row;
     padding: 0;
 }
 
-.search-label{
+.search-label {
     padding-bottom: .5rem;
 }
 
-.search-input{
+.search-input {
     min-width: 10px;
     flex-grow: 2;
 }
 
-#btn-find{
+#btn-find {
     border: 0;
     background-color: #ebebeb;
     margin-right: .25rem;
@@ -120,38 +122,38 @@ body{
     background-color: #bc8f8f;
     padding: .75rem;
     border-radius: .25rem;
-    position: inherit;
-    z-index: 999;
+    position: fixed;
+    left: 50%;
+    top: 5%;
 }
 
 .notification-window_hidden {
     display: none;
-    width: 0;
 }
 
 /* Окно с диалогом */
-.opened-dialog-window{
+.opened-dialog-window {
     width: 70%;
     background-color: white;
     display: flex;
     flex-direction: column;
 }
 
-.hidden-window{
+.hidden-window {
     width: 0;
     height: 0;
     visibility: hidden;
 }
 
 /* Шапка окна диалога */
-.opened-dialog-header{
+.opened-dialog-header {
     display: flex;
     flex-direction: row;
     border-bottom: 2px #ebebeb solid;
 }
 
 /* Кнопка вызова меню */
-.btn-menu-trigger{
+.btn-menu-trigger {
     position: absolute;
     box-sizing: border-box;
     visibility: hidden;
@@ -161,17 +163,17 @@ body{
     color: black;
 }
 
-.btn-menu-trigger:hover{
+.btn-menu-trigger:hover {
     color: black;
     cursor: pointer;
 }
 
-.opened-dialog-username{
+.opened-dialog-username {
     flex-grow: 2;
 }
 
 /* Список сообщений */
-.messages-list{
+.messages-list {
     display: flex;
     flex-direction: column;
     flex-grow: 2;
@@ -183,34 +185,33 @@ body{
 }
 
 .messages-list::-webkit-scrollbar {
-    width: 6px;               /* ширина scrollbar */
-}
-.messages-list::-webkit-scrollbar-thumb {
-    background-color: #ebebeb;    /* цвет плашки */
-    border-radius: 20px;       /* закругления плашки */
-    border: 0;  /* padding вокруг плашки */
+    width: 6px; /* ширина scrollbar */
 }
 
-.message-container{
+.messages-list::-webkit-scrollbar-thumb {
+    background-color: #ebebeb; /* цвет плашки */
+    border-radius: 20px; /* закругления плашки */
+    border: 0; /* padding вокруг плашки */
+}
+
+.message-container {
     width: 90%;
     margin-left: .75rem;
     font-size: 14px;
     word-wrap: break-word;
 }
 
-.message-author{
-    padding: .5rem;
-    padding-bottom: 0;
+.message-author {
+    padding: .5rem .5rem 0 .5rem;
     color: dodgerblue;
 }
 
-.message-text{
-    padding: .5rem;
-    padding-top: 0;
+.message-text {
+    padding: .5rem .5rem 0 .5rem;
 }
 
 /* Окно ввода сообщения */
-.message-input-window{
+.message-input-window {
     display: flex;
     flex-direction: row;
     padding: .5rem;
@@ -218,7 +219,7 @@ body{
     border-top: 2px #ebebeb solid;
 }
 
-#input-message-text-area{
+#input-message-text-area {
     resize: none;
     width: 90%;
     margin-left: .5rem;
@@ -226,34 +227,34 @@ body{
     border-radius: .3rem;
 }
 
-#send-button{
+#send-button {
     padding: .5rem;
     margin-left: .5rem;
 }
 
-#send-button:hover{
+#send-button:hover {
     cursor: pointer;
 }
 
 /* Для мобилок! */
 @media (max-width: 767.98px) {
-    .main{
+    .main {
         padding: 0;
         margin: 0;
     }
 
-    .main-row{
+    .main-row {
         margin: 0;
     }
 
-    .main-window{
+    .main-window {
         height: 100vh;
         border: 0;
         padding: 0;
         margin: 0;
     }
 
-    .dialogs-window-mobile-closed{
+    .dialogs-window-mobile-closed {
         position: fixed;
         height: 0;
         width: 0;
@@ -263,7 +264,7 @@ body{
         -moz-transition: width 0.3s;
     }
 
-    .dialogs-window-mobile-opened{
+    .dialogs-window-mobile-opened {
         position: fixed;
         height: 100%;
         width: 50%;
@@ -273,11 +274,11 @@ body{
         -moz-transition: width 0.3s;
     }
 
-    .opened-dialog-window{
+    .opened-dialog-window {
         width: 100%;
     }
 
-    .btn-menu-trigger{
+    .btn-menu-trigger {
         position: fixed;
         visibility: visible;
         width: auto;
