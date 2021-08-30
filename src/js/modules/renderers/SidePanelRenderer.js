@@ -2,75 +2,32 @@ import {sidePanelUtils as utils} from '../renderUtils.js'
 
 
 class SidePanelRenderer {
-  sidePanel
+  render(conversations, onClickHandler) {
+    let sidePanelDOM = ''
 
-  constructor(sidePanel) {
-    this.sidePanel = sidePanel
+    conversations.forEach(conversation => {
+      sidePanelDOM += utils.getSidePanelConversationChunk(conversation, conversation.getLastMessage())
+    })
+
+    utils.renderSidePanel(sidePanelDOM)
+
+    utils.getAllSidePanelConversations().forEach(conversationView => {
+      conversationView.onclick = () => onClickHandler(parseInt(conversationView.dataset.conversationId))
+    })
   }
 
-  isElementRendered(conversationId) {
-    return this.getElement(conversationId) !== null
+  setConversationActive(conversationId) {
+    this.getConversation(conversationId).classList.add('side-panel__list__conversation_active')
   }
 
-  renderNewElement(conversationState, lastMessageState, isAddToBegin, onClickCallback) {
-    let title
-    if (conversationState.type === 'dialog') {
-      title = conversationState.participants[0].username
-    } else {
-      title = conversationState.name
-    }
-
-    const sidePanelConversationView = this.createElement(
-      conversationState.id, title, lastMessageState, onClickCallback
-    )
-
-    const sidePanel = this.sidePanel
-    if (isAddToBegin && sidePanel.hasChildNodes()) {
-      sidePanel.prepend(sidePanelConversationView)
-    } else {
-      sidePanel.appendChild(sidePanelConversationView)
-    }
-
-    sidePanel.scrollTop = sidePanel.scrollHeight
+  setConversationNotActive(conversationId) {
+    this.getConversation(conversationId).classList.remove('side-panel__list__conversation_active')
   }
 
-  moveElementToBegin(conversationId) {
-    const conversationView = this.getElement(conversationId)
-
-    const sidePanel = this.sidePanel
-    if (sidePanel.hasChildNodes()) {
-      sidePanel.prepend(conversationView)
-    }
-  }
-
-  changeElementLastMessage(conversationId, messageState) {
-    const conversationView = this.getElement(conversationId)
-    utils.setSidePanelElementLastMessageView(conversationView, messageState)
-  }
-
-  setElementActive(conversationId) {
-    this.getElement(conversationId).classList.add('active-conversation')
-  }
-
-  setElementNotActive(conversationId) {
-    this.getElement(conversationId).classList.remove('active-conversation')
-  }
-
-  getElement(conversationId) {
+  getConversation(conversationId) {
     return document.querySelector(`[data-conversation-id="${conversationId}"]`)
   }
 
-  createElement(conversationId, username, messageState, onClickCallback) {
-    const conversationView = utils.createSidePanelConversationView(conversationId, username)
-
-    conversationView.onclick = () => onClickCallback(conversationView)
-
-    if (messageState) {
-      conversationView.appendChild(utils.createLastMessageView(messageState))
-    }
-
-    return conversationView
-  }
 }
 
 

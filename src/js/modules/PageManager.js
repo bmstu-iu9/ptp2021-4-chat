@@ -1,169 +1,160 @@
 import {ConversationsList} from './virtualObjects.js'
-import * as render from './renderConversations.js'
-import {renderMessage} from './renderMessages.js'
-
-
-const messagesContainer = document.querySelector('.messages-list')
+import SidePanelRenderer from './renderers/SidePanelRenderer'
+import ConversationWindowRenderer from './renderers/ConversationWindowRenderer'
 
 
 export class PageManager {
   conversationsList
-  openedConversation
-  conversationOnclickFunc
-  username
-  userId
+  onClickCallback
+  currentUser
 
   constructor() {
     this.conversationsList = new ConversationsList()
-  }
-
-  setConversationOnclickHandler(conversationOnclickFunc) {
-    this.conversationOnclickFunc = conversationOnclickFunc
-  }
-
-  setUserInfo(id, username) {
-    this.userId = id
-    this.username = username
+    this.sidePanelRenderer = new SidePanelRenderer()
+    this.conversationWindowRenderer = new ConversationWindowRenderer()
   }
 
   hasConversation(conversationId) {
     return this.conversationsList.includesConversationById(conversationId)
   }
 
-  addConversation(update) {
-    if (this.conversationsList.get(update.conversation.id)) {
-      throw new Error(`Диалог с id=${update.conversation.id} уже существует!`)
-    }
-
-    const conversation = this.conversationsList.create(update.conversation)
-
-    if (update.lastMessage) {
-      conversation.addMessage(update.lastMessage)
-    }
-
-    if (update.messages) {
-      update.messages.forEach(
-        message => conversation.addMessage(message)
-      )
-    }
-
-    let lastMessage
-    if (conversation.getLastMessage()) {
-      lastMessage = conversation.getLastMessage().getData()
-    }
-    render.renderConversation(conversation.getData(), lastMessage,
-      true, this.conversationOnclickFunc)
+  setCurrentUser(userUpdate) {
+    this.currentUser = userUpdate
   }
 
-  unsetConversationActive() {
-    if (this.openedConversation) {
-      render.unsetConversationActive(this.openedConversation.conversationId)
-      this.openedConversation = undefined
-    }
+  getCurrentUser() {
+    return this.currentUser
   }
 
-  setConversationActive(conversationId) {
-    this.unsetConversationActive()
-
-    this.openedConversation = this.conversationsList.get(conversationId)
-    render.setConversationActive(conversationId)
+  setSidePanelConversationOnClickCallback(onClickCallback) {
+    this.onClickCallback = onClickCallback
   }
 
-  openConversation(conversationId) {
-    this.setConversationActive(conversationId)
-    render.renameOpenedDialog(this.openedConversation.name)
-
-    const loadedMessagesInfo = this.openedConversation.getLastMessages(50)
-    if (!loadedMessagesInfo.allLoaded) {
-      return {needLoad: true, lastId: loadedMessagesInfo.lastId}
-    }
-
-    for (const message of Object.values(loadedMessagesInfo.messages)) {
-      renderMessage(message.getData(), false, true)
-    }
-
-    this.openedConversation.lastShownMessageId = loadedMessagesInfo.lastId
-    return {needLoad: false}
+  setActiveConversation(conversationId) {
+    this.sidePanelRenderer.setConversationActive(conversationId)
+    this.conversationsList.setActive(conversationId)
   }
 
-  addOldMessages(update) {
-    const conversation = this.conversationsList.get(update.conversation.id)
-
-    update.messages.forEach(
-      message => conversation.addMessage(message)
-    )
-
-    const lastMessage = conversation.getLastMessage()
-    if (lastMessage) {
-      render.changeConversationLastMessage(conversation.getData().id,
-        lastMessage.getData().content.value,
-        lastMessage.getData().self)
-    }
+  unsetActiveConversation() {
+    const conversation = this.conversationsList.getActive()
+    this.conversationsList.unsetActive()
+    this.sidePanelRenderer.setConversationNotActive(conversation.id)
   }
 
-  renderOldMessages() {
-    const loadedMessagesInfo = this.openedConversation.getMessagesFromId(50,
-      this.openedConversation.lastShownMessageId)
-
-    if (!loadedMessagesInfo.allLoaded) {
-      return {needLoad: true, lastId: loadedMessagesInfo.lastId}
+  getActiveConversationId() {
+    const conversation = this.conversationsList.getActive()
+    if (!conversation) {
+      return null
     }
 
-    const scrollY = messagesContainer.scrollHeight - messagesContainer.scrollTop
-    for (const message of Object.values(loadedMessagesInfo.messages).reverse()) {
-      renderMessage(message.getData(), true, false, messagesContainer.scrollHeight - scrollY)
+    return conversation.id
+  }
+
+  isConversationFullyLoaded() {
+    return this.conversationsList.getActive().isAllMessagesLoaded()
+  }
+
+  getConversationEarliestMessageRelativeId() {
+    const message = this.conversationsList.getActive().getEarliestMessage()
+
+    if (!message) {
+      return null
+    }
+    return message.getData().relativeId
+  }
+
+  getConversationEarliestNotSelfMessageRead() {
+    const message = this.conversationsList.getActive().getEarliestNotSelfMessage()
+
+    if (!message) {
+      return true
     }
 
-    this.openedConversation.lastShownMessageId = loadedMessagesInfo.lastId
-    return {needLoad: false}
+    return message.getData().read
   }
 
-  createMessage(messageUpdate) {
-    const conversation = this.conversationsList.get(messageUpdate.conversation.id)
+  applyConversationUpdate(conversationUpdate) {
+    const conversationId = conversationUpdate.id
+    const conversation = this.conversationsList.get(conversationId)
+    if (conversation) {
+      conversation.update(conversationUpdate)
+    } else {
+      this.conversationsList.create(conversationUpdate)
+    }
 
-    messageUpdate.message.self = true
-    messageUpdate.message.server = false
-    messageUpdate.message.user = {id: this.userId, username: this.username}
-    messageUpdate.message.edited = false
-
-    conversation.addMessage(messageUpdate.message)
-    renderMessage(messageUpdate.message, false, true)
-    render.changeConversationLastMessage(conversation.getData().id,
-      conversation.getLastMessage().getData().content.value,
-      conversation.getLastMessage().getData().self)
+    return conversation
   }
 
+  applyNewMessageUpdate(conversationId, newMessageUpdate) {
+    const conversation = this.conversationsList.get(conversationId)
+    conversation.addMessage(newMessageUpdate)
+  }
+
+  applyLastMessageUpdate(conversationId, lastMessageUpdate) {
+    const conversation = this.conversationsList.get(conversationId)
+
+    if (!lastMessageUpdate) {
+      conversation.setAllMessagesLoaded(true)
+      return
+    }
+
+    conversation.addMessage(lastMessageUpdate)
+  }
+
+  applyMessagesUpdate(conversationId, messagesUpdate) {
+    const conversation = this.conversationsList.get(conversationId)
+
+    const previousEarliestNotSelfMessage = conversation.getEarliestNotSelfMessage()
+
+    messagesUpdate.forEach(messageUpdate => conversation.addMessage(messageUpdate))
+
+    const earliestNotSelfMessage = conversation.getEarliestNotSelfMessage()
+
+    if (!earliestNotSelfMessage) {
+      return {needLoadMore: false}
+    }
+
+    const report = {
+      needLoadMore: previousEarliestNotSelfMessage !== earliestNotSelfMessage && !earliestNotSelfMessage.getData().read,
+      earliestNotSelfUnreadMessageRelativeId: earliestNotSelfMessage.getData().relativeId
+    }
+
+    if (messagesUpdate.length === 0) {
+      conversation.setAllMessagesLoaded(true)
+    }
+
+    return report
+  }
+
+  renderSidePanel() {
+    this.sidePanelRenderer.render(this.conversationsList.getAllSorted(), this.onClickCallback)
+  }
+
+  renderConversation() {
+    this.conversationWindowRenderer.render(this.conversationsList.getActive())
+  }
 
   newMessageHandler(update) {
-    const conversation = this.conversationsList.get(update.conversation.id)
+    const conversation = this.applyConversationUpdate(update.conversation)
+    this.applyNewMessageUpdate(update.message)
 
-    if (!conversation) {
-      throw new Error(`Пришло сообщение в диалог, которого нет! (id=${update.conversation.id})`)
-    }
-
-    conversation.addMessage(update.message)
-
-    render.changeConversationLastMessage(conversation.getData().id,
-      conversation.getLastMessage().getData().content.value,
-      conversation.getLastMessage().getData().self)
-    render.moveConversationToBegin(conversation.getData().id)
-
-    if (this.openedConversation && conversation.getData().id === this.openedConversation.getData().id) {
-      renderMessage(update.message, false, true)
+    this.renderSidePanel()
+    if (conversation === this.conversationsList.getActive()) {
+      this.renderConversation()
     }
   }
 
   newConversationHandler(update) {
-    const conversation = this.conversationsList.create(update.conversation)
+    this.applyConversationUpdate(update.conversation)
 
-    render.renderConversation(conversation.getData(), undefined,
-      true, this.conversationOnclickFunc)
+    this.renderSidePanel()
   }
 
-  runHandlers(update) {
+  runUpdateHandlers(update) {
     if (update.notificationType === 'newConversation') {
       this.newConversationHandler(update)
     }
+
     if (update.notificationType === 'newMessage') {
       this.newMessageHandler(update)
     }

@@ -1,18 +1,19 @@
 import {createElementWithClass, createTextElement} from './renderUtils.js'
 
-const dialogsContainer = document.querySelector('.dialogs-list')
-const dialogsWindow = document.querySelector('.dialogs-window')
-const messagesContainer = document.querySelector('.messages-list')
-const messageInputField = document.getElementById('input-message-text-area')
-const openedDialogWindow = document.querySelector('.opened-dialog-window')
+
+const dialogsContainer = document.querySelector('.side-panel__list')
+const dialogsWindow = document.querySelector('.side-panel')
+const messagesContainer = document.querySelector('.conversation-window__list')
+const messageInputField = document.querySelector('.conversation-window__input__text-area')
+const openedDialogWindow = document.querySelector('.conversation-window')
 
 
 /* Создание объекта сообщения */
 function createMessageElement(fromUser, id, messageText) {
   const messageAuthorElem = createTextElement('p',
-    'message-author', fromUser)
+    'message-container__author', fromUser)
   const messageTextElem = createTextElement('p',
-    'message-text', messageText)
+    'message-container__text', messageText)
   const newMessage = createElementWithClass('div',
     'message-container')
 

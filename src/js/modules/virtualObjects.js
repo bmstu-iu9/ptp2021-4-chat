@@ -1,4 +1,6 @@
 /* Классы для хранения сообщений и диалогов */
+
+
 class Updatable {
   #data
 
@@ -41,29 +43,32 @@ class VirtualMessage extends Updatable {
 class VirtualConversation extends Updatable {
   messages
   name
-  conversationId
-  lastShownMessageId
+  id
+  allMessagesLoaded
+  earliestNotSelfMessage
 
   constructor(conversationUpdate) {
     super(conversationUpdate)
 
-    this.conversationId = this.getData().id
-    if (this.getData().type === 'dialog') {
-      this.name = this.getData().participants[0].username
-    } else {
-      this.name = this.getData().name
-    }
+    const state = this.getData()
+
+    this.id = state.id
+    this.name = state.type === 'dialog' ? state.participants[0].username : state.name
 
     this.messages = {
       list: {},
       toBeUpdated: {},
       new: {}
     }
+    this.allMessagesLoaded = false
   }
 
-  getLastLoadedMessageId() {
-    const ids = Object.keys(this.messages.list)
-    return parseInt(ids[0])
+  setAllMessagesLoaded(loaded) {
+    this.allMessagesLoaded = loaded
+  }
+
+  isAllMessagesLoaded() {
+    return this.allMessagesLoaded
   }
 
   getLastMessageId() {
@@ -73,73 +78,52 @@ class VirtualConversation extends Updatable {
 
   addMessage(messageUpdate) {
     const id = messageUpdate.relativeId
-    this.messages.list[id] = new VirtualMessage(messageUpdate)
+
+    const message = this.messages.list[id] = this.messages.toBeUpdated[id] = new VirtualMessage(messageUpdate)
+
+    if (!messageUpdate.self) {
+      if (!this.earliestNotSelfMessage || messageUpdate.relativeId < this.earliestNotSelfMessage.getData().relativeId) {
+        this.earliestNotSelfMessage = message
+      }
+    }
+  }
+
+  getEarliestNotSelfMessage() {
+    return this.earliestNotSelfMessage
   }
 
   updateMessage(messageStateUpdate) {
     const id = messageStateUpdate.relativeId
 
-    if (id in this.messages.list) {
-      this.#updateMessageState(this.messages.list[id], messageStateUpdate)
+    const message = this.messages.list[id]
+    if (message) {
+      message.update(messageStateUpdate)
+      this.messages.toBeUpdated[messageStateUpdate.relativeId] = message
     }
   }
 
-  getUpdatedMessages() {
-    for (const message of Object.values(this.messages.toBeUpdated)) {
-      if (message.getState().deleted) {
-        delete this.messages.list[message.relativeId]
-      }
-    }
-
-    const copy = Object.assign({}, this.messages.toBeUpdated)
-    this.messages.toBeUpdated = {}
-
-    return copy
-  }
-
-  getMessagesList() {
+  getMessages() {
     return Object.assign({}, this.messages.list)
   }
 
-  #updateMessageState(message, messageStateUpdate) {
-    message.update(messageStateUpdate)
+  getEarliestMessage() {
+    const ids = Object.keys(this.messages.list)
 
-    this.messages.toBeUpdated[messageStateUpdate.relativeId] = message
+    if (ids.length === 0) {
+      return null
+    }
+
+    return this.messages.list[ids[0]]
   }
 
   getLastMessage() {
-    return this.messages.list[this.getLastMessageId()]
-  }
+    const ids = Object.keys(this.messages.list)
 
-  getLastMessages(N) {
-    return this.getMessagesFromId(N, this.getLastMessageId())
-  }
-
-  getMessagesFromId(N, fromRelativeId) {
-    const lastMessages = {}
-    let id
-
-    for (id = fromRelativeId; (id in this.messages.list) && (id > fromRelativeId - N) && (id > 0); id--) {
-      lastMessages[id] = this.messages.list[id]
+    if (ids.length === 0) {
+      return null
     }
 
-    let allMessagesLoaded = false
-    if (id === 0 || id === fromRelativeId - N) {
-      allMessagesLoaded = true
-    }
-
-    return {
-      messages: lastMessages,
-      allLoaded: allMessagesLoaded,
-      lastId: id + 1
-    }
-  }
-
-  getConversationInfo() {
-    return {
-      name: this.name,
-      conversationId: this.conversationId
-    }
+    return this.messages.list[ids[ids.length - 1]]
   }
 }
 
@@ -150,6 +134,7 @@ export class ConversationsList {
 
   constructor() {
     this.conversations = {}
+    this.sortedConversations = []
     this.activeConversation = null
   }
 
@@ -165,8 +150,12 @@ export class ConversationsList {
     return this.conversations[id]
   }
 
-  setActive(conversation) {
-    this.activeConversation = conversation
+  setActive(conversationId) {
+    this.activeConversation = this.get(conversationId)
+  }
+
+  unsetActive() {
+    this.activeConversation = null
   }
 
   getActive() {
@@ -175,5 +164,16 @@ export class ConversationsList {
 
   getAll() {
     return Object.assign({}, this.conversations)
+  }
+
+  getAllSorted() {
+    return Object.values(this.conversations).sort((a, b) => {
+      const createdAtA = a.getLastMessage().getData().createdAt
+      const createdAtB = b.getLastMessage().getData().createdAt
+      const timestampA = new Date(createdAtA).getTime()
+      const timestampB = new Date(createdAtB).getTime()
+
+      return timestampA - timestampB
+    })
   }
 }

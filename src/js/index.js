@@ -1,52 +1,55 @@
 import {PageManager} from './modules/PageManager.js'
 import WSClient from './modules/WSClient.js'
+import FoundUserModalRenderer
+  from './modules/renderers/FoundUserModalRenderer.js'
 
 
 /* Основные объекты! */
-const dialogsContainer = document.querySelector('.dialogs-list')
-const dialogsWindow = document.querySelector('.dialogs-window')
-const messagesContainer = document.querySelector('.messages-list')
-const messageInputField = document.getElementById('input-message-text-area')
-const openedDialogWindow = document.querySelector('.opened-dialog-window')
-const searchUserField = document.getElementById('search-user-input')
-const pageManager = new PageManager()
+const sidePanel = document.querySelector('.side-panel')
+const sidePanelConversationsContainer = document.querySelector('.side-panel__list')
+
+const conversationWindow = document.querySelector('.conversation-window')
+const conversationWindowMessagesContainer = document.querySelector('.conversation-window__list')
+const messageInputField = document.querySelector('.conversation-window__input__text-area')
+const searchUserField = document.querySelector('.search-window__search-form__controls__input')
+
+const pageManager = new PageManager(sidePanel, conversationWindow)
 const wsClient = new WSClient('ws://localhost:80')
-const closeButton = document.querySelector('.btn-close')
-const notificationWindow = document.querySelector('.notification-window')
+const modal = new FoundUserModalRenderer('search-window')
 
+pageManager.setSidePanelConversationOnClickCallback(loadAndRenderConversationWindow)
 
-pageManager.setConversationOnclickHandler(conversationOnclickHandler)
-
-wsClient.setOnMessageHandler(pageManager.runHandlers.bind(pageManager))
+wsClient.setOnMessageHandler(pageManager.runUpdateHandlers.bind(pageManager))
 
 wsClient.connect().then(() => {
   console.log('Подключен')
 })
 
 wsClient.makeAPIRequest('getUser', {}).then(user => {
-  pageManager.setUserInfo(user.username, user.id)
+  pageManager.setCurrentUser(user)
 })
 
 wsClient.makeAPIRequest('getAllConversations', {}).then(data => {
-  data.forEach(update => pageManager.addConversation(update))
+  data.forEach(({conversation, lastMessage}) => {
+    pageManager.applyConversationUpdate(conversation)
+    pageManager.applyLastMessageUpdate(conversation.id, lastMessage)
+  })
+
+  pageManager.renderSidePanel()
 })
 
 document.getElementById('btn-menu-trigger').onclick = toggleMenu
-document.getElementById('btn-find').onclick = searchUser
-document.getElementById('send-button').onclick = sendMessage
+document.querySelector('.search-window__search-form__controls__find-button').onclick = searchUser
+document.querySelector('.conversation-window__input__send-button').onclick = sendMessage
 
-closeButton.onclick = function() {
-  notificationWindow.classList.add('notification-window_hidden')
-}
-
-document.getElementById('search-user-input').onkeydown = function(event) {
+document.querySelector('.search-window__search-form__controls__input').onkeydown = function(event) {
   if (event.key === 'Enter') {
     event.preventDefault()
     searchUser()
   }
 }
 
-document.getElementById('input-message-text-area').onkeydown = function(event) {
+document.querySelector('.conversation-window__input__text-area').onkeydown = function(event) {
   if (event.key === 'Enter') {
     event.preventDefault()
     sendMessage()
@@ -56,62 +59,40 @@ document.getElementById('input-message-text-area').onkeydown = function(event) {
 /* Закрытие текущего диалога нажатием на esc */
 document.body.onkeyup = function(event) {
   if (event.key === 'Escape') {
-    clearOpenedDialog()
-    closeOpenedDialog()
-    pageManager.unsetConversationActive()
+    hideConversationWindow()
+    pageManager.unsetActiveConversation()
   }
-}
-
-/* Отображение сообщения об ошибке */
-function showNotificationWindow() {
-  const notificationWindow = document.querySelector('.notification-window')
-  notificationWindow.classList.remove('notification-window_hidden')
 }
 
 /* Загрузка сообщений при прокрутке вверх */
-messagesContainer.onscroll = function() {
-  if (!(messagesContainer.scrollTop === 0
-    || pageManager.openedConversation
-    || pageManager.openedConversation.lastShownMessageId !== 1)) {
+conversationWindowMessagesContainer.onscroll = function() {
+  if (!isMessagesPreloaderInViewport()) {
     return
   }
 
-  const result = pageManager.renderOldMessages()
-
-  if (result.needLoad) {
-    const conversationId = pageManager.openedConversation.conversationId
-
-    wsClient.makeAPIRequest('getConversation', {
-      conversationId,
-      relativeId: result.lastId
-    }).then(data => {
-      pageManager.addOldMessages(data)
-      pageManager.renderOldMessages()
-    })
-  }
+  loadAndRenderConversation(
+    pageManager.getActiveConversationId(),
+    pageManager.getConversationEarliestMessageRelativeId()
+  )
 }
 
 
 /* Переключение меню на мобилах */
 function toggleMenu() {
-  dialogsWindow.classList.toggle('dialogs-window-mobile-closed')
-  dialogsWindow.classList.toggle('dialogs-window-mobile-opened')
-}
-
-/* Очистка всех сообщений и полей в открытом диалоге */
-function clearOpenedDialog() {
-  messageInputField.value = ''
-  messagesContainer.innerHTML = ''
+  sidePanel.classList.toggle('dialogs-window-mobile-closed')
+  sidePanel.classList.toggle('dialogs-window-mobile-opened')
 }
 
 /* Показать окно с текущим диалогом */
-function showOpenedDialog() {
-  openedDialogWindow.classList.toggle('hidden-window', false)
+function showConversationWindow() {
+  conversationWindow.classList.remove('hidden-window')
 }
 
 /* Спрятать окно с текущим диалогом */
-function closeOpenedDialog() {
-  openedDialogWindow.classList.toggle('hidden-window', true)
+function hideConversationWindow() {
+  messageInputField.value = ''
+  conversationWindowMessagesContainer.innerHTML = ''
+  conversationWindow.classList.add('hidden-window')
 }
 
 /* Поиск пользователя и добавление его в диалоги! */
@@ -121,23 +102,36 @@ function searchUser() {
     return
   }
 
-  wsClient.makeAPIRequest('searchUser', {username}).then(
-    userInfo => {
-      if (userInfo.user) {
-        wsClient.makeAPIRequest('createDialog', {userId: userInfo.user.id}).then(
-          data => {
-            pageManager.addConversation(data)
-          }
-        )
+  wsClient.makeAPIRequest('searchUser', {username}).then(userUpdate => {
+    const user = userUpdate.user
+    if (user) {
+      if (username === pageManager.getCurrentUser().username) {
+        modal.showFound(user)
       } else {
-        // Здесь будет вызов окна!
-        console.log('Такого пользователя не существует!')
+        modal.showFound(user, () => createDialog(userUpdate))
       }
+    } else {
+      modal.showNotFound(username)
     }
-  )
+  })
 
   searchUserField.value = ''
-  dialogsContainer.scrollTop = dialogsContainer.scrollHeight
+  sidePanelConversationsContainer.scrollTop = sidePanelConversationsContainer.scrollHeight
+}
+
+function createDialog(userUpdate) {
+  hideConversationWindow()
+  wsClient.makeAPIRequest('createDialog', {userId: userUpdate.user.id}).then(update => {
+    const conversationUpdate = update.conversation
+
+    // как-то залупно выходит - мы сначала применяем апдейт, а потом заново
+    // его загружаем и применяем. Я не придумаль как ещё сделать
+    // наверное нужно придумать :/
+    pageManager.applyConversationUpdate(conversationUpdate)
+    loadAndRenderConversationWindow(conversationUpdate.id)
+
+    modal.hide()
+  })
 }
 
 /* Отправка сообщений */
@@ -147,33 +141,79 @@ function sendMessage() {
     return
   }
 
+  const conversationId = pageManager.getActiveConversationId()
+
   wsClient.makeAPIRequest("createMessage", {
-    conversationId: pageManager.openedConversation.conversationId,
+    conversationId,
     contentType: 'text',
     value: message
-  }).then(messageUpdate => pageManager.createMessage(messageUpdate))
+  }).then(messageUpdate => {
+    // тут шота намутить нужно
+  })
 
   messageInputField.value = ''
-  messagesContainer.scrollTo(0, messagesContainer.scrollHeight)
+  conversationWindowMessagesContainer.scrollTo(0, conversationWindowMessagesContainer.scrollHeight)
 }
 
 /* Обработчик нажатия на диалог */
-function conversationOnclickHandler(conversationWindow) {
-  clearOpenedDialog()
-  showOpenedDialog()
-  const result = pageManager.openConversation(
-    conversationWindow.getAttribute('data-conversation-id')
-  )
+function loadAndRenderConversationWindow(conversationId) {
+  pageManager.setActiveConversation(conversationId)
 
-  if (result.needLoad) {
-    const conversationId = pageManager.openedConversation.conversationId
+  loadAndRenderConversation(conversationId).then(scrollToMessageRelativeId => {
+    if (!scrollToMessageRelativeId) {
+      /* а здесь видимо нужно скролить в самый низ */
+      return
+    }
 
-    wsClient.makeAPIRequest('getConversation', {conversationId})
-    .then(data => {
-      pageManager.addOldMessages(data)
-      pageManager.openConversation(
-        conversationWindow.getAttribute('data-conversation-id')
-      )
-    })
+    // скрол до самого раннего непрочитанного чужого сообщения
+    const targetMessage = conversationWindowMessagesContainer
+    .querySelector(`[data-message-id="${scrollToMessageRelativeId}"]`)
+
+    conversationWindowMessagesContainer.scrollTop = targetMessage.offsetTop
+      - conversationWindowMessagesContainer.offsetTop
+  }).then(showConversationWindow)
+}
+
+function loadAndRenderConversation(conversationId, relativeId) {
+  if (pageManager.isConversationFullyLoaded()) {
+    pageManager.renderConversation()
+    return Promise.resolve(/* шо тут то передать ляя */)
   }
+
+  return new Promise(resolve => {
+    wsClient.makeAPIRequest('getConversation', {
+      conversationId,
+      relativeId
+    }).then(({conversation, messages}) => {
+      pageManager.applyConversationUpdate(conversation)
+      const {
+        needLoadMore,
+        earliestNotSelfUnreadMessageRelativeId
+      } = pageManager.applyMessagesUpdate(conversation.id, messages)
+
+      pageManager.renderConversation()
+
+      if (needLoadMore || isMessagesPreloaderInViewport()) {
+        loadAndRenderConversation(
+          conversationId,
+          pageManager.getConversationEarliestMessageRelativeId()
+        ).then(() => resolve(earliestNotSelfUnreadMessageRelativeId))
+      } else {
+        resolve(earliestNotSelfUnreadMessageRelativeId)
+      }
+    })
+  })
+}
+
+function isMessagesPreloaderInViewport() {
+  const preloader = document.querySelector('.conversation-window__list__preloader')
+
+  if (!preloader) {
+    return false
+  }
+
+  const preloaderRect = preloader.getBoundingClientRect()
+  const containerRect = conversationWindowMessagesContainer.getBoundingClientRect()
+
+  return preloaderRect.bottom >= containerRect.top
 }
