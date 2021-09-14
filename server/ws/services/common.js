@@ -31,11 +31,7 @@ async function getConversationClients(conversationId, currentSessionId) {
       sessionId => {
         return {socket: wssClients[sessionId], user: ids[sessionId]}
       }
-    ),
-    current: {
-      socket: wssClients[currentSessionId],
-      user: ids[currentSessionId]
-    }
+    )
   }
 }
 
@@ -97,7 +93,7 @@ async function getAllConversationsWithLastMessage(user) {
   return result
 }
 
-async function emit(type, functions) {
+async function emit(type, answer, functions) {
   const clients = await functions.getClients()
   await notifyClients(type, clients.other, async user => {
     return await functions.getPayloadToOther(user)
@@ -105,7 +101,7 @@ async function emit(type, functions) {
 
   const payload = await functions.getPayloadToCurrent()
 
-  clients.current.socket.answer(payload)
+  answer(payload)
 }
 
 

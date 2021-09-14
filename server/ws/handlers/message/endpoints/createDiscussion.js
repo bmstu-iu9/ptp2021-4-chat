@@ -8,7 +8,7 @@ const {saveConversation} = require('../../../services/conversations')
 const {checkUsersExist} = require('../../../services/users')
 
 
-module.exports = async (context, payload) => {
+module.exports = async (context, localContext, payload) => {
   const {user, session} = context.current
   const {name, userIds} = payload.meta
 
@@ -27,7 +27,7 @@ module.exports = async (context, payload) => {
   const conversationId = await saveConversation('discussion', [user.id, ...userIds])
   await saveDiscussionMeta(conversationId, name)
 
-  await emit('newConversation', {
+  await emit('newConversation', localContext.answer, {
     getClients: async () => await getConversationClients(conversationId, session.sessionId),
     getPayloadToOther: async (user) => {
       return {conversation: await getConversation(conversationId, user, fullConversationConfig)}

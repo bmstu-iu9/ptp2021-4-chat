@@ -6,7 +6,7 @@ const {emit} = require('../../../services/common')
 const {checkUserHasAccessToConversation} = require('../../../services/conversations')
 const {saveMessage} = require('../../../services/messages')
 const {
-  onlyIdConversationConfig,
+  simpleConversationConfig,
   newMessageConversationConfig
 } = require('../../../services/conversations/configs')
 const {
@@ -15,7 +15,7 @@ const {
 } = require('../../../services/messages/configs')
 
 
-module.exports = async (context, payload) => {
+module.exports = async (context, localContext, payload) => {
   const {user, session} = context.current
   const {conversationId, contentType, value, files} = payload.meta
 
@@ -27,7 +27,7 @@ module.exports = async (context, payload) => {
 
   const relativeId = await saveMessage(conversationId, contentType, value, files, user)
 
-  await emit('newMessage', {
+  await emit('newMessage', localContext.answer, {
     getClients: async () => await getConversationClients(conversationId, session.sessionId),
     getPayloadToOther: async (user) => {
       return {
@@ -37,8 +37,8 @@ module.exports = async (context, payload) => {
     },
     getPayloadToCurrent: async () => {
       return {
-        conversation: await getConversation(conversationId, user, onlyIdConversationConfig),
-        message: await getMessage(conversationId, relativeId, user, createMessageConfig)
+        conversation: await getConversation(conversationId, user, simpleConversationConfig),
+        message: await getMessage(conversationId, relativeId, user, newMessageConfig)
       }
     }
   })

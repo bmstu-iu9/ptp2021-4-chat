@@ -1,3 +1,3 @@
-module.exports = async context => {
-  context.socket.answer(context.current.user)
+module.exports = async (context, localContext) => {
+  localContext.answer(context.current.user)
 }

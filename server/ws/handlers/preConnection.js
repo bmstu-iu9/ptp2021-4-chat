@@ -1,6 +1,7 @@
 const {checkSession} = require('../../http/services/common')
 const {wss} = require('../../definitions')
 const cookie = require('cookie')
+const {WSErrorWithRedirect} = require('../../misc/wsErrors')
 const {getUser} = require('../services/users')
 
 
@@ -11,7 +12,7 @@ wss.onPreConnection(async context => {
   const result = await checkSession(request)
 
   if (!result) {
-    context.redirectUrl = '/entry'
+    context.error = new WSErrorWithRedirect('/entry')
     return
   }
 

@@ -2,14 +2,19 @@ import {sidePanelUtils as utils} from '../renderUtils.js'
 
 
 class SidePanelRenderer {
-  render(conversations, onClickHandler) {
+  render(conversationsList, onClickHandler) {
     let sidePanelDOM = ''
 
-    conversations.forEach(conversation => {
-      sidePanelDOM += utils.getSidePanelConversationChunk(conversation, conversation.getLastMessage())
+    conversationsList.getAllSorted().forEach(conversation => {
+      sidePanelDOM += utils.getSidePanelConversationChunk(conversation, conversation.getLatestMessage())
     })
 
     utils.renderSidePanel(sidePanelDOM)
+
+    const active = conversationsList.getActive()
+    if (active) {
+      this.setConversationActive(active.id)
+    }
 
     utils.getAllSidePanelConversations().forEach(conversationView => {
       conversationView.onclick = () => onClickHandler(parseInt(conversationView.dataset.conversationId))

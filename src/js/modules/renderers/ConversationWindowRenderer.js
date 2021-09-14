@@ -2,32 +2,48 @@ import {conversationWindowUtils as utils} from '../renderUtils.js'
 
 
 class ConversationWindowRenderer {
-
-  setTitle(title) {
-    utils.setConversationWindowTitle(title)
-  }
+  renderedMessages
 
   render(conversation) {
-    let conversationDOM = conversation.isAllMessagesLoaded() ? '' : utils.getConversationWindowPreloaderChunk()
+    let messagesDOM = conversation.isAllMessagesLoaded() ?
+      '' :
+      utils.getConversationWindowPreloaderChunk()
 
-    Object.values(conversation.getMessages()).forEach(message => {
-      conversationDOM += utils.getConversationMessageChunk(message)
+    Object.values(conversation.getAllMessages()).forEach(message => {
+      messagesDOM += utils.getConversationMessageChunk(message)
     })
 
-    // conversationDOM += utils.getConversationWindowUnreadCounterChunk(conversation)
+    // messagesDOM += utils.getConversationWindowUnreadCounterChunk(conversation)
 
-    this.setTitle(conversation.name)
-    utils.renderConversation(conversationDOM)
+    utils.setConversationWindowTitle(conversation.name)
+    utils.renderConversation(messagesDOM)
+
+    this.renderedMessages = utils.getAllConversationMessages()
   }
 
-  getEarliestUnreadMessageId(messagesStates) {
-    Object.keys(messagesStates).forEach(messageState => {
-      if (!messageState.self && !messageState.read) {
-        return messageState.relativeId
+  rerender(conversation) {
+    Object.values(conversation.getUpdatedMessages()).forEach(message => {
+      const messageView = document.querySelector(`[data-message-id="${message.getData().relativeId}"]`)
+
+      const messageDOM = utils.getConversationMessageChunk(message)
+      // Новое сообщение
+      if (!messageView) {
+        utils.insertMessageToConversation(messageDOM)
+      } else {
+        // TODO: сделать, чтобы у существующего элемента менялись классы
+        messageView.outerHTML = messageDOM
       }
     })
 
-    return null
+    this.renderedMessages = utils.getAllConversationMessages()
+  }
+
+  isPreloaderInViewport() {
+    return utils.isMessagesPreloaderInViewport()
+  }
+
+  getRenderedMessages() {
+    return this.renderedMessages
   }
 }
 

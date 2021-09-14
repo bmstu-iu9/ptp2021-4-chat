@@ -1,28 +1,8 @@
-function createElementWithClass(tag, className) {
-  let element = document.createElement(tag)
-  element.classList.add(className)
-  return element
-}
+function createElementFromHTML(htmlString) {
+  const div = document.createElement('div')
+  div.innerHTML = htmlString.trim()
 
-function createTextElement(tag, className, innerText = '') {
-  let element = document.createElement(tag)
-
-  element.classList.add(className)
-  element.innerText = innerText
-
-  return element
-}
-
-function createCustomElement(tag, className, id = null, innerText = '') {
-  let element = document.createElement(tag)
-  element.classList.add(className)
-
-  if (id) {
-    element.setAttribute('id', id)
-  }
-
-  element.innerText = innerText
-  return element
+  return div.firstChild
 }
 
 function getSidePanelConversationChunk(conversation, lastMessage) {
@@ -102,6 +82,24 @@ function renderConversation(DOMString) {
   document.querySelector('.conversation-window__list').innerHTML = DOMString
 }
 
+function getAllConversationMessages() {
+  return document.querySelectorAll('.message-container')
+}
+
+function isMessagesPreloaderInViewport() {
+  const preloader = document.querySelector('.conversation-window__list__preloader')
+  const messagesContainer = document.querySelector('.conversation-window__list')
+
+  if (!preloader) {
+    return false
+  }
+
+  const preloaderRect = preloader.getBoundingClientRect()
+  const containerRect = messagesContainer.getBoundingClientRect()
+
+  return preloaderRect.bottom >= containerRect.top
+}
+
 function setConversationWindowTitle(title) {
   document.querySelector('.conversation-window__header').textContent = title
 }
@@ -119,6 +117,16 @@ function getConversationWindowUnreadCounterChunk(conversation) {
         <p class="unread-counter__value">${unreadCount}</p>
     </div>
   `)
+}
+
+function insertMessageToConversation(messageDOM) {
+  document.querySelector('.conversation-window__list').insertAdjacentHTML('beforeend', messageDOM)
+}
+
+function replaceMessageInConversationWindow(relativeId, messageDOM) {
+  const messageView = document.querySelector(`[data-message-id="${relativeId}"]`)
+  const newMessageView = createElementFromHTML(messageDOM)
+  document.querySelector('.conversation-window__list').replaceChild(newMessageView, messageView)
 }
 
 // это нужно скорее всего поменять, выглядит так себе)
@@ -142,12 +150,6 @@ function getPredefinedClassNames(parentClassName) {
   }
 }
 
-export {
-  createElementWithClass,
-  createTextElement,
-  createCustomElement
-}
-
 
 export const sidePanelUtils = {
   getSidePanelConversationChunk,
@@ -161,7 +163,11 @@ export const conversationWindowUtils = {
   getConversationWindowUnreadCounterChunk,
   getConversationMessageChunk,
   setConversationWindowTitle,
-  renderConversation
+  insertMessageToConversation,
+  isMessagesPreloaderInViewport,
+  renderConversation,
+  replaceMessageInConversationWindow,
+  getAllConversationMessages
 }
 
 

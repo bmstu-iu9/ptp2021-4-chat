@@ -4,12 +4,12 @@ const {getConversationClients} = require('../../../services/common')
 const {emit} = require('../../../services/common')
 const {checkMessageReadByUser} = require('../../../services/messages')
 const {readMessageStateConfig} = require('../../../services/messages/configs')
-const {onlyIdConversationConfig} = require('../../../services/conversations/configs')
+const {simpleConversationConfig} = require('../../../services/conversations/configs')
 const {getMessage, readMessage} = require('../../../services/messages')
 const {checkUserHasAccessToConversation} = require('../../../services/conversations')
 
 
-module.exports = async (context, payload) => {
+module.exports = async (context, localContext, payload) => {
   const {user, session} = context.current
   const {conversationId, relativeId} = payload.meta
 
@@ -31,17 +31,17 @@ module.exports = async (context, payload) => {
 
   await readMessage(conversationId, relativeId, user)
 
-  await emit('newMessageState', {
+  await emit('newMessageState', localContext.answer, {
     getClients: async () => await getConversationClients(conversationId, session.sessionId),
     getPayloadToOther: async (user) => {
       return {
-        conversation: await getConversation(conversationId, user, onlyIdConversationConfig),
+        conversation: await getConversation(conversationId, user, simpleConversationConfig),
         messageState: await getMessage(conversationId, relativeId, user, readMessageStateConfig)
       }
     },
     getPayloadToCurrent: async () => {
       return {
-        conversation: await getConversation(conversationId, user, onlyIdConversationConfig),
+        conversation: await getConversation(conversationId, user, simpleConversationConfig),
         messageState: await getMessage(conversationId, relativeId, user, readMessageStateConfig)
       }
     }

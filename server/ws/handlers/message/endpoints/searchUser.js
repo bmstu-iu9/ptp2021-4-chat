@@ -1,10 +1,10 @@
 const {getUserByUsername} = require('../../../services/users')
 
 
-module.exports = async (context, payload) => {
+module.exports = async (context, localContext, payload) => {
   const {username} = payload.meta
 
   const user = await getUserByUsername(username)
 
-  context.socket.answer({user})
+  localContext.answer({user})
 }

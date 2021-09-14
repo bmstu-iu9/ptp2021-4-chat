@@ -43,9 +43,9 @@ class VirtualMessage extends Updatable {
 class VirtualConversation extends Updatable {
   messages
   name
-  id
   allMessagesLoaded
   earliestNotSelfMessage
+  notSelfUnreadMessages
 
   constructor(conversationUpdate) {
     super(conversationUpdate)
@@ -60,11 +60,13 @@ class VirtualConversation extends Updatable {
       toBeUpdated: {},
       new: {}
     }
+
     this.allMessagesLoaded = false
+    this.notSelfUnreadMessages = {}
   }
 
-  setAllMessagesLoaded(loaded) {
-    this.allMessagesLoaded = loaded
+  setAllMessagesLoaded() {
+    this.allMessagesLoaded = true
   }
 
   isAllMessagesLoaded() {
@@ -76,33 +78,58 @@ class VirtualConversation extends Updatable {
     return parseInt(ids[ids.length - 1])
   }
 
+  getEarliestNotSelfMessage() {
+    return this.earliestNotSelfMessage
+  }
+
+  getEarliestNotSelfUnreadMessage() {
+    const ids = Object.keys(this.notSelfUnreadMessages)
+
+    if (ids.length === 0) {
+      return null
+    }
+
+    return this.notSelfUnreadMessages[ids[0]]
+  }
+
   addMessage(messageUpdate) {
     const id = messageUpdate.relativeId
 
     const message = this.messages.list[id] = this.messages.toBeUpdated[id] = new VirtualMessage(messageUpdate)
 
     if (!messageUpdate.self) {
-      if (!this.earliestNotSelfMessage || messageUpdate.relativeId < this.earliestNotSelfMessage.getData().relativeId) {
+      if (!this.earliestNotSelfMessage
+        || messageUpdate.relativeId < this.earliestNotSelfMessage.getData().relativeId) {
         this.earliestNotSelfMessage = message
+      }
+      if (!messageUpdate.read) {
+        this.notSelfUnreadMessages[id] = message
       }
     }
   }
 
-  getEarliestNotSelfMessage() {
-    return this.earliestNotSelfMessage
-  }
-
   updateMessage(messageStateUpdate) {
     const id = messageStateUpdate.relativeId
-
     const message = this.messages.list[id]
-    if (message) {
-      message.update(messageStateUpdate)
-      this.messages.toBeUpdated[messageStateUpdate.relativeId] = message
+
+    if (!message) {
+      return
     }
+
+    message.update(messageStateUpdate)
+    this.messages.toBeUpdated[id] = message
+
+    if (messageStateUpdate.deleted) {
+      delete this.messages.list[id]
+    }
+
+    if (messageStateUpdate.read) {
+      delete this.notSelfUnreadMessages[id]
+    }
+
   }
 
-  getMessages() {
+  getAllMessages() {
     return Object.assign({}, this.messages.list)
   }
 
@@ -116,7 +143,7 @@ class VirtualConversation extends Updatable {
     return this.messages.list[ids[0]]
   }
 
-  getLastMessage() {
+  getLatestMessage() {
     const ids = Object.keys(this.messages.list)
 
     if (ids.length === 0) {
@@ -124,6 +151,16 @@ class VirtualConversation extends Updatable {
     }
 
     return this.messages.list[ids[ids.length - 1]]
+  }
+
+  getUpdatedMessages() {
+    const updated = Object.assign({}, this.messages.toBeUpdated)
+    this.clearUpdatedCacheMessagesCache()
+    return updated
+  }
+
+  clearUpdatedCacheMessagesCache() {
+    this.messages.toBeUpdated = {}
   }
 }
 
@@ -163,17 +200,29 @@ export class ConversationsList {
   }
 
   getAll() {
-    return Object.assign({}, this.conversations)
+    return Object.keys(Object.assign({}, this.conversations))
+    .reduce((conversations, conversationId) => conversations[conversationId] = this.conversations[conversationId], {})
   }
 
   getAllSorted() {
-    return Object.values(this.conversations).sort((a, b) => {
-      const createdAtA = a.getLastMessage().getData().createdAt
-      const createdAtB = b.getLastMessage().getData().createdAt
-      const timestampA = new Date(createdAtA).getTime()
-      const timestampB = new Date(createdAtB).getTime()
+    return Object.values(this.conversations)
+    .sort((a, b) => {
+      const lastMessageA = a.getLatestMessage()
+      const lastMessageB = b.getLatestMessage()
+
+      let timestampA, timestampB
+
+      if (!lastMessageA || !lastMessageB) {
+        timestampA = a.getData().createdAt
+        timestampB = b.getData().createdAt
+      } else {
+        const createdAtA = lastMessageA.getData().createdAt
+        const createdAtB = lastMessageB.getData().createdAt
+        timestampA = new Date(createdAtA).getTime()
+        timestampB = new Date(createdAtB).getTime()
+      }
 
       return timestampA - timestampB
-    })
+    }).reverse()
   }
 }
