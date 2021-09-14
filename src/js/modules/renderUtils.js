@@ -1,8 +1,22 @@
-function createElementFromHTML(htmlString) {
-  const div = document.createElement('div')
-  div.innerHTML = htmlString.trim()
+const messagesContainerClassName = 'conversation-window__list'
+const messageClassName = 'message-container'
+const messageContainerAuthorClassName = 'message-container__author'
+const messageContainerTextClassName = 'message-container__text'
 
-  return div.firstChild
+const messagesContainer = document.querySelector(`.${messagesContainerClassName}`)
+
+function getConversationMessageView(relativeId) {
+  const messageContainer = messagesContainer.querySelector(`[data-message-id="${relativeId}"]`)
+
+  if (!messageContainer) {
+    return null
+  }
+
+  return {
+    container: messageContainer,
+    author: messageContainer.querySelector(`.${messageContainerAuthorClassName}`),
+    text: messageContainer.querySelector(`.${messageContainerTextClassName}`)
+  }
 }
 
 function getSidePanelConversationChunk(conversation, lastMessage) {
@@ -78,6 +92,22 @@ function getConversationMessageChunk(message) {
   `)
 }
 
+function updateConversationMessageView(message) {
+  const view = getConversationMessageView(message.getData().relativeId)
+
+  if (message.getData().self) {
+    view.container.classList.add('message-container_self')
+
+    if (!message.getData().read) {
+      view.container.classList.add('message-container_self_unread')
+    } else {
+      view.container.classList.remove('message-container_self_unread')
+    }
+  } else {
+    view.container.classList.remove('message-container_self')
+  }
+}
+
 function renderConversation(DOMString) {
   document.querySelector('.conversation-window__list').innerHTML = DOMString
 }
@@ -123,12 +153,6 @@ function insertMessageToConversation(messageDOM) {
   document.querySelector('.conversation-window__list').insertAdjacentHTML('beforeend', messageDOM)
 }
 
-function replaceMessageInConversationWindow(relativeId, messageDOM) {
-  const messageView = document.querySelector(`[data-message-id="${relativeId}"]`)
-  const newMessageView = createElementFromHTML(messageDOM)
-  document.querySelector('.conversation-window__list').replaceChild(newMessageView, messageView)
-}
-
 // это нужно скорее всего поменять, выглядит так себе)
 function getDOMObjects(parentClassName) {
   const DOMObjects = {}
@@ -165,8 +189,9 @@ export const conversationWindowUtils = {
   setConversationWindowTitle,
   insertMessageToConversation,
   isMessagesPreloaderInViewport,
+  updateConversationMessageView,
+  getConversationMessageView,
   renderConversation,
-  replaceMessageInConversationWindow,
   getAllConversationMessages
 }
 

@@ -23,7 +23,7 @@ module.exports = async (context, localContext, payload) => {
   const dialog = await getDialog(user.id, userId)
 
   if (dialog) {
-    context.socket.answer({conversation: dialog})
+    localContext.answer({conversation: dialog})
     return
   }
   const conversationId = await saveConversation('dialog', [userId, user.id])

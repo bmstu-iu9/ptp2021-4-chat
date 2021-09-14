@@ -23,15 +23,12 @@ class ConversationWindowRenderer {
 
   rerender(conversation) {
     Object.values(conversation.getUpdatedMessages()).forEach(message => {
-      const messageView = document.querySelector(`[data-message-id="${message.getData().relativeId}"]`)
-
-      const messageDOM = utils.getConversationMessageChunk(message)
-      // Новое сообщение
-      if (!messageView) {
-        utils.insertMessageToConversation(messageDOM)
+      const messageView = utils.getConversationMessageView(message.getData().relativeId)
+      console.log(messageView)
+      if (!messageView) { // Новое сообщение
+        utils.insertMessageToConversation(utils.getConversationMessageChunk(message))
       } else {
-        // TODO: сделать, чтобы у существующего элемента менялись классы
-        messageView.outerHTML = messageDOM
+        utils.updateConversationMessageView(message)
       }
     })
 

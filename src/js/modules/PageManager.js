@@ -99,7 +99,7 @@ class VirtualObjectUpdater {
     conversation.updateMessage(update.messageState)
 
     if (Object.values(conversation.getAllMessages()).length === 0) {
-      conversation.setAllMessagesLoaded(true)
+      conversation.setAllMessagesLoaded()
     }
   }
 }

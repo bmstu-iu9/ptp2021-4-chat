@@ -199,11 +199,6 @@ export class ConversationsList {
     return this.activeConversation
   }
 
-  getAll() {
-    return Object.keys(Object.assign({}, this.conversations))
-    .reduce((conversations, conversationId) => conversations[conversationId] = this.conversations[conversationId], {})
-  }
-
   getAllSorted() {
     return Object.values(this.conversations)
     .sort((a, b) => {
@@ -212,17 +207,24 @@ export class ConversationsList {
 
       let timestampA, timestampB
 
-      if (!lastMessageA || !lastMessageB) {
+      // если в каком-то из диалогов/бесед нет сообщений, то сортируем
+      // на основании даты его создания
+
+      if (!lastMessageA) {
         timestampA = a.getData().createdAt
-        timestampB = b.getData().createdAt
       } else {
         const createdAtA = lastMessageA.getData().createdAt
-        const createdAtB = lastMessageB.getData().createdAt
         timestampA = new Date(createdAtA).getTime()
+      }
+
+      if (!lastMessageB) {
+        timestampB = b.getData().createdAt
+      } else {
+        const createdAtB = lastMessageB.getData().createdAt
         timestampB = new Date(createdAtB).getTime()
       }
 
-      return timestampA - timestampB
-    }).reverse()
+      return timestampB - timestampA
+    })
   }
 }
