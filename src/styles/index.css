@@ -4,16 +4,59 @@ body {
   background-color: #ebebeb;
 }
 
+/* Шапка */
+
+header {
+  background-color: white;
+}
+
+.header-container-desktop {
+  height: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.header-row {
+  height: inherit;
+}
+
+.header-column-desktop {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  justify-content: space-between;
+}
+
+.header-column-desktop__title {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.header-column-desktop__logout-button {
+  display: flex;
+  align-items: center;
+}
+
+.header-column-desktop__logout-button:hover {
+  cursor: pointer;
+}
+
+.header-column-desktop__logout-button i {
+  font-size: 1.5rem;
+}
+
+/* Основное окно */
+
 .main-window {
-  height: 90vh;
+  height: calc(100vh - 40px - 1.5rem);
   border-radius: 6px;
-  margin-top: 2rem;
+  margin-top: .75rem;
   padding: 0;
   display: flex;
   flex-direction: row;
   background-color: white;
   overflow: hidden;
-  box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  box-shadow: 4px 4px 8px 0 rgba(34, 60, 80, 0.2);
 }
 
 /* Окно со всеми диалогами */
@@ -33,6 +76,10 @@ body {
 .small-header {
   padding: .5rem 1rem .5rem .5rem;
   border-top-left-radius: inherit;
+}
+
+.side-panel__header__title {
+  text-align: end;
 }
 
 .side-panel__header {
@@ -175,6 +222,7 @@ body {
 }
 
 .search-window__found-user {
+  display: none;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -388,6 +436,10 @@ body {
   .main {
     padding: 0;
     margin: 0;
+  }
+
+  .header-container-desktop {
+    display: none;
   }
 
   .main-row {
