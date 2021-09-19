@@ -320,7 +320,6 @@ header {
 
 /* Кнопка вызова меню */
 .btn-menu-trigger {
-  position: absolute;
   box-sizing: border-box;
   visibility: hidden;
   width: 0;
@@ -432,7 +431,7 @@ header {
 }
 
 /* Для мобильных устройств! */
-@media (max-width: 768px) {
+@media (max-width: 767.98px) {
   .main {
     padding: 0;
     margin: 0;

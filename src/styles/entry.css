@@ -2,16 +2,38 @@ body {
   background-color: #ebebeb;
 }
 
+/* Шапка */
+
 header {
   background-color: white;
 }
 
 .header-container {
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
+  height: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
+.header-row {
+  height: inherit;
+}
+
+.header-column {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+  justify-content: space-between;
+}
+
+.header-column__title {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+/* Бади) */
+
 .row-main{
+  align-items: flex-start;
   margin: 0;
 }
 
@@ -25,6 +47,12 @@ header {
   padding: .75rem;
   border: 1px white solid;
   border-radius: .25rem;
+}
+
+.info-title {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: .5rem;
 }
 
 .login-window {

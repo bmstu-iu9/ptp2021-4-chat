@@ -86,6 +86,7 @@ class FoundUserModalRenderer {
 
     const modal = this.DOMObjects.modal
     modal.style.visibility = 'visible'
+    modal.style.display = 'block'
     modal.style.transform = `translateY(-${parentHeight}px)`
 
     return this.getAnimationTimeoutPromise()
@@ -101,6 +102,7 @@ class FoundUserModalRenderer {
 
     return this.getAnimationTimeoutPromise().then(() => {
       modal.style.visibility = 'hidden'
+      modal.style.display = 'none'
       this.cleanupStyles()
     })
   }
