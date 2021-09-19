@@ -131,7 +131,7 @@ function isMessagesPreloaderInViewport() {
 }
 
 function setConversationWindowTitle(title) {
-  document.querySelector('.conversation-window__header').textContent = title
+  document.querySelector('.conversation-window__header__username').textContent = title
 }
 
 function getConversationWindowPreloaderChunk() {

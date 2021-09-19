@@ -135,8 +135,8 @@ function isScrolledToTheBottom() {
 
 /* Переключение меню на мобилах */
 function toggleMenu() {
-  sidePanel.classList.toggle('dialogs-window-mobile-closed')
-  sidePanel.classList.toggle('dialogs-window-mobile-opened')
+  sidePanel.classList.toggle('side-panel-mobile-closed')
+  sidePanel.classList.toggle('side-panel-mobile-opened')
 }
 
 function isReadOnScrollRequired() {
