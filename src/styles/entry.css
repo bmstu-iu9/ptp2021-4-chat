@@ -1,78 +1,78 @@
 body {
-    background-color: #ebebeb;
+  background-color: #ebebeb;
 }
 
 header {
-    background-color: white;
+  background-color: white;
 }
 
 .header-container {
-    padding-bottom: 0.5rem;
-    padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
 }
 
 .row-main{
-    margin: 0;
+  margin: 0;
 }
 
 .m-3 {
-    margin-left: 3rem;
-    margin-right: 3rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
 }
 
 .simple-window {
-    background-color: white;
-    padding: .75rem;
-    border: 1px white solid;
-    border-radius: .25rem;
+  background-color: white;
+  padding: .75rem;
+  border: 1px white solid;
+  border-radius: .25rem;
 }
 
 .login-window {
-    height: fit-content !important;
+  height: fit-content !important;
 }
 
 .notification-window {
-    background-color: #91d491;
-    padding: .75rem;
-    border-radius: .25rem;
+  background-color: #91d491;
+  padding: .75rem;
+  border-radius: .25rem;
 }
 
 .notification-window_hidden {
-    display: none !important;
+  display: none !important;
 }
 
 .notification-window_error {
-    background-color: #f5c1c1 !important;
+  background-color: #f5c1c1 !important;
 }
 
 .form_hidden {
-    display: none !important;
+  display: none !important;
 }
 
 .auth-form__password-form{
-    position: relative;
+  position: relative;
 
 }
 
 .auth-form__password-input{
-    display: block;
+  display: block;
 }
 
 .auth-form__password-show{
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    right: 5px;
-    top: 7px;
-    background: url("https://icon2.cleanpng.com/20180409/qow/kisspng-computer-icons-eye-clip-art-eye-5acb3e37da4182.722290961523269175894.jpg") no-repeat 50% 50% inherit;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: 5px;
+  top: 7px;
+  background: url("https://icon2.cleanpng.com/20180409/qow/kisspng-computer-icons-eye-clip-art-eye-5acb3e37da4182.722290961523269175894.jpg") no-repeat 50% 50% inherit;
 }
 
 @media (max-width: 768px) {
-    .login-window {
-        order: 0;
-    }
+  .login-window {
+    order: 0;
+  }
 
-    .info-window {
-        order: 1;
-    }
+  .info-window {
+    order: 1;
+  }
 }

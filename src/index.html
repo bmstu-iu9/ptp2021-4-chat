@@ -1,72 +1,72 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
-          name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <!-- Bootstrap5 css files -->
-    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
-          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+        name="viewport">
+  <meta content="ie=edge" http-equiv="X-UA-Compatible">
+  <!-- Bootstrap5 css files -->
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" rel="stylesheet">
 
-    <!-- Fontawesome -->
-    <script crossorigin="anonymous" src="https://kit.fontawesome.com/5d7c9e875e.js"></script>
+  <!-- Fontawesome -->
+  <script crossorigin="anonymous" src="https://kit.fontawesome.com/5d7c9e875e.js"></script>
 
-    <!-- bundle.css -->
-    <link href="styles/bundle.css" rel="stylesheet">
-    <title>Диалоги</title>
+  <!-- bundle.css -->
+  <link href="styles/bundle.css" rel="stylesheet">
+  <title>Диалоги</title>
 </head>
 <body>
 <div class="container-fluid main">
-    <div class="row main-row justify-content-center">
-        <div class="col-md-10 main-window">
-            <div class="side-panel side-panel-mobile-closed">
-                <div class="side-panel__header small-header">
-                    <p class="side-panel__header__title">Текущие диалоги</p>
-                </div>
-                <div class="side-panel__list"></div>
-                <div class="search-window">
-                    <div class="search-window__search-form">
-                        <p class="search-window__search-form__title">Добавление собеседника</p>
-                        <div class="search-window__search-form__controls">
-                            <input class="search-window__search-form__controls__input form-control-sm"
-                                   placeholder="Введите имя"
-                                   type="text">
-                            <div class="search-window__search-form__controls__find-button">
-                                <i class="fas fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="search-window__found-user">
-                        <div class="search-window__found-user__header">
-                            <p class="search-window__found-user__header__title">Пользователь найден</p>
-                            <div class="btn-close btn-close-white search-window__found-user__header__close-button"></div>
-                        </div>
-                        <div class="search-window__found-user__user-data">
-                            <p class="search-window__found-user__user-data__username">Postlog</p>
-                            <div class="search-window__found-user__user-data__send">Написать</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="conversation-window hidden-window">
-                <div class="conversation-window__header small-header">
-                    <a class="btn-menu-trigger" id="btn-menu-trigger">
-                        <i aria-hidden="true" class="fa fa-bars"></i>
-                    </a>
-                    <p class="conversation-window__header__username">Имя Собеседника</p>
-                </div>
-                <div class="conversation-window__list">
-                </div>
-                <div class="conversation-window__input">
-                    <textarea class="form-control-sm conversation-window__input__text-area" rows="3"></textarea>
-                    <a class="conversation-window__input__send-button">
-                        <i aria-hidden="true" class="fa fa-paper-plane"></i>
-                    </a>
-                </div>
-            </div>
+  <div class="row main-row justify-content-center">
+    <div class="col-md-10 main-window">
+      <div class="side-panel side-panel-mobile-closed">
+        <div class="side-panel__header small-header">
+          <p class="side-panel__header__title">Текущие диалоги</p>
         </div>
+        <div class="side-panel__list"></div>
+        <div class="search-window">
+          <div class="search-window__search-form">
+            <p class="search-window__search-form__title">Добавление собеседника</p>
+            <div class="search-window__search-form__controls">
+              <input class="search-window__search-form__controls__input form-control-sm"
+                     placeholder="Введите имя"
+                     type="text">
+              <div class="search-window__search-form__controls__find-button">
+                <i class="fas fa-search"></i>
+              </div>
+            </div>
+          </div>
+          <div class="search-window__found-user">
+            <div class="search-window__found-user__header">
+              <p class="search-window__found-user__header__title">Пользователь найден</p>
+              <div class="btn-close btn-close-white search-window__found-user__header__close-button"></div>
+            </div>
+            <div class="search-window__found-user__user-data">
+              <p class="search-window__found-user__user-data__username">Postlog</p>
+              <div class="search-window__found-user__user-data__send">Написать</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="conversation-window hidden-window">
+        <div class="conversation-window__header small-header">
+          <a class="btn-menu-trigger" id="btn-menu-trigger">
+            <i aria-hidden="true" class="fa fa-bars"></i>
+          </a>
+          <p class="conversation-window__header__username">Имя Собеседника</p>
+        </div>
+        <div class="conversation-window__list">
+        </div>
+        <div class="conversation-window__input">
+          <textarea class="form-control-sm conversation-window__input__text-area" rows="3"></textarea>
+          <a class="conversation-window__input__send-button">
+            <i aria-hidden="true" class="fa fa-paper-plane"></i>
+          </a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <script src="../common/common.js"></script>
