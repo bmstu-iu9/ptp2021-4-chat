@@ -100,26 +100,30 @@ document.body.onkeyup = (event) => {
 }
 
 /* Загрузка сообщений при прокрутке вверх */
+function readMessagesOnLoad(conversationId) {
+  const relativeIds = conversationManager.getMessagesIdsToMarkAsRead(
+    getMessagesIdsInViewport()
+  )
+
+  relativeIds.forEach(relativeId =>
+    wsClient.makeAPIRequest('readMessage', {conversationId, relativeId})
+    .then(update => {
+      updater.applyConversationUpdate(update)
+      updater.applyNewMessageStateUpdate(update)
+
+      if (conversationManager.isActive(conversationId)) {
+        pageManager.rerenderConversation()
+      }
+
+      pageManager.renderSidePanel()
+    })
+  )
+}
+
 messagesContainer.onscroll = () => {
   const conversationId = conversationManager.getActiveId()
   if (isReadOnScrollRequired()) {
-    const relativeIds = conversationManager.getMessagesIdsToMarkAsRead(
-      getMessagesIdsInViewport()
-    )
-
-    relativeIds.forEach(relativeId =>
-      wsClient.makeAPIRequest('readMessage', {conversationId, relativeId})
-      .then(update => {
-        updater.applyConversationUpdate(update)
-        updater.applyNewMessageStateUpdate(update)
-
-        if (conversationManager.isActive(conversationId)) {
-          pageManager.rerenderConversation()
-        }
-
-        pageManager.renderSidePanel()
-      })
-    )
+    readMessagesOnLoad(conversationId)
   }
 
   if (conversationManager.isPreloaderInViewport()) {
@@ -255,6 +259,7 @@ function loadAndRenderConversationWindow(conversationId) {
       scrollConversationWindowToTheBottom()
     }
 
+    readMessagesOnLoad(conversationManager.getActiveId())
     showConversationWindow()
     return
   }
@@ -282,6 +287,8 @@ function loadAndRenderConversationWindow(conversationId) {
     }
     showConversationWindow()
   })
+
+  readMessagesOnLoad(conversationManager.getActiveId())
 }
 
 function loadAndRenderConversation(conversationId, relativeId) {
