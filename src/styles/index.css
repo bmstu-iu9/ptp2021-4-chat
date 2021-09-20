@@ -329,6 +329,7 @@ header {
 
 .conversation-window__header__username {
   flex-grow: 2;
+  text-align: end;
 }
 
 /* Список сообщений */
