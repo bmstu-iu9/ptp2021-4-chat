@@ -9,6 +9,11 @@ class WSError extends Error {
   }
 }
 
+class WSErrorWithRedirect extends WSError {
+  constructor(redirectUrl) {
+    super(4000, {redirectUrl})
+  }
+}
 
 class WSRequestError extends WSError {
   constructor(message) {
@@ -19,5 +24,6 @@ class WSRequestError extends WSError {
 
 module.exports = {
   WSError,
+  WSErrorWithRedirect,
   WSRequestError
 }

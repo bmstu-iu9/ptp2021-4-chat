@@ -1,4 +1,5 @@
 const processObjectAccordingConfig = require('../../../misc/objectProcessor')
+const {WSRequestError} = require('../../../misc/wsErrors')
 const {ReadMessage} = require('../../../database/models/message')
 const {Op} = require('sequelize')
 const {messagesCountPerRequest} = require('../../../constants')

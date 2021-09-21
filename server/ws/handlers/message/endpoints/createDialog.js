@@ -8,7 +8,7 @@ const {getDialog} = require('../../../services/conversations')
 const {fullConversationConfig} = require('../../../services/conversations/configs')
 
 
-module.exports = async (context, payload) => {
+module.exports = async (context, localContext, payload) => {
   const {user, session} = context.current
   const userId = payload.meta.userId
 
@@ -23,12 +23,12 @@ module.exports = async (context, payload) => {
   const dialog = await getDialog(user.id, userId)
 
   if (dialog) {
-    context.socket.answer({conversation: dialog})
+    localContext.answer({conversation: dialog})
     return
   }
   const conversationId = await saveConversation('dialog', [userId, user.id])
 
-  await emit('newConversation', {
+  await emit('newConversation', localContext.answer, {
     getClients: async () => await getConversationClients(conversationId, session.sessionId),
     getPayloadToOther: async (user) => {
       return {conversation: await getConversation(conversationId, user, fullConversationConfig)}

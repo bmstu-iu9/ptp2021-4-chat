@@ -91,11 +91,11 @@ class WSServer {
     next()
   }
 
-  async runMessageHandlers(context, data) {
+  async runMessageHandlers(context, localContext, data) {
     const next = this.generateNextFunction(
       'message',
       this.runErrorHandlers.bind(this),
-      context, data
+      context, localContext, data
     )
 
     await next()
@@ -152,10 +152,19 @@ class WSServer {
 
       context.socket = this.modifySocket(socket)
 
+      if (context.error) {
+        this.runErrorHandlers(context, context.error)
+        return
+      }
+
       this.runConnectionHandlers(context)
 
       socket.on('message', async (buffer, isBinary) => {
-        await this.runMessageHandlers(context, {payload: buffer, isBinary})
+        const localContext = {}
+        await this.runMessageHandlers(context, localContext, {
+          payload: buffer,
+          isBinary
+        })
       })
 
       socket.on('close', async (code, reason) => {

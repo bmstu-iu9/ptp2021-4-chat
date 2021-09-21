@@ -2,42 +2,69 @@
 
 body {
     background-color: #ebebeb;
+    font-size: 16px;
+}
+
+header {
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+}
+
+.header-column-desktop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.header-column-desktop__title {
+    font-size: 1.4rem;
+}
+
+.header-column-desktop__logout-button {
+    cursor: pointer;
 }
 
 .main-window {
+    margin-bottom: 30px;
     height: 90vh;
-    border: 3px white solid;
-    border-radius: .25rem;
+    border-radius: 6px;
     margin-top: 2rem;
     padding: 0;
-
     display: flex;
     flex-direction: row;
-
     background-color: white;
+    overflow: hidden;
+    box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
 }
 
 /* Окно со всеми диалогами */
 
-.dialogs-window, .dialogs-window-mobile-opened, .dialogs-window-mobile-closed {
+.side-panel, .side-panel-mobile, .side-panel-mobile_closed {
     visibility: visible;
     height: auto;
     width: 30%;
     display: flex;
     flex-direction: column;
-    background-color: #ebebeb;
-    border-right: 3px white solid;
+    justify-content: space-between;
+    border-right: 1px solid #e0e5e9;
     border-radius: .25rem;
+    position: relative;
+    z-index: 0;
 }
 
 .small-header {
-    padding: .25rem;
-    padding-right: 1rem;
-    border-bottom: 2px white solid;
-    text-align: end;
+    padding: .5rem 1rem .5rem .5rem;
+    border-top-left-radius: inherit;
 }
 
-.dialogs-list {
+.side-panel__header {
+    text-align: left;
+    background-color: #fff;
+    border-bottom: 4px solid #e0e5e9;
+    z-index: -1;
+}
+
+.side-panel__list {
     display: flex;
     flex-direction: column;
     flex-grow: 2;
@@ -48,150 +75,209 @@ body {
     scrollbar-color: white #ebebeb;
     scroll-snap-align: start;
     position: relative;
+    z-index: -1;
 }
 
-.dialogs-list::-webkit-scrollbar {
+.side-panel__list::-webkit-scrollbar {
     width: 6px; /* ширина scrollbar */
 }
 
-.dialogs-list::-webkit-scrollbar-thumb {
+.side-panel__list::-webkit-scrollbar-thumb {
     background-color: white; /* цвет плашки */
     border-radius: 20px; /* закругления плашки */
     border: 0; /* padding вокруг плашки */
 }
 
-.conversation {
-    padding: .25rem .75rem;
-    border-bottom: 2px white solid;
+.side-panel__list__conversation {
+    padding: .25rem .5rem;
+    border-bottom: 1px solid #e0e5e9;
     word-wrap: break-word;
-    /* Настраиваем скролл */
     scroll-snap-align: start;
-}
-
-.conversation:hover {
+    position: relative;
     cursor: pointer;
 }
 
-.conversation-username {
+.side-panel__list__conversation_active:before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: cornflowerblue;
+}
+
+.side-panel__list__conversation__title {
     font-size: 1rem;
     font-weight: 450;
 }
 
-.conversation-last-message-self {
-    font-size: 0.75rem;
-    font-weight: 350;
-    font-style: italic;
+.side-panel__list__conversation__unread-counter {
+    position: absolute;
+    top: 50%;
+    right: 2%;
+    transform: translate(-50%, -50%);
+    width: 1.2rem;
+    height: 1.2rem;
+    background-color: cornflowerblue;
+    border-radius: 50px;
 }
 
-.conversation-last-message {
+.side-panel__list__conversation__unread-counter__value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: .8em;
+}
+
+.side-panel__list__conversation__last-message {
     font-size: 0.75rem;
     font-weight: 350;
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+}
+
+.side-panel__list__conversation__last-message__unread-symbol {
+    width: 5px;
+    height: 5px;
+    background-color: cornflowerblue;
+    margin-right: 5px;
+    border-radius: 50px;
+}
+
+.side-panel__list__conversation__last-message__self-symbol {
+    font-style: italic;
+    margin-right: 2px
+}
+
+.side-panel__list__conversation__last-message__text {
+    width: 100%;
 }
 
 /* форма с поиском собеседников */
 
 .search-window {
-    padding: .5rem;
-    padding-top: .25rem;
-    border-top: 2px white solid;
+    padding: .25rem .5rem .5rem .5rem;
+    position: relative;
+    background-color: #fff;
+    border-top: 4px solid #e0e5e9;
+    border-bottom-left-radius: inherit;
 }
 
-.search-form {
+.search-window__search-form {
+    z-index: 1;
+}
+
+.search-window__search-form__title {
+    margin-bottom: 10px;
+}
+
+.search-window__search-form__controls {
+    width: 100%;
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     padding: 0;
 }
 
-.search-label {
-    padding-bottom: .5rem;
+.search-window__search-form__controls__input {
+    width: 100%;
+    margin-right: 10px;
 }
 
-.search-input {
-    min-width: 10px;
-    flex-grow: 2;
-}
-
-#btn-find {
-    border: 0;
-    background-color: #ebebeb;
-    margin-right: .25rem;
-    margin-left: .25rem;
-}
-
-.notification-window {
-    background-color: #bc8f8f;
-    padding: .75rem;
-    border-radius: .25rem;
-    position: fixed;
-    left: 50%;
-    top: 5%;
-}
-
-.notification-window_hidden {
-    display: none;
+.search-window__search-form__controls__find-button {
+    cursor: pointer;
+    font-size: 1.2rem;
 }
 
 /* Окно с диалогом */
-.opened-dialog-window {
+.conversation-window {
     width: 70%;
     background-color: white;
     display: flex;
     flex-direction: column;
 }
 
+.conversation-window__wrapper {
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+    justify-content: space-between;
+    height: 100%;
+}
+
 .hidden-window {
-    width: 0;
-    height: 0;
     visibility: hidden;
 }
 
 /* Шапка окна диалога */
-.opened-dialog-header {
+.conversation-window__header {
     display: flex;
     flex-direction: row;
     border-bottom: 2px #ebebeb solid;
 }
 
 /* Кнопка вызова меню */
-.btn-menu-trigger {
-    position: absolute;
-    box-sizing: border-box;
+.conversation-window__header__mobile-menu-button {
     visibility: hidden;
     width: 0;
     height: 0;
     text-decoration: none;
     color: black;
-}
-
-.btn-menu-trigger:hover {
-    color: black;
     cursor: pointer;
+    margin-right: 20px;
 }
 
-.opened-dialog-username {
+.conversation-window__header__username {
     flex-grow: 2;
 }
 
 /* Список сообщений */
-.messages-list {
+.conversation-window__list {
     display: flex;
     flex-direction: column;
     flex-grow: 2;
     /* Настраиваем скролл */
-    overflow-y: auto;
+    overflow-y: scroll;
     scroll-snap-type: x mandatory;
     scrollbar-width: thin;
     scrollbar-color: #ebebeb white;
+    position: relative;
 }
 
-.messages-list::-webkit-scrollbar {
+.conversation-window__list::-webkit-scrollbar {
     width: 6px; /* ширина scrollbar */
 }
 
-.messages-list::-webkit-scrollbar-thumb {
+.conversation-window__list::-webkit-scrollbar-thumb {
     background-color: #ebebeb; /* цвет плашки */
     border-radius: 20px; /* закругления плашки */
     border: 0; /* padding вокруг плашки */
+}
+
+.conversation-window__list__preloader {
+    width: 100%;
+    padding: 2rem 1rem;
+    position: relative;
+}
+
+.conversation-window__list__preloader_hidden {
+    display: none;
+}
+
+.conversation-window__list__preloader:before {
+    content: 'Загрузка...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .message-container {
@@ -199,45 +285,61 @@ body {
     margin-left: .75rem;
     font-size: 14px;
     word-wrap: break-word;
+    margin-bottom: 10px;
 }
 
-.message-author {
-    padding: .5rem .5rem 0 .5rem;
+.message-container__header {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.message-container__header__author {
+    margin-bottom: 5px;
     color: dodgerblue;
+    margin-right: 10px;
 }
 
-.message-text {
-    padding: .5rem .5rem 0 .5rem;
+.message-container__header__time {
+    color: #aaa;
+}
+
+.message-container__text {
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.message-container_self_unread .message-container__text {
+    background-color: darkcyan;
+}
+
+.message-container__text_unread {
+    background-color: rgba(0, 0, 0, .3);
 }
 
 /* Окно ввода сообщения */
-.message-input-window {
+.conversation-window__input {
     display: flex;
     flex-direction: row;
-    padding: .5rem;
-    padding-top: 1rem;
+    align-items: center;
+    padding: 5px 10px;
     border-top: 2px #ebebeb solid;
 }
 
-#input-message-text-area {
+.conversation-window__input__text-area {
     resize: none;
     width: 90%;
-    margin-left: .5rem;
-    border: 1.5px black solid;
-    border-radius: .3rem;
+    border: 2px black solid;
+    border-radius: .2rem;
 }
 
-#send-button {
-    padding: .5rem;
-    margin-left: .5rem;
-}
-
-#send-button:hover {
+.conversation-window__input__send-button {
+    margin-left: 1rem;
+    font-size: 1.2rem;
     cursor: pointer;
 }
 
-/* Для мобилок! */
-@media (max-width: 767.98px) {
+/* Для мобильных устройств! */
+@media (max-width: 768px) {
     .main {
         padding: 0;
         margin: 0;
@@ -254,32 +356,22 @@ body {
         margin: 0;
     }
 
-    .dialogs-window-mobile-closed {
+    .side-panel-mobile {
         position: fixed;
-        height: 0;
-        width: 0;
-        visibility: hidden;
-        transition: width 0.3s;
-        -webkit-transition: width 0.3s;
-        -moz-transition: width 0.3s;
+        display: none;
     }
 
-    .dialogs-window-mobile-opened {
-        position: fixed;
-        height: 100%;
-        width: 50%;
-        visibility: visible;
-        transition: width 0.3s;
-        -webkit-transition: width 0.3s;
-        -moz-transition: width 0.3s;
+    .side-panel-mobile_opened {
+        display: flex;
+        width: 100%;
+        height: 100vh;
     }
 
-    .opened-dialog-window {
+    .conversation-window {
         width: 100%;
     }
 
-    .btn-menu-trigger {
-        position: fixed;
+    .conversation-window__header__mobile-menu-button {
         visibility: visible;
         width: auto;
         height: auto;

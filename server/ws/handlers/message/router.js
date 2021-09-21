@@ -3,7 +3,7 @@ const {endpoints, validateSchema} = require('./endpoints')
 const {wss} = require('../../../definitions')
 
 
-wss.onMessage(async (context, data) => {
+wss.onMessage(async (context, localContext, data) => {
   const payload = data.payload
 
   if (!validateSchema(payload)) {
@@ -12,5 +12,5 @@ wss.onMessage(async (context, data) => {
 
   const endpoint = endpoints[payload.request]
 
-  await endpoint(context, payload)
+  await endpoint(context, localContext, payload)
 })

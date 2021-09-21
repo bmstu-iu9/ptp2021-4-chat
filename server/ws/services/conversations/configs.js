@@ -1,5 +1,4 @@
 const fullConversationConfig = {
-  exclude: ['createdAt'],
   rules: [
     [
       ['type', 'discussionMeta'],
@@ -24,10 +23,9 @@ const fullConversationConfig = {
   ]
 }
 
-const onlyIdConversationConfig = {
+const simpleConversationConfig = {
   exclude: [
-    'type', 'createdAt', 'generatedAt',
-    'unreadCount', 'participants', 'discussionMeta'
+    'type', 'createdAt', 'participants', 'discussionMeta'
   ]
 }
 
@@ -38,6 +36,6 @@ const newMessageConversationConfig = {
 
 module.exports = {
   fullConversationConfig,
-  onlyIdConversationConfig,
+  simpleConversationConfig,
   newMessageConversationConfig
 }
