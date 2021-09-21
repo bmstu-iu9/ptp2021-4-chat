@@ -280,7 +280,7 @@ header {
     transform: translate(-50%, -50%);
 }
 
-.conversation-window__list .message-container {
+.message-container {
     width: 90%;
     margin-left: .75rem;
     font-size: 14px;
@@ -288,21 +288,31 @@ header {
     margin-bottom: 10px;
 }
 
-.conversation-window__list .message-container__author {
-    margin-bottom: 5px;
-    color: dodgerblue;
+.message-container__header {
+    display: flex;
+    justify-content: flex-start;
 }
 
-.conversation-window__list .message-container__text {
+.message-container__header__author {
+    margin-bottom: 5px;
+    color: dodgerblue;
+    margin-right: 10px;
+}
+
+.message-container__header__time {
+    color: #aaa;
+}
+
+.message-container__text {
     padding: 5px 10px;
     border-radius: 5px;
 }
 
-.conversation-window__list .message-container_self_unread .message-container__text {
+.message-container_self_unread .message-container__text {
     background-color: darkcyan;
 }
 
-.conversation-window__list .message-container__text_unread {
+.message-container__text_unread {
     background-color: rgba(0, 0, 0, .3);
 }
 

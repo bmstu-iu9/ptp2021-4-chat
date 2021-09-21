@@ -1,17 +1,7 @@
 const messagesContainer = document.querySelector(`.conversation-window__list`)
 
 function getConversationMessageView(relativeId) {
-  const messageContainer = messagesContainer.querySelector(`[data-message-id="${relativeId}"]`)
-
-  if (!messageContainer) {
-    return null
-  }
-
-  return {
-    container: messageContainer,
-    author: messageContainer.querySelector(`.message-container__author`),
-    text: messageContainer.querySelector(`.message-container__text`)
-  }
+  return messagesContainer.querySelector(`[data-message-id="${relativeId}"]`)
 }
 
 function getSidePanelConversationChunk(conversation, lastMessage) {
@@ -77,11 +67,22 @@ function getConversationMessageChunk(message) {
   const author = message.getData().user.username
   const self = message.getData().self
   const unread = !message.getData().read
+  const createdAt = message.getData().createdAt
+  const formattedCreatedAt = new Date(createdAt).toLocaleDateString('eu-RU', {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric'
+  })
 
   // чем длиннее строчки, тем выше достоинство UwU
   return (`
     <div class="message-container ${self ? 'message-container_self' : ''} ${self && unread ? 'message-container_self_unread' : ''}" data-message-id="${relativeId}">
-        <p class="message-container__author">${author}</p>
+        <div class="message-container__header">
+            <p class="message-container__header__author">${author}</p>
+            <span class="message-container__header__time">${formattedCreatedAt}</span>  
+        </div>
         <p class="message-container__text">${messageText}</p>
     </div>
   `)
@@ -91,15 +92,15 @@ function updateConversationMessageView(message) {
   const view = getConversationMessageView(message.getData().relativeId)
 
   if (message.getData().self) {
-    view.container.classList.add('message-container_self')
+    view.classList.add('message-container_self')
 
     if (!message.getData().read) {
-      view.container.classList.add('message-container_self_unread')
+      view.classList.add('message-container_self_unread')
     } else {
-      view.container.classList.remove('message-container_self_unread')
+      view.classList.remove('message-container_self_unread')
     }
   } else {
-    view.container.classList.remove('message-container_self')
+    view.classList.remove('message-container_self')
   }
 }
 
@@ -148,27 +149,6 @@ function insertMessageToConversation(messageDOM) {
   document.querySelector('.conversation-window__list').insertAdjacentHTML('beforeend', messageDOM)
 }
 
-// это нужно скорее всего поменять, выглядит так себе)
-function getDOMObjects(parentClassName) {
-  const DOMObjects = {}
-  DOMObjects.parent = document.querySelector(`.${parentClassName}`)
-  DOMObjects.modal = document.querySelector(`.${parentClassName}__found-user`)
-  DOMObjects.title = document.querySelector(`.${parentClassName}__found-user__header__title`)
-  DOMObjects.closeButton = document.querySelector(`.${parentClassName}__found-user__header__close-button`)
-  DOMObjects.username = document.querySelector(`.${parentClassName}__found-user__user-data__username`)
-  DOMObjects.sendButton = document.querySelector(`.${parentClassName}__found-user__user-data__send`)
-
-  return DOMObjects
-}
-
-function getPredefinedClassNames(parentClassName) {
-  return {
-    error: `${parentClassName}__found-user_error`,
-    incorrect: `${parentClassName}__found-user_incorrect`,
-    currentUser: `${parentClassName}__found-user_current-user`
-  }
-}
-
 
 export const sidePanelUtils = {
   getSidePanelConversationChunk,
@@ -188,10 +168,4 @@ export const conversationWindowUtils = {
   getConversationMessageView,
   renderConversation,
   getAllConversationMessages
-}
-
-
-export const foundUserModalUtils = {
-  getDOMObjects,
-  getPredefinedClassNames
 }

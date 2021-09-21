@@ -34,6 +34,8 @@ wsClient.setOnMessageHandler(update => {
       } else {
         pageManager.rerenderConversation()
       }
+
+      readMessages(conversation.id)
     }
   }
 
