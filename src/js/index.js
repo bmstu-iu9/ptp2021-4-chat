@@ -4,9 +4,7 @@ import WSClient from './modules/WSClient.js'
 
 /* Основные объекты! */
 const sidePanel = document.querySelector('.side-panel')
-const sidePanelConversationsContainer = document.querySelector('.side-panel__list')
-
-const conversationWindow = document.querySelector('.conversation-window')
+const conversationWindow = document.querySelector('.conversation-window__wrapper')
 const messagesContainer = document.querySelector('.conversation-window__list')
 const messageInputField = document.querySelector('.conversation-window__input__text-area')
 const searchUserField = document.querySelector('.search-window__search-form__controls__input')
@@ -14,7 +12,6 @@ const searchUserButton = document.querySelector('.search-window__search-form__co
 const pageManager = new PageManager()
 const updater = pageManager.getUpdater()
 const conversationManager = pageManager.getConversationManager()
-
 const wsClient = new WSClient('ws://localhost:80')
 
 pageManager.setSidePanelOnClickHandler(loadAndRenderConversationWindow)
@@ -68,9 +65,34 @@ wsClient.makeAPIRequest('getAllConversations', {}).then(updates => {
   pageManager.renderSidePanel()
 })
 
-document.getElementById('btn-menu-trigger').onclick = toggleMenu
-searchUserButton.onclick = searchUser
+wsClient.setOnCloseHandler((code, message) => {
+  if (code === 1006) {
+    return
+  }
+
+  const payload = JSON.parse(message)
+
+  if (code === 4000) {
+    const url = payload.redirectUrl
+    location.replace(url)
+  }
+
+  if (code === 1007) {
+    console.error('Запрос к серверу содержал ошибку(-и): ' + payload.message)
+  }
+})
+
+document.querySelector('.conversation-window__header__mobile-menu-button').onclick = toggleMobileSidePanel
 document.querySelector('.conversation-window__input__send-button').onclick = sendMessage
+searchUserButton.onclick = searchUser
+
+document.querySelector('.header-column-desktop__logout-button').onclick = () => {
+  fetch('/api/logout', {method: 'GET'}).then(response => {
+    if (response.redirected) {
+      location.replace(response.url)
+    }
+  })
+}
 
 document.querySelector('.search-window__search-form__controls__input').onkeydown = (event) => {
   if (event.key === 'Enter') {
@@ -96,27 +118,12 @@ document.body.onkeyup = (event) => {
   }
 }
 
+
 /* Загрузка сообщений при прокрутке вверх */
 messagesContainer.onscroll = () => {
   const conversationId = conversationManager.getActiveId()
   if (isReadOnScrollRequired()) {
-    const relativeIds = conversationManager.getMessagesIdsToMarkAsRead(
-      getMessagesIdsInViewport()
-    )
-
-    relativeIds.forEach(relativeId =>
-      wsClient.makeAPIRequest('readMessage', {conversationId, relativeId})
-      .then(update => {
-        updater.applyConversationUpdate(update)
-        updater.applyNewMessageStateUpdate(update)
-
-        if (conversationManager.isActive(conversationId)) {
-          pageManager.rerenderConversation()
-        }
-
-        pageManager.renderSidePanel()
-      })
-    )
+    readMessages(conversationId)
   }
 
   if (conversationManager.isPreloaderInViewport()) {
@@ -126,14 +133,36 @@ messagesContainer.onscroll = () => {
   }
 }
 
+function readMessages(conversationId) {
+  const relativeIds = conversationManager.getMessagesIdsToMarkAsRead(
+    getMessagesIdsInViewport()
+  )
+
+  relativeIds.forEach(relativeId =>
+    wsClient.makeAPIRequest('readMessage', {conversationId, relativeId})
+    .then(update => {
+      updater.applyConversationUpdate(update)
+      updater.applyNewMessageStateUpdate(update)
+
+      if (conversationManager.isActive(conversationId)) {
+        pageManager.rerenderConversation()
+      }
+
+      pageManager.renderSidePanel()
+    })
+  )
+}
+
 function isScrolledToTheBottom() {
   return Math.ceil(messagesContainer.offsetHeight + messagesContainer.scrollTop) >= messagesContainer.scrollHeight
 }
 
 /* Переключение меню на мобилах */
-function toggleMenu() {
-  sidePanel.classList.toggle('dialogs-window-mobile-closed')
-  sidePanel.classList.toggle('dialogs-window-mobile-opened')
+function toggleMobileSidePanel() {
+  sidePanel.classList.toggle('side-panel-mobile_opened')
+  if (sidePanel.classList.contains('side-panel-mobile_opened')) {
+    hideConversationWindow()
+  }
 }
 
 function isReadOnScrollRequired() {
@@ -259,9 +288,8 @@ function scrollConversationWindowToTheMessage(relativeId) {
   messagesContainer.scrollTo(0, targetMessage.offsetTop)
 }
 
-// TODO: сделать прочтение сообщений без прокрутки
-
 function loadAndRenderConversationWindow(conversationId) {
+  toggleMobileSidePanel()
   hideConversationWindow()
   conversationManager.setActive(conversationId)
 
@@ -276,6 +304,7 @@ function loadAndRenderConversationWindow(conversationId) {
       scrollConversationWindowToTheBottom()
     }
 
+    readMessages(conversationId)
     showConversationWindow()
     return
   }
@@ -301,6 +330,8 @@ function loadAndRenderConversationWindow(conversationId) {
     } else {
       scrollConversationWindowToTheBottom()
     }
+
+    readMessages(conversationId)
     showConversationWindow()
   })
 }

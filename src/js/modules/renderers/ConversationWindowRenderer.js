@@ -24,7 +24,7 @@ class ConversationWindowRenderer {
   rerender(conversation) {
     Object.values(conversation.getUpdatedMessages()).forEach(message => {
       const messageView = utils.getConversationMessageView(message.getData().relativeId)
-      console.log(messageView)
+
       if (!messageView) { // Новое сообщение
         utils.insertMessageToConversation(utils.getConversationMessageChunk(message))
       } else {

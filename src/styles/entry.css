@@ -6,12 +6,23 @@ header {
     background-color: white;
 }
 
+.header-column-desktop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.header-column__title {
+    font-size: 1.4rem;
+}
+
 .header-container {
     padding-bottom: 0.5rem;
     padding-top: 0.5rem;
 }
 
-.row-main{
+.row-main {
     margin: 0;
 }
 
@@ -25,10 +36,12 @@ header {
     padding: .75rem;
     border: 1px white solid;
     border-radius: .25rem;
+    box-shadow: none !important;
 }
 
 .login-window {
     height: fit-content !important;
+    box-shadow: none !important;
 }
 
 .notification-window {

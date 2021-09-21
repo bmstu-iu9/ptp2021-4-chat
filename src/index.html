@@ -17,10 +17,24 @@
     <title>Диалоги</title>
 </head>
 <body>
+<header>
+    <div class="container-fluid header-container-desktop">
+        <div class="row header-row justify-content-center">
+            <div class="col-md-10 col-xxl-7 header-column-desktop">
+                <div class="header-column-desktop__title">
+                    <span style="color: #0d6efd;">Bauman</span>gram
+                </div>
+                <div class="header-column-desktop__logout-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 <div class="container-fluid main">
     <div class="row main-row justify-content-center">
         <div class="col-md-10 main-window">
-            <div class="side-panel side-panel-mobile-closed">
+            <div class="side-panel side-panel-mobile">
                 <div class="side-panel__header small-header">
                     <p class="side-panel__header__title">Текущие диалоги</p>
                 </div>
@@ -39,20 +53,27 @@
                     </div>
                 </div>
             </div>
-            <div class="conversation-window hidden-window">
+            <div class="conversation-window">
                 <div class="conversation-window__header small-header">
-                    <a class="btn-menu-trigger" id="btn-menu-trigger">
+                    <a class="conversation-window__header__mobile-menu-button">
                         <i aria-hidden="true" class="fa fa-bars"></i>
                     </a>
-                    <p class="conversation-window__header__username">Имя Собеседника</p>
+                    <p class="conversation-window__header__username">Имя собеседника</p>
                 </div>
-                <div class="conversation-window__list">
-                </div>
-                <div class="conversation-window__input">
-                    <textarea class="form-control-sm conversation-window__input__text-area" rows="3"></textarea>
-                    <a class="conversation-window__input__send-button">
-                        <i aria-hidden="true" class="fa fa-paper-plane"></i>
-                    </a>
+                <div class="conversation-window__wrapper hidden-window">
+                    <div class="conversation-window__list">
+                    </div>
+                    <div class="conversation-window__input">
+                        <textarea
+                                class="form-control-sm conversation-window__input__text-area"
+                                placeholder="Введите сообщение"
+                                rows="3"
+                        >
+                        </textarea>
+                        <a class="conversation-window__input__send-button">
+                            <i aria-hidden="true" class="fa fa-paper-plane"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
