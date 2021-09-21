@@ -1,7 +1,5 @@
 import {PageManager} from './modules/PageManager.js'
 import WSClient from './modules/WSClient.js'
-import FoundUserModalRenderer
-  from './modules/renderers/FoundUserModalRenderer.js'
 
 
 /* Основные объекты! */
@@ -12,13 +10,12 @@ const conversationWindow = document.querySelector('.conversation-window')
 const messagesContainer = document.querySelector('.conversation-window__list')
 const messageInputField = document.querySelector('.conversation-window__input__text-area')
 const searchUserField = document.querySelector('.search-window__search-form__controls__input')
-
+const searchUserButton = document.querySelector('.search-window__search-form__controls__find-button')
 const pageManager = new PageManager()
 const updater = pageManager.getUpdater()
 const conversationManager = pageManager.getConversationManager()
 
 const wsClient = new WSClient('ws://localhost:80')
-const modal = new FoundUserModalRenderer('search-window')
 
 pageManager.setSidePanelOnClickHandler(loadAndRenderConversationWindow)
 
@@ -72,7 +69,7 @@ wsClient.makeAPIRequest('getAllConversations', {}).then(updates => {
 })
 
 document.getElementById('btn-menu-trigger').onclick = toggleMenu
-document.querySelector('.search-window__search-form__controls__find-button').onclick = searchUser
+searchUserButton.onclick = searchUser
 document.querySelector('.conversation-window__input__send-button').onclick = sendMessage
 
 document.querySelector('.search-window__search-form__controls__input').onkeydown = (event) => {
@@ -158,12 +155,25 @@ function hideConversationWindow() {
 /* Поиск пользователя и добавление его в диалоги! */
 function searchUser() {
   let username = searchUserField.value
+
+  searchUserField.value = ''
   if (username === '') {
     return
   }
 
   if (username === pageManager.getCurrentUser().username) {
-    modal.showFound(pageManager.getCurrentUser())
+    Swal.fire({
+      icon: 'success',
+      text: 'Вы нашли самого себя'
+    })
+    return
+  }
+
+  if (!validateUsername(username)) {
+    Swal.fire({
+      icon: 'error',
+      text: 'Вы указали некорректное имя пользователя'
+    })
     return
   }
 
@@ -171,13 +181,25 @@ function searchUser() {
   .then(userUpdate => {
     const user = userUpdate.user
     if (user) {
-      modal.showFound(user, () => createDialog(userUpdate))
+      Swal.fire({
+        icon: 'success',
+        text: `Пользователь «${username}» найден`,
+        showCancelButton: true,
+        confirmButtonText: 'Написать',
+        cancelButtonText: `Закрыть`
+      }).then((result) => {
+        if (result.isConfirmed) {
+          createDialog(userUpdate)
+        }
+      })
     } else {
-      modal.showNotFound(username)
+      Swal.fire({
+        icon: 'error',
+        text: 'Пользователь не найден'
+      })
     }
   })
 
-  searchUserField.value = ''
   scrollConversationWindowToTheBottom()
 }
 
@@ -186,7 +208,6 @@ function createDialog(userUpdate) {
   .then(update => {
     updater.applyConversationUpdate(update)
     loadAndRenderConversationWindow(update.conversation.id)
-    modal.hide()
   })
 }
 

@@ -1,9 +1,4 @@
-const messagesContainerClassName = 'conversation-window__list'
-const messageClassName = 'message-container'
-const messageContainerAuthorClassName = 'message-container__author'
-const messageContainerTextClassName = 'message-container__text'
-
-const messagesContainer = document.querySelector(`.${messagesContainerClassName}`)
+const messagesContainer = document.querySelector(`.conversation-window__list`)
 
 function getConversationMessageView(relativeId) {
   const messageContainer = messagesContainer.querySelector(`[data-message-id="${relativeId}"]`)
@@ -14,8 +9,8 @@ function getConversationMessageView(relativeId) {
 
   return {
     container: messageContainer,
-    author: messageContainer.querySelector(`.${messageContainerAuthorClassName}`),
-    text: messageContainer.querySelector(`.${messageContainerTextClassName}`)
+    author: messageContainer.querySelector(`.message-container__author`),
+    text: messageContainer.querySelector(`.message-container__text`)
   }
 }
 

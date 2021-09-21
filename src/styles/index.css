@@ -174,83 +174,6 @@ body {
     font-size: 1.2rem;
 }
 
-.search-window__found-user {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    justify-content: center;
-    color: #ffffff;
-    width: 100%;
-    padding: 10px 20px;
-    z-index: -1;
-    background-color: cornflowerblue;
-    visibility: hidden;
-    transition: transform ease-in .2s !important;
-}
-
-.search-window__found-user_error, .search-window__found-user_incorrect {
-    background-color: #bc8f8f;
-}
-
-.search-window__found-user__header {
-    display: flex;
-    flex-flow: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.search-window__found-user_incorrect .search-window__found-user__header {
-    margin-bottom: 0;
-}
-
-.search-window__found-user__header__title {
-}
-
-.search-window__found-user__header__close-button {
-    cursor: pointer;
-    color: #ffffff;
-}
-
-.search-window__found-user__user-data {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.search-window__found-user_incorrect .search-window__found-user__user-data {
-    display: none;
-}
-
-
-.search-window__found-user__user-data__username {
-    word-break: break-all;
-    margin-left: 10px;
-}
-
-.search-window__found-user__user-data__send {
-    cursor: pointer;
-    background-color: #fff;
-    color: cornflowerblue;
-    padding: 5px 20px;
-    transition-duration: .1s !important;
-    border: 2px solid #fff;
-    user-select: none;
-}
-
-.search-window__found-user_error .search-window__found-user__user-data__send {
-    display: none;
-}
-
-.search-window__found-user_current-user .search-window__found-user__user-data__send {
-    display: none;
-}
-
-.search-window__found-user__user-data__send:hover {
-    background-color: cornflowerblue;
-    color: #fff;
-}
-
 /* Окно с диалогом */
 .conversation-window {
     width: 70%;
@@ -317,7 +240,6 @@ body {
     width: 100%;
     padding: 2rem 1rem;
     position: relative;
-    background-color: red;
 }
 
 .conversation-window__list__preloader_hidden {
